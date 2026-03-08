@@ -30,7 +30,7 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center p-8 pb-10">
-            <Link href="/dashboard/generate" className="w-full max-w-sm">
+            <Link href="/dashboard/generate-report" className="w-full max-w-sm">
               <Button className="w-full h-16 text-lg shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700">
                 <Plus className="mr-2 h-6 w-6" />
                 New Experiment
