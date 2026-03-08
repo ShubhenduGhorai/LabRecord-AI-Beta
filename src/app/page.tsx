@@ -8,6 +8,8 @@ import { Testimonials } from "@/components/Testimonials";
 import { FAQ } from "@/components/FAQ";
 import { FinalCTA } from "@/components/FinalCTA";
 
+export const revalidate = 0; // Ensures the page always fetches fresh data on every request
+
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
