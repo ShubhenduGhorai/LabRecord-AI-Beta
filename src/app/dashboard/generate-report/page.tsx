@@ -22,6 +22,8 @@ export default function GenerateReportPage() {
   const [previewRows, setPreviewRows] = useState<any[][]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Helper to extract first two numeric columns from a 2D array
   const processRawData = (rows: any[][]) => {
@@ -158,12 +160,33 @@ export default function GenerateReportPage() {
   };
 
   // --- Action ---
-  const handleAnalyzeData = () => {
+  const handleAnalyzeData = async () => {
     if (!parsedData) return;
     
-    // Here is where it sends to the backend in the future
-    console.log("SENDING TO BACKEND API:", parsedData);
-    alert("Data sent for analysis! Check browser console for the JSON payload.");
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/analyze-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(parsedData)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to analyze data server-side.");
+      }
+
+      setAnalysisResult(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -299,17 +322,71 @@ export default function GenerateReportPage() {
             <CardFooter className="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-xl mt-auto">
               <Button 
                 onClick={handleAnalyzeData}
-                disabled={!parsedData}
+                disabled={!parsedData || isAnalyzing}
                 className="w-full h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 disabled:shadow-none disabled:bg-slate-200 disabled:text-slate-400 transition-all"
               >
                 <Play className="mr-2 h-4 w-4 fill-current" />
-                Analyze Data
+                {isAnalyzing ? "Analyzing..." : "Analyze Data"}
               </Button>
             </CardFooter>
           </Card>
         </div>
 
       </div>
+
+      {/* Analysis Results Section */}
+      {analysisResult && (
+        <div className="mt-12 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 border-b pb-2">Analysis Results</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="shadow-sm border-slate-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-slate-500">Mean (Y)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-slate-800">{analysisResult.mean}</div>
+              </CardContent>
+            </Card>
+            
+            <Card className="shadow-sm border-slate-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-slate-500">Standard Deviation (Y)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-slate-800">{analysisResult.std_dev}</div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-sm border-slate-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-slate-500">Linear Regression</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm space-y-1.5 text-slate-600">
+                  <p><span className="font-semibold text-slate-800">Slope (m):</span> {analysisResult.slope}</p>
+                  <p><span className="font-semibold text-slate-800">Intercept (b):</span> {analysisResult.intercept}</p>
+                  <p><span className="font-semibold text-red-600">Avg % Error:</span> {analysisResult.error_percent}%</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="overflow-hidden shadow-sm border-slate-200">
+            <CardHeader className="bg-slate-50 border-b border-slate-100">
+              <CardTitle>Generated Plot</CardTitle>
+              <CardDescription>Experimental Data vs. Calculated Linear Regression</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 bg-white flex justify-center py-8">
+               <img 
+                 src={analysisResult.graph_url} 
+                 alt="Scientific Analysis Graph" 
+                 className="w-full max-w-4xl max-h-[600px] object-contain rounded-md" 
+               />
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
