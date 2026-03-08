@@ -19,7 +19,7 @@ export function Pricing() {
     },
     {
       name: "Student Pro",
-      price: "$9",
+      price: "***",
       period: "/month",
       description: "Everything you need to cruise through your semester.",
       features: ["Unlimited Lab Reports", "Advanced Graphs", "AI Conclusion Generator", "Viva Prep Sheet"],
@@ -28,7 +28,7 @@ export function Pricing() {
     },
     {
       name: "Researcher",
-      price: "$99",
+      price: "***",
       period: "/year",
       description: "For final year projects, thesis, and paper publications.",
       features: ["Thesis Formatting", "Equation OCR", "Citation Manager", "Research Paper Export"],
@@ -85,7 +85,7 @@ export function Pricing() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button 
+                  <Button
                     className={`w-full h-12 ${plan.popular ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-muted hover:bg-muted/80 text-foreground'}`}
                   >
                     {plan.buttonText}
