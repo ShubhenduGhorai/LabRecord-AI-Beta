@@ -19,7 +19,7 @@ export function Pricing() {
     },
     {
       name: "Student Pro",
-      price: "***",
+      price: "$9",
       period: "/month",
       description: "Everything you need to cruise through your semester.",
       features: ["Unlimited Lab Reports", "Advanced Graphs", "AI Conclusion Generator", "Viva Prep Sheet"],
@@ -28,7 +28,7 @@ export function Pricing() {
     },
     {
       name: "Researcher",
-      price: "***",
+      price: "$99",
       period: "/year",
       description: "For final year projects, thesis, and paper publications.",
       features: ["Thesis Formatting", "Equation OCR", "Citation Manager", "Research Paper Export"],
