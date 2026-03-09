@@ -32,10 +32,9 @@ export function Sidebar() {
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "My Experiments", href: "/dashboard/experiments", icon: FlaskConical },
-    { name: "Generate Report", href: "/dashboard/generate", icon: FileText },
+    { name: "Generate Report", href: "/tools/lab-report", icon: FileText },
+    { name: "Cloud Storage", href: "/tools/storage", icon: FlaskConical },
     { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   const SidebarContent = () => (
