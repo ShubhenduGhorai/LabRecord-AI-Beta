@@ -40,12 +40,12 @@ export function Sidebar() {
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col bg-slate-50 border-r py-6">
-      <div className="flex items-center gap-2 px-6 mb-10">
+      <Link href="/" className="flex items-center gap-2 px-6 mb-10 hover:opacity-80 transition-opacity">
         <Beaker className="h-6 w-6 text-indigo-600" />
-        <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-blue-700">
+        <span className="text-xl font-bold tracking-tight text-slate-900">
           LabRecord AI
         </span>
-      </div>
+      </Link>
 
       <nav className="flex-1 space-y-2 px-4">
         {navItems.map((item) => {
@@ -89,10 +89,10 @@ export function Sidebar() {
   return (
     <>
       <div className="md:hidden flex items-center justify-between border-b p-4 bg-white sticky top-0 z-50">
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Beaker className="h-6 w-6 text-indigo-600" />
-          <span className="text-xl font-bold tracking-tight">LabRecord</span>
-        </div>
+          <span className="text-xl font-bold tracking-tight text-slate-900">LabRecord</span>
+        </Link>
         <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>
