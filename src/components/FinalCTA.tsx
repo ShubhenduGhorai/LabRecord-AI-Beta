@@ -12,7 +12,7 @@ export function FinalCTA() {
         <div className="absolute inset-0 bg-gradient-to-tr from-indigo-900 to-indigo-500 opacity-90"></div>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
       </div>
-      
+
       <div className="container mx-auto px-4 md:px-8 relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -27,7 +27,7 @@ export function FinalCTA() {
           <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto">
             Let AI analyze your experiment data and generate a perfect lab report in seconds. Focus on learning, not formatting.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup" className="w-full sm:w-auto">
               <Button size="lg" className="h-14 px-8 text-base font-bold bg-white text-indigo-900 hover:bg-gray-100 w-full transition-all shadow-xl">
@@ -36,7 +36,7 @@ export function FinalCTA() {
               </Button>
             </Link>
             <Link href="/dashboard" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="h-14 px-8 text-base font-bold w-full border-indigo-300 text-white hover:bg-white/10 hover:text-white transition-all">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-base font-bold w-full border-indigo-300 text-blue hover:bg-white/10 hover:text-white transition-all">
                 View Demo
               </Button>
             </Link>

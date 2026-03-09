@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle } from "lucide-react";
+import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle, FileText, Sparkles, Beaker, ShieldAlert, BadgeHelp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 
@@ -24,6 +25,11 @@ export default function GenerateReportPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
+  // AI Report Generation State
+  const [experimentTitle, setExperimentTitle] = useState("");
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [reportResult, setReportResult] = useState<any>(null);
 
   // Helper to extract first two numeric columns from a 2D array
   const processRawData = (rows: any[][]) => {
@@ -184,8 +190,46 @@ export default function GenerateReportPage() {
       setAnalysisResult(data);
     } catch (err: any) {
       setError(err.message);
-    } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    if (!analysisResult) return;
+
+    setIsGeneratingReport(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/generate-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          experiment_title: experimentTitle || "Lab Experiment",
+          statistics: {
+            mean: analysisResult.mean,
+            std_dev: analysisResult.std_dev,
+            error_percent: analysisResult.error_percent,
+            slope: analysisResult.slope
+          },
+          data_summary: "Generated from raw sensor data",
+          graph_url: analysisResult.graph_url
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate report.");
+      }
+
+      setReportResult(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsGeneratingReport(false);
     }
   };
 
@@ -385,6 +429,142 @@ export default function GenerateReportPage() {
                />
             </CardContent>
           </Card>
+
+          {/* AI Report Generation Section */}
+          <Card className="shadow-sm border-slate-200 mt-8 bg-gradient-to-br from-slate-50 to-white">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-indigo-500" />
+                AI Lab Report Generator
+              </CardTitle>
+              <CardDescription>
+                Let our AI draft a comprehensive, academic report based on these results.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="experiment-title" className="text-sm font-medium text-slate-700">
+                  Experiment Title <span className="text-slate-400 font-normal">(Optional)</span>
+                </label>
+                <Input 
+                  id="experiment-title"
+                  placeholder="e.g. Voltage vs Time Constants" 
+                  value={experimentTitle}
+                  onChange={(e) => setExperimentTitle(e.target.value)}
+                  className="max-w-md bg-white"
+                />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                onClick={handleGenerateReport} 
+                disabled={isGeneratingReport}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20"
+              >
+                {isGeneratingReport ? (
+                   <>
+                     <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
+                     Drafting Report...
+                   </>
+                ) : (
+                  <>
+                     <FileText className="mr-2 h-4 w-4" />
+                     Generate AI Report
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
+
+          {/* Generated Report Output */}
+          {reportResult && (
+            <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 border-b pb-2 flex items-center gap-2">
+                <FileText className="h-6 w-6 text-indigo-600" />
+                Generated Report
+              </h2>
+              
+              <div className="space-y-6">
+                
+                {/* Result & Conclusion */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+                        <Beaker className="h-5 w-5 text-indigo-500" />
+                        Result
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.result}
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+                        <CheckCircle2 className="h-5 w-5 text-indigo-500" />
+                        Conclusion
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.conclusion}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Error Analysis & Precautions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-red-50/30">
+                      <CardTitle className="text-lg flex items-center gap-2 text-red-900">
+                        <AlertCircle className="h-5 w-5 text-red-500" />
+                        Error Analysis
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.error_analysis}
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-amber-50/30">
+                      <CardTitle className="text-lg flex items-center gap-2 text-amber-900">
+                        <ShieldAlert className="h-5 w-5 text-amber-500" />
+                        Precautions
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.precautions}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Viva Questions */}
+                <Card className="shadow-sm border-slate-200 mb-10">
+                  <CardHeader className="pb-3 border-b border-slate-100 bg-emerald-50/30">
+                    <CardTitle className="text-lg flex items-center gap-2 text-emerald-900">
+                      <BadgeHelp className="h-5 w-5 text-emerald-500" />
+                      Viva Questions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <ul className="space-y-3">
+                      {reportResult.viva_questions?.map((question: string, index: number) => (
+                        <li key={index} className="flex gap-3 text-sm text-slate-700">
+                           <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-medium text-xs">
+                             {index + 1}
+                           </span>
+                           <span className="pt-0.5 leading-relaxed">{question}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
