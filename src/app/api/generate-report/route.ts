@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize the OpenAI client lazily inside the handler to prevent build-time errors
+let openaiClient: OpenAI | null = null;
+
+function getOpenAIClient(apiKey: string) {
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: apiKey,
+    });
+  }
+  return openaiClient;
+}
 
 export async function POST(req: Request) {
   try {
@@ -47,6 +54,8 @@ Respond with ONLY a JSON object exactly matching this structure:
   "viva_questions": ["...", "...", "..."]
 }
 `;
+
+    const openai = getOpenAIClient(process.env.OPENAI_API_KEY);
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini", // or gpt-4o, gpt-3.5-turbo depending on preference
