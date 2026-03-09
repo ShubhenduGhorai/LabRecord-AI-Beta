@@ -34,7 +34,7 @@ export function Sidebar() {
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "My Experiments", href: "/dashboard/experiments", icon: FlaskConical },
     { name: "Generate Report", href: "/dashboard/generate", icon: FileText },
-    { name: "Pricing", href: "/dashboard/pricing", icon: CreditCard },
+    { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 

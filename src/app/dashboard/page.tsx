@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Plus, FileText, Download, Clock } from "lucide-react";
+import { Plus, FileText, Download, Clock, CreditCard } from "lucide-react";
 import Link from "next/link";
+import { createSupabaseClient } from "@/lib/supabaseClient";
 
 export default function DashboardPage() {
   const recentReports = [
@@ -13,11 +15,36 @@ export default function DashboardPage() {
     { id: 3, title: "Engineering Lab: Material Stress Test", date: "Oct 12, 2024" },
   ];
 
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createSupabaseClient();
+
+  useEffect(() => {
+    async function fetchUserData() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from("users")
+          .select("plan, reports_count_this_month")
+          .eq("id", user.id)
+          .single();
+        setUserData(data);
+      }
+      setLoading(false);
+    }
+    fetchUserData();
+  }, []);
+
+  const planName = userData?.plan === 'research' ? 'Research Plan' : userData?.plan === 'pro' ? 'Pro Plan' : 'Free Student Plan';
+  const reportCount = userData?.reports_count_this_month || 0;
+  const isFree = !userData?.plan || userData?.plan === 'free';
+  const progressValue = isFree ? (reportCount / 3) * 100 : 0;
+
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-muted-foreground mt-2">Here's an overview of your recent lab experiments.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome back</h1>
+        <p className="text-muted-foreground mt-2 text-slate-500">Here's an overview of your recent lab experiments.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -43,24 +70,33 @@ export default function DashboardPage() {
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle>Usage Plan</CardTitle>
-            <CardDescription>Free Student Plan</CardDescription>
+            <CardDescription>{planName}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">Reports Generated</span>
-                <span className="text-muted-foreground">3 / 3</span>
+                <span className="text-muted-foreground">
+                  {isFree ? `${reportCount} / 3` : 'Unlimited'}
+                </span>
               </div>
-              <Progress value={100} className="h-2 bg-slate-100" />
+              {isFree && <Progress value={progressValue} className="h-2 bg-slate-100" />}
             </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              You've hit your free limit. Upgrade to unlock unlimited reports and AI Viva Prep.
-            </p>
+            {isFree && reportCount >= 3 && (
+              <p className="text-xs text-muted-foreground pt-2">
+                You've hit your free limit. Upgrade to unlock unlimited reports and AI Viva Prep.
+              </p>
+            )}
+            {!isFree && (
+              <p className="text-xs text-muted-foreground pt-2">
+                Thank you for being a {userData?.plan} subscriber!
+              </p>
+            )}
           </CardContent>
           <CardFooter>
-            <Link href="/dashboard/pricing" className="w-full">
+            <Link href="/dashboard/billing" className="w-full">
               <Button variant="outline" className="w-full font-semibold text-indigo-700 border-indigo-200 bg-indigo-50 hover:bg-indigo-100">
-                Upgrade to Pro
+                {isFree ? "Upgrade to Pro" : "Manage Billing"}
               </Button>
             </Link>
           </CardFooter>

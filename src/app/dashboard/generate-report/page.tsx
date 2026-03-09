@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 
@@ -31,6 +32,7 @@ export default function GenerateReportPage() {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [reportResult, setReportResult] = useState<any>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Helper to extract first two numeric columns from a 2D array
   const processRawData = (rows: any[][]) => {
@@ -223,6 +225,9 @@ export default function GenerateReportPage() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (res.status === 403 && data.limit_reached) {
+          setShowUpgradeModal(true);
+        }
         throw new Error(data.error || "Failed to generate report.");
       }
 
@@ -255,10 +260,10 @@ export default function GenerateReportPage() {
         },
         body: JSON.stringify({
           title: experimentTitle || "Lab Experiment",
-          aim: "To investigate the relationship between experimental parameters through linear regression analysis.",
-          apparatus: "Laboratory test bench, digital sensors, and automated data logging system.",
-          theory: `The experiment utilizes linear regression (y = mx + b) to determine the correlation between variables. Calculated Slope: ${analysisResult.slope}, Mean: ${analysisResult.mean}.`,
-          procedure: "1. Calibrate sensors. 2. Record data points at intervals. 3. Process data using statistical analysis engines.",
+          aim: reportResult.aim,
+          apparatus: reportResult.apparatus,
+          theory: reportResult.theory,
+          procedure: reportResult.procedure,
           observation_table: observationTable,
           graph_url: analysisResult.graph_url,
           calculations: `Mean of Y: ${analysisResult.mean}\nStandard Deviation: ${analysisResult.std_dev}\nSlope (m): ${analysisResult.slope}\nIntercept (b): ${analysisResult.intercept}\nAverage Error: ${analysisResult.error_percent}%`,
@@ -297,6 +302,27 @@ export default function GenerateReportPage() {
           Upload your raw lab dataset or paste it manually to begin AI analysis.
         </p>
       </div>
+
+      {showUpgradeModal && (
+        <Card className="border-indigo-200 bg-indigo-50 shadow-md animate-in fade-in slide-in-from-top-4 duration-300">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-indigo-900 flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5" />
+              Upgrade Required cost
+            </CardTitle>
+            <CardDescription className="text-indigo-700 font-medium">
+              You've reached your monthly limit of 3 reports on the Free plan.
+            </CardDescription>
+          </CardHeader>
+          <CardFooter>
+            <Link href="/dashboard/billing">
+              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold">
+                Upgrade to Pro
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
@@ -562,6 +588,60 @@ export default function GenerateReportPage() {
               </h2>
               
               <div className="space-y-6">
+                
+                {/* Aim & Apparatus */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+                        <Sparkles className="h-5 w-5 text-indigo-500" />
+                        Aim
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.aim}
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+                        <Beaker className="h-5 w-5 text-indigo-500" />
+                        Apparatus
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.apparatus}
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Theory & Procedure */}
+                <div className="grid grid-cols-1 gap-6">
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+                        <FileText className="h-5 w-5 text-indigo-500" />
+                        Theory
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.theory}
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="shadow-sm border-slate-200">
+                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
+                        <FileText className="h-5 w-5 text-indigo-500" />
+                        Procedure
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
+                      {reportResult.procedure}
+                    </CardContent>
+                  </Card>
+                </div>
                 
                 {/* Result & Conclusion */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

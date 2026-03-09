@@ -15,6 +15,28 @@ export async function POST(req: Request) {
       );
     }
 
+    // 1. Authenticate user and check plan
+    const { createSupabaseServerClient } = await import('@/lib/supabaseServer');
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: userData } = await supabase
+      .from('users')
+      .select('plan, reports_count_this_month')
+      .eq('id', user.id)
+      .single();
+
+    if (userData?.plan === 'free' && (userData.reports_count_this_month || 0) >= 3) {
+      return NextResponse.json(
+        { error: 'Monthly report limit reached. Please upgrade to Pro for unlimited reports.', limit_reached: true },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { experiment_title, statistics, data_summary, graph_url } = body;
 
@@ -29,8 +51,8 @@ export async function POST(req: Request) {
     const openai = new OpenAI({ apiKey });
 
     const prompt = `
-Given the following experiment results and statistics, write clear academic lab report sections for engineering students. 
-Include result interpretation, possible sources of experimental error, safety precautions, and 3 viva questions.
+Given the following experiment results and statistics, write a complete academic lab report for engineering students. 
+Ensure the tone is scientific and professional.
 
 Experiment Title: ${experiment_title}
 Data Summary: ${data_summary || 'N/A'}
@@ -41,6 +63,10 @@ Slope: ${statistics.slope || 'N/A'}
 
 Respond with ONLY a JSON object exactly matching this structure:
 {
+  "aim": "...",
+  "apparatus": "...",
+  "theory": "...",
+  "procedure": "...",
   "result": "...",
   "conclusion": "...",
   "error_analysis": "...",
@@ -72,6 +98,12 @@ Respond with ONLY a JSON object exactly matching this structure:
     }
 
     const reportSections = JSON.parse(aiContent);
+
+    // 4. Increment usage count
+    await supabase
+      .from('users')
+      .update({ reports_count_this_month: (userData?.reports_count_this_month || 0) + 1 })
+      .eq('id', user.id);
 
     return NextResponse.json(reportSections);
 
