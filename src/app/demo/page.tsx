@@ -235,7 +235,7 @@ export default function DemoPage() {
               </CardHeader>
               <CardContent className="p-0 flex-1 relative min-h-[250px]">
                 {previewRows.length > 0 ? (
-                  <div className="overflow-x-auto">
+                  <div className="w-full overflow-x-auto pb-2">
                     <Table>
                       <TableBody>
                         {previewRows.map((row, idx) => (
@@ -291,6 +291,15 @@ export default function DemoPage() {
                        backgroundColor: 'rgb(54, 162, 235)'
                      }
                    ]
+                 }}
+                 options={{
+                   maintainAspectRatio: false,
+                   responsive: true,
+                   animation: false,
+                   scales: {
+                     x: { title: { display: true, text: 'X Values' } },
+                     y: { title: { display: true, text: 'Y Values' } }
+                   }
                  }}
                />
             </Card>

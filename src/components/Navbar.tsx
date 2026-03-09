@@ -66,23 +66,23 @@ export function Navbar() {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t bg-background/95 backdrop-blur-sm px-4 py-4 space-y-4 shadow-lg pb-6 absolute w-full left-0 top-16">
           <nav className="flex flex-col space-y-4 text-sm font-medium text-muted-foreground">
-            <Link href={isHome ? "#features" : "/#features"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-2">Features</Link>
-            <Link href={isHome ? "#how-it-works" : "/#how-it-works"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-2">How It Works</Link>
-            <Link href={isHome ? "#demo" : "/#demo"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-2">Demo</Link>
-            <Link href={isHome ? "#pricing" : "/#pricing"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-2">Pricing</Link>
-            <Link href={isHome ? "#faq" : "/#faq"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-2">FAQ</Link>
+            <Link href={isHome ? "#features" : "/#features"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Features</Link>
+            <Link href={isHome ? "#how-it-works" : "/#how-it-works"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">How It Works</Link>
+            <Link href={isHome ? "#demo" : "/#demo"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Demo</Link>
+            <Link href={isHome ? "#pricing" : "/#pricing"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Pricing</Link>
+            <Link href={isHome ? "#faq" : "/#faq"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">FAQ</Link>
           </nav>
           <div className="flex flex-col space-y-3 pt-4 border-t">
-            <Link href="/auth/login" onClick={closeMobileMenu} className="text-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/auth/login" onClick={closeMobileMenu} className="text-center py-3 min-h-[44px] flex flex-col justify-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Log in
             </Link>
             <WaitlistModal>
-              <Button variant="outline" className="w-full justify-center">
+              <Button variant="outline" className="w-full justify-center min-h-[44px]">
                 Join Waitlist
               </Button>
             </WaitlistModal>
             <Link href="/auth/signup" onClick={closeMobileMenu} className="w-full">
-              <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md">
+              <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md min-h-[44px]">
                 Get Started
               </Button>
             </Link>

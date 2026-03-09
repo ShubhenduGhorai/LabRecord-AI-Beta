@@ -75,7 +75,7 @@ export default function PricingPage() {
   const isFree = !currentPlan || currentPlan === 'free';
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-12">
+    <div className="px-4 py-8 md:p-10 max-w-6xl mx-auto space-y-12">
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <Badge variant="outline" className="text-indigo-600 border-indigo-200 bg-indigo-50 px-3 py-1">
           <Lock className="w-3 h-3 mr-1 inline" />

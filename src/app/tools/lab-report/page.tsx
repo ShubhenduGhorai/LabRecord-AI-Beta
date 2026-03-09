@@ -307,7 +307,7 @@ export default function GenerateReportPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+    <div className="px-4 py-8 md:p-10 max-w-5xl mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Upload Experiment Data</h1>
         <p className="text-muted-foreground mt-2 text-slate-500">
@@ -425,7 +425,7 @@ export default function GenerateReportPage() {
             </CardHeader>
             <CardContent className="p-0 flex-1 relative min-h-[250px]">
               {previewRows.length > 0 ? (
-                <div className="overflow-x-auto">
+                <div className="w-full overflow-x-auto pb-2">
                   <Table>
                     <TableHeader className="bg-slate-50/80">
                       <TableRow>

@@ -56,7 +56,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-      <div className="flex flex-col justify-center px-8 sm:px-16 md:px-24 bg-background z-10">
+      <div className="flex flex-col justify-center px-6 py-12 sm:px-16 md:px-24 bg-background z-10 h-full">
         <div className="w-full max-w-md mx-auto space-y-8">
           <Link href="/" className="flex items-center gap-2 mb-12">
             <Beaker className="h-8 w-8 text-indigo-600" />
