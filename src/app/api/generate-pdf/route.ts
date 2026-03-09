@@ -113,9 +113,14 @@ export async function POST(req: Request) {
 
             // Fetch image and add to PDF
             // Note: Since jspdf runs on server, we can fetch images via buffer
-            const imgRes = await fetch(graph_url);
-            const arrayBuffer = await imgRes.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
+            let buffer: Buffer;
+            if (graph_url.startsWith('data:image/')) {
+               buffer = Buffer.from(graph_url.split(',')[1], 'base64');
+            } else {
+               const imgRes = await fetch(graph_url);
+               const arrayBuffer = await imgRes.arrayBuffer();
+               buffer = Buffer.from(arrayBuffer);
+            }
             
             const imgWidth = pageWidth - 40;
             const imgHeight = 100;

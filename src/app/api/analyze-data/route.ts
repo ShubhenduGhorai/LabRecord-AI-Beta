@@ -39,48 +39,13 @@ export async function POST(req: NextRequest) {
     }
     const error_percent = n > 0 ? (mapeSum / n) * 100 : 0;
 
-    // 4. Generate QuickChart URL
-    // Format required by chart.js syntax for QuickChart
-    const chartConfig = {
-      type: 'scatter',
-      data: {
-        datasets: [
-          {
-            type: 'line',
-            label: 'Regression Line',
-            data: numX.map(xVal => ({ x: xVal, y: regressionLineFunc(xVal) })),
-            borderColor: 'rgb(255, 99, 132)',
-            borderWidth: 2,
-            fill: false,
-            pointRadius: 0
-          },
-          {
-            type: 'scatter',
-            label: 'Data Points',
-            data: numX.map((xVal, i) => ({ x: xVal, y: numY[i] })),
-            backgroundColor: 'rgb(54, 162, 235)'
-          }
-        ]
-      },
-      options: {
-        title: { display: true, text: 'Experiment Analysis' },
-        scales: {
-          xAxes: [{ scaleLabel: { display: true, labelString: 'X Values' } }],
-          yAxes: [{ scaleLabel: { display: true, labelString: 'Y Values' } }]
-        }
-      }
-    };
-
-    const graph_url = `https://quickchart.io/chart?c=${encodeURIComponent(JSON.stringify(chartConfig))}`;
-
-    // 5. Build Response Payload
+    // 4. Build Response Payload
     return NextResponse.json({
       mean: Number(yMean.toFixed(4)),
       std_dev: Number(yStdDev.toFixed(4)),
       slope: Number(regression.m.toFixed(4)),
       intercept: Number(regression.b.toFixed(4)),
-      error_percent: Number(error_percent.toFixed(2)),
-      graph_url: graph_url
+      error_percent: Number(error_percent.toFixed(2))
     });
 
   } catch (error: any) {

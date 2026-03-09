@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle, FileText, Sparkles, Beaker, ShieldAlert, BadgeHelp, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -11,6 +11,17 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
+import {
+  Chart as ChartJS,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Scatter } from 'react-chartjs-2';
+
+ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 type ParsedData = {
   x: any[];
@@ -33,6 +44,7 @@ export default function GenerateReportPage() {
   const [reportResult, setReportResult] = useState<any>(null);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const chartRef = useRef<any>(null);
 
   // Helper to extract first two numeric columns from a 2D array
   const processRawData = (rows: any[][]) => {
@@ -218,7 +230,7 @@ export default function GenerateReportPage() {
             slope: analysisResult.slope
           },
           data_summary: "Generated from raw sensor data",
-          graph_url: analysisResult.graph_url
+          graph_url: chartRef.current?.toBase64Image() || ""
         })
       });
 
@@ -265,7 +277,7 @@ export default function GenerateReportPage() {
           theory: reportResult.theory,
           procedure: reportResult.procedure,
           observation_table: observationTable,
-          graph_url: analysisResult.graph_url,
+          graph_url: chartRef.current?.toBase64Image() || "",
           calculations: `Mean of Y: ${analysisResult.mean}\nStandard Deviation: ${analysisResult.std_dev}\nSlope (m): ${analysisResult.slope}\nIntercept (b): ${analysisResult.intercept}\nAverage Error: ${analysisResult.error_percent}%`,
           result: reportResult.result,
           conclusion: reportResult.conclusion,
@@ -503,11 +515,37 @@ export default function GenerateReportPage() {
               <CardTitle>Generated Plot</CardTitle>
               <CardDescription>Experimental Data vs. Calculated Linear Regression</CardDescription>
             </CardHeader>
-            <CardContent className="p-0 bg-white flex justify-center py-8">
-               <img 
-                 src={analysisResult.graph_url} 
-                 alt="Scientific Analysis Graph" 
-                 className="w-full max-w-4xl max-h-[600px] object-contain rounded-md" 
+            <CardContent className="p-4 bg-white flex justify-center py-8 h-[400px] w-full">
+               <Scatter 
+                 ref={chartRef}
+                 data={{
+                   datasets: [
+                     {
+                       type: 'scatter' as const,
+                       label: 'Regression Line',
+                       data: parsedData ? parsedData.x.map((xVal) => ({ x: xVal, y: analysisResult.slope * xVal + analysisResult.intercept })) : [],
+                       borderColor: 'rgb(255, 99, 132)',
+                       borderWidth: 2,
+                       pointRadius: 0,
+                       showLine: true
+                     },
+                     {
+                       type: 'scatter' as const,
+                       label: 'Data Points',
+                       data: parsedData ? parsedData.x.map((xVal, i) => ({ x: xVal, y: parsedData.y[i] })) : [],
+                       backgroundColor: 'rgb(54, 162, 235)'
+                     }
+                   ]
+                 }}
+                 options={{
+                   maintainAspectRatio: false,
+                   responsive: true,
+                   animation: false,
+                   scales: {
+                     x: { title: { display: true, text: 'X Values' } },
+                     y: { title: { display: true, text: 'Y Values' } }
+                   }
+                 }}
                />
             </CardContent>
           </Card>
