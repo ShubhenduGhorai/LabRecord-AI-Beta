@@ -38,6 +38,7 @@ export default function DashboardPage() {
       icon: <LineChart className="h-6 w-6 text-indigo-500" />,
       href: "/tools/data-analysis",
       color: "border-indigo-200 bg-indigo-50",
+      isPremium: false,
     },
     {
       title: "Graph Generator",
@@ -45,6 +46,7 @@ export default function DashboardPage() {
       icon: <BarChart2 className="h-6 w-6 text-blue-500" />,
       href: "/tools/graph-generator",
       color: "border-blue-200 bg-blue-50",
+      isPremium: false,
     },
     {
       title: "AI Lab Report Writer",
@@ -52,6 +54,7 @@ export default function DashboardPage() {
       icon: <FileText className="h-6 w-6 text-emerald-500" />,
       href: "/tools/lab-report",
       color: "border-emerald-200 bg-emerald-50",
+      isPremium: false,
     },
     {
       title: "Viva Preparation",
@@ -59,6 +62,7 @@ export default function DashboardPage() {
       icon: <BadgeHelp className="h-6 w-6 text-amber-500" />,
       href: "/tools/viva-prep",
       color: "border-amber-200 bg-amber-50",
+      isPremium: true,
     },
     {
       title: "Research Formatting",
@@ -66,6 +70,7 @@ export default function DashboardPage() {
       icon: <BookOpen className="h-6 w-6 text-purple-500" />,
       href: "/tools/research-format",
       color: "border-purple-200 bg-purple-50",
+      isPremium: true,
     },
     {
       title: "Cloud Storage",
@@ -73,6 +78,7 @@ export default function DashboardPage() {
       icon: <HardDrive className="h-6 w-6 text-slate-500" />,
       href: "/tools/storage",
       color: "border-slate-200 bg-slate-50",
+      isPremium: false,
     }
   ];
 
@@ -98,22 +104,24 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pt-6 pb-2">
-              {hasSubscription === false && (
-                <div className="flex items-center gap-2 text-sm text-red-600 font-medium bg-red-50 p-2 rounded-md mb-2">
-                  <Lock className="h-4 w-4" />
-                  Subscription Required
+              {hasSubscription === false && tool.isPremium && (
+                <div className="flex items-center gap-2 text-sm text-slate-700 font-medium bg-slate-100 p-2 rounded-md mb-2 border border-slate-200">
+                  <Lock className="h-4 w-4 text-slate-500" />
+                  Premium Feature
                 </div>
               )}
             </CardContent>
             <CardFooter className="pt-2 pb-6">
-               <Link href={hasSubscription === false ? "/pricing" : tool.href} className="w-full">
+               <Link href={hasSubscription === false && tool.isPremium ? "/pricing" : tool.href} className="w-full">
                   <Button 
-                    variant={hasSubscription === false ? "outline" : "default"} 
+                    variant={hasSubscription === false && tool.isPremium ? "outline" : "default"} 
                     className={`w-full font-semibold flex items-center justify-between ${
-                      hasSubscription !== false ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200" : ""
+                      hasSubscription === false && tool.isPremium
+                        ? "text-slate-700 hover:bg-slate-50"
+                        : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200"
                     }`}
                   >
-                    {hasSubscription === false ? "Upgrade Plan" : "Launch Tool"}
+                    {hasSubscription === false && tool.isPremium ? "Unlock Feature" : "Open Tool"}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                </Link>
