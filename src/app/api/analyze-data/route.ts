@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mean, standardDeviation, linearRegression, linearRegressionLine } from "simple-statistics";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { x, y } = body;
+    const { x, y, isDemo } = body;
+
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Secure route: limit anonymous compute runs unless specifically requested via demo bounds
+    if (!user && !isDemo) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     if (!x || !y || !Array.isArray(x) || !Array.isArray(y) || x.length !== y.length) {
       return NextResponse.json({ error: "Invalid data format. x and y must be arrays of equal length." }, { status: 400 });

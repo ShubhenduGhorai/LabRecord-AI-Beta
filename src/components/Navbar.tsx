@@ -39,16 +39,16 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Login
+          <Link href="/auth/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            Log in
           </Link>
           <WaitlistModal>
             <Button variant="outline" className="hidden lg:flex">
               Join Waitlist
             </Button>
           </WaitlistModal>
-          <Link href="/signup">
-            <Button className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:opacity-90 transition-opacity">
+          <Link href="/auth/signup">
+            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all">
               Get Started
             </Button>
           </Link>
@@ -73,16 +73,16 @@ export function Navbar() {
             <Link href={isHome ? "#faq" : "/#faq"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-2">FAQ</Link>
           </nav>
           <div className="flex flex-col space-y-3 pt-4 border-t">
-            <Link href="/login" onClick={closeMobileMenu} className="text-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Login
+            <Link href="/auth/login" onClick={closeMobileMenu} className="text-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              Log in
             </Link>
             <WaitlistModal>
               <Button variant="outline" className="w-full justify-center">
                 Join Waitlist
               </Button>
             </WaitlistModal>
-            <Link href="/signup" onClick={closeMobileMenu} className="w-full">
-              <Button className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:opacity-90 transition-opacity">
+            <Link href="/auth/signup" onClick={closeMobileMenu} className="w-full">
+              <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md">
                 Get Started
               </Button>
             </Link>

@@ -15,30 +15,33 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1. Authenticate user and check plan
+    const body = await req.json();
+    const { experiment_title, statistics, data_summary, graph_url, isDemo } = body;
+
     const { createSupabaseServerClient } = await import('@/lib/supabaseServer');
     const supabase = await createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (!user && !isDemo) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { data: userData } = await supabase
-      .from('users')
-      .select('plan, reports_count_this_month')
-      .eq('id', user.id)
-      .single();
+    let userData = null;
+    if (user) {
+      const { data } = await supabase
+        .from('users')
+        .select('plan, reports_count_this_month')
+        .eq('id', user.id)
+        .single();
+      userData = data;
 
-    if (userData?.plan === 'free' && (userData.reports_count_this_month || 0) >= 3) {
-      return NextResponse.json(
-        { error: 'Monthly report limit reached. Please upgrade to Pro for unlimited reports.', limit_reached: true },
-        { status: 403 }
-      );
+      if (userData?.plan === 'free' && (userData.reports_count_this_month || 0) >= 3) {
+        return NextResponse.json(
+          { error: 'Monthly report limit reached. Please upgrade to Pro for unlimited reports.', limit_reached: true },
+          { status: 403 }
+        );
+      }
     }
-
-    const body = await req.json();
-    const { experiment_title, statistics, data_summary, graph_url } = body;
 
     // Validate request
     if (!experiment_title || !statistics) {
@@ -99,11 +102,13 @@ Respond with ONLY a JSON object exactly matching this structure:
 
     const reportSections = JSON.parse(aiContent);
 
-    // 4. Increment usage count
-    await supabase
-      .from('users')
-      .update({ reports_count_this_month: (userData?.reports_count_this_month || 0) + 1 })
-      .eq('id', user.id);
+    // 4. Increment usage count if it's not a demo
+    if (user && !isDemo) {
+      await supabase
+        .from('users')
+        .update({ reports_count_this_month: (userData?.reports_count_this_month || 0) + 1 })
+        .eq('id', user.id);
+    }
 
     return NextResponse.json(reportSections);
 

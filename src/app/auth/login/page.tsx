@@ -9,40 +9,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Beaker } from "lucide-react";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const router = useRouter();
   const supabase = createSupabaseClient();
   
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          data: {
-            full_name: name,
-          },
-        },
       });
 
-      if (signUpError) throw signUpError;
+      if (signInError) throw signInError;
       
-      // If sign up is successful, push to dashboard
-      // Note: Supabase might require email verification depending on settings
       router.push("/dashboard");
-      router.refresh();
+      router.refresh(); // Refresh the layout to update server components with session state
     } catch (err: any) {
-      setError(err.message || "An error occurred during sign up");
+      setError(err.message || "Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -72,23 +64,11 @@ export default function SignupPage() {
           </Link>
           
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
-            <p className="text-muted-foreground">Automation for your lab reports starts here.</p>
+            <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
+            <p className="text-muted-foreground">Enter your credentials to access your dashboard.</p>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="h-11 border-border/60 focus:border-indigo-500"
-              />
-            </div>
-            
+          <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -103,7 +83,12 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link href="#" className="text-xs font-medium text-indigo-600 hover:text-indigo-500 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -111,7 +96,6 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
                 className="h-11 border-border/60 focus:border-indigo-500"
               />
             </div>
@@ -127,7 +111,7 @@ export default function SignupPage() {
               className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all font-semibold"
               disabled={loading}
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
 
@@ -168,14 +152,15 @@ export default function SignupPage() {
           </Button>
 
           <p className="text-center text-sm text-muted-foreground mt-8">
-            Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-              Login
+            Don't have an account?{" "}
+            <Link href="/auth/signup" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+              Sign up
             </Link>
           </p>
         </div>
       </div>
       
+      {/* Right Column Illustration/Gradient */}
       <div className="hidden md:flex flex-col bg-slate-50 border-l justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-indigo-600/5 backdrop-blur-3xl z-0" />
         <div className="absolute w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] mix-blend-multiply top-0 right-0" />
@@ -184,10 +169,10 @@ export default function SignupPage() {
         <div className="max-w-md text-center z-10 px-8 relative">
           <div className="bg-white/60 p-8 rounded-2xl border shadow-xl backdrop-blur-md mb-8">
             <h3 className="text-3xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-blue-700">
-              Stop formatting. <br/> Start shipping.
+              Welcome back to LabRecord
             </h3>
             <p className="text-slate-600 text-lg leading-relaxed">
-              Join thousands of engineering students who save 4+ hours every week on boring lab report formatting using LabRecord AI.
+              Continue where you left off. Your experiment data is safely stored in the cloud.
             </p>
           </div>
         </div>

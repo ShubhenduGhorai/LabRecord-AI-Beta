@@ -49,8 +49,23 @@ CREATE POLICY "Users can manage their own profile" ON public.users FOR ALL USING
 CREATE POLICY "Users can manage their own experiments" ON public.experiments FOR ALL USING (auth.uid() = user_id);
 
 -- Wait! A report belongs to an experiment, which belongs to a user.
+-- Users can manage their own reports
 CREATE POLICY "Users can manage their own reports" ON public.reports FOR ALL USING (
   experiment_id IN (
     SELECT id FROM public.experiments WHERE user_id = auth.uid()
   )
 );
+
+-- Subscriptions Table
+CREATE TABLE public.subscriptions (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  plan_name TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'inactive',
+  credits INTEGER DEFAULT 0,
+  expiry_date TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can read their own subscriptions" ON public.subscriptions FOR SELECT USING (auth.uid() = user_id);

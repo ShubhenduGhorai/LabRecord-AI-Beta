@@ -29,10 +29,9 @@ export function FinalCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/signup" className="w-full sm:w-auto">
-              <Button size="lg" className="h-14 px-8 text-base font-bold bg-white text-indigo-900 hover:bg-gray-100 w-full transition-all shadow-xl">
+            <Link href="/auth/signup" className="w-full sm:w-auto">
+              <Button size="lg" className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 w-full shadow-lg shadow-indigo-500/25">
                 Start Free
-                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="/dashboard" className="w-full sm:w-auto">

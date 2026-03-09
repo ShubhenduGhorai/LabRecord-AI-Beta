@@ -1,136 +1,125 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Plus, FileText, Download, Clock, CreditCard } from "lucide-react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { LineChart, BarChart2, FileText, BadgeHelp, BookOpen, HardDrive, Lock, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
-  const recentReports = [
-    { id: 1, title: "Physics Lab: Conservation of Momentum", date: "Oct 24, 2024" },
-    { id: 2, title: "Chemistry Lab: Titration Analysis", date: "Oct 18, 2024" },
-    { id: 3, title: "Engineering Lab: Material Stress Test", date: "Oct 12, 2024" },
-  ];
-
-  const [userData, setUserData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [hasSubscription, setHasSubscription] = useState<boolean | null>(null);
   const supabase = createSupabaseClient();
 
   useEffect(() => {
-    async function fetchUserData() {
+    async function checkSub() {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase
-          .from("users")
-          .select("plan, reports_count_this_month")
-          .eq("id", user.id)
-          .single();
-        setUserData(data);
+      if (!user) return;
+      
+      const { data: sub } = await supabase.from('subscriptions').select('status').eq('user_id', user.id).single();
+      if (sub?.status === 'active') {
+        setHasSubscription(true);
+        return;
       }
-      setLoading(false);
+      const { data: legacy } = await supabase.from('users').select('subscription_status').eq('id', user.id).single();
+      if (legacy?.subscription_status === 'active') {
+         setHasSubscription(true);
+         return;
+      }
+      setHasSubscription(false);
     }
-    fetchUserData();
+    checkSub();
   }, []);
 
-  const planName = userData?.plan === 'research' ? 'Research Plan' : userData?.plan === 'pro' ? 'Pro Plan' : 'Free Student Plan';
-  const reportCount = userData?.reports_count_this_month || 0;
-  const isFree = !userData?.plan || userData?.plan === 'free';
-  const progressValue = isFree ? (reportCount / 3) * 100 : 0;
+  const tools = [
+    {
+      title: "AI Data Analysis",
+      description: "Process experiment arrays and extract accurate statistical properties.",
+      icon: <LineChart className="h-6 w-6 text-indigo-500" />,
+      href: "/tools/data-analysis",
+      color: "border-indigo-200 bg-indigo-50",
+    },
+    {
+      title: "Graph Generator",
+      description: "Visualize data with interactive charts and auto-calculated regressions.",
+      icon: <BarChart2 className="h-6 w-6 text-blue-500" />,
+      href: "/tools/graph-generator",
+      color: "border-blue-200 bg-blue-50",
+    },
+    {
+      title: "AI Lab Report Writer",
+      description: "Draft comprehensive academic reports including theories and procedures.",
+      icon: <FileText className="h-6 w-6 text-emerald-500" />,
+      href: "/tools/lab-report",
+      color: "border-emerald-200 bg-emerald-50",
+    },
+    {
+      title: "Viva Preparation",
+      description: "Generate potential viva questions and answers based on your findings.",
+      icon: <BadgeHelp className="h-6 w-6 text-amber-500" />,
+      href: "/tools/viva-prep",
+      color: "border-amber-200 bg-amber-50",
+    },
+    {
+      title: "Research Formatting",
+      description: "Auto-format documents to comply with strict academic publishing layouts.",
+      icon: <BookOpen className="h-6 w-6 text-purple-500" />,
+      href: "/tools/research-format",
+      color: "border-purple-200 bg-purple-50",
+    },
+    {
+      title: "Cloud Storage",
+      description: "Securely save, organize, and access all your generated PDF reports.",
+      icon: <HardDrive className="h-6 w-6 text-slate-500" />,
+      href: "/tools/storage",
+      color: "border-slate-200 bg-slate-50",
+    }
+  ];
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Welcome back</h1>
-        <p className="text-muted-foreground mt-2 text-slate-500">Here's an overview of your recent lab experiments.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Lab Suite Workspace</h1>
+        <p className="text-muted-foreground mt-2 text-slate-500">
+          Select a tool below to begin. Access requires an active premium subscription.
+        </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Create Experiment Card */}
-        <Card className="md:col-span-2 border-indigo-100 shadow-sm bg-gradient-to-br from-indigo-50/50 to-white">
-          <CardHeader>
-            <CardTitle>Create New Report</CardTitle>
-            <CardDescription>
-              Upload your raw lab dataset and let AI generate your complete report.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center p-8 pb-10">
-            <Link href="/dashboard/generate-report" className="w-full max-w-sm">
-              <Button className="w-full h-16 text-lg shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700">
-                <Plus className="mr-2 h-6 w-6" />
-                New Experiment
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* Usage Limit Card */}
-        <Card className="shadow-sm">
-          <CardHeader>
-            <CardTitle>Usage Plan</CardTitle>
-            <CardDescription>{planName}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">Reports Generated</span>
-                <span className="text-muted-foreground">
-                  {isFree ? `${reportCount} / 3` : 'Unlimited'}
-                </span>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {tools.map((tool, idx) => (
+          <Card key={idx} className="relative flex flex-col hover:shadow-lg transition-shadow border-slate-200">
+            <CardHeader className={`pb-4 border-b ${tool.color}`}>
+              <div className="p-2 bg-white rounded-lg w-fit mb-3 shadow-sm border border-slate-100">
+                {tool.icon}
               </div>
-              {isFree && <Progress value={progressValue} className="h-2 bg-slate-100" />}
-            </div>
-            {isFree && reportCount >= 3 && (
-              <p className="text-xs text-muted-foreground pt-2">
-                You've hit your free limit. Upgrade to unlock unlimited reports and AI Viva Prep.
-              </p>
-            )}
-            {!isFree && (
-              <p className="text-xs text-muted-foreground pt-2">
-                Thank you for being a {userData?.plan} subscriber!
-              </p>
-            )}
-          </CardContent>
-          <CardFooter>
-            <Link href="/dashboard/billing" className="w-full">
-              <Button variant="outline" className="w-full font-semibold text-indigo-700 border-indigo-200 bg-indigo-50 hover:bg-indigo-100">
-                {isFree ? "Upgrade to Pro" : "Manage Billing"}
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
-      </div>
-
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight">Recent Reports</h2>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {recentReports.map((report) => (
-            <Card key={report.id} className="shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-start">
-                  <div className="p-2 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition-colors">
-                    <FileText className="h-5 w-5 text-indigo-600" />
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-indigo-600">
-                    <Download className="h-4 w-4" />
+              <CardTitle className="text-xl">{tool.title}</CardTitle>
+              <CardDescription className="text-slate-600 mt-2 line-clamp-2 min-h-[40px]">
+                {tool.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex-1 pt-6 pb-2">
+              {hasSubscription === false && (
+                <div className="flex items-center gap-2 text-sm text-red-600 font-medium bg-red-50 p-2 rounded-md mb-2">
+                  <Lock className="h-4 w-4" />
+                  Subscription Required
+                </div>
+              )}
+            </CardContent>
+            <CardFooter className="pt-2 pb-6">
+               <Link href={hasSubscription === false ? "/pricing" : tool.href} className="w-full">
+                  <Button 
+                    variant={hasSubscription === false ? "outline" : "default"} 
+                    className={`w-full font-semibold flex items-center justify-between ${
+                      hasSubscription !== false ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200" : ""
+                    }`}
+                  >
+                    {hasSubscription === false ? "Upgrade Plan" : "Launch Tool"}
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
-                </div>
-                <CardTitle className="text-base mt-2 line-clamp-2 leading-tight">
-                  {report.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <Clock className="mr-1 h-3 w-3" />
-                  {report.date}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+               </Link>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     </div>
   );

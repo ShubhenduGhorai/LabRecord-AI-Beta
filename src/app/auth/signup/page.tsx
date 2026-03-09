@@ -9,32 +9,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Beaker } from "lucide-react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
   const supabase = createSupabaseClient();
   
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
       });
 
-      if (signInError) throw signInError;
+      if (signUpError) throw signUpError;
       
+      // Initialize free tier credits securely before redirect
+      await fetch('/api/init-user', { method: 'POST' });
+
+      // If sign up is successful, push to dashboard
+      // Note: Supabase might require email verification depending on settings
       router.push("/dashboard");
-      router.refresh(); // Refresh the layout to update server components with session state
+      router.refresh();
     } catch (err: any) {
-      setError(err.message || "Invalid credentials. Please try again.");
+      setError(err.message || "An error occurred during sign up");
     } finally {
       setLoading(false);
     }
@@ -64,11 +75,23 @@ export default function LoginPage() {
           </Link>
           
           <div className="space-y-3">
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-            <p className="text-muted-foreground">Enter your credentials to access your dashboard.</p>
+            <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
+            <p className="text-muted-foreground">Automation for your lab reports starts here.</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleSignup} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="h-11 border-border/60 focus:border-indigo-500"
+              />
+            </div>
+            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -83,12 +106,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link href="#" className="text-xs font-medium text-indigo-600 hover:text-indigo-500 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -96,6 +114,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
                 className="h-11 border-border/60 focus:border-indigo-500"
               />
             </div>
@@ -111,7 +130,7 @@ export default function LoginPage() {
               className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all font-semibold"
               disabled={loading}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
 
@@ -152,15 +171,14 @@ export default function LoginPage() {
           </Button>
 
           <p className="text-center text-sm text-muted-foreground mt-8">
-            Don't have an account?{" "}
-            <Link href="/signup" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
-              Sign up
+            Already have an account?{" "}
+            <Link href="/auth/login" className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+              Login
             </Link>
           </p>
         </div>
       </div>
       
-      {/* Right Column Illustration/Gradient */}
       <div className="hidden md:flex flex-col bg-slate-50 border-l justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-indigo-600/5 backdrop-blur-3xl z-0" />
         <div className="absolute w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] mix-blend-multiply top-0 right-0" />
@@ -169,10 +187,10 @@ export default function LoginPage() {
         <div className="max-w-md text-center z-10 px-8 relative">
           <div className="bg-white/60 p-8 rounded-2xl border shadow-xl backdrop-blur-md mb-8">
             <h3 className="text-3xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-blue-700">
-              Welcome back to LabRecord
+              Stop formatting. <br/> Start shipping.
             </h3>
             <p className="text-slate-600 text-lg leading-relaxed">
-              Continue where you left off. Your experiment data is safely stored in the cloud.
+              Join thousands of engineering students who save 4+ hours every week on boring lab report formatting using LabRecord AI.
             </p>
           </div>
         </div>
