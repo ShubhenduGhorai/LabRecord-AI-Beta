@@ -1,20 +1,20 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Initialize the OpenAI client lazily inside the handler to prevent build-time errors
-let openaiClient: OpenAI | null = null;
-
-function getOpenAIClient(apiKey: string) {
-  if (!openaiClient) {
-    openaiClient = new OpenAI({
-      apiKey: apiKey,
-    });
-  }
-  return openaiClient;
-}
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
+      console.error("OPENAI_API_KEY is not set.");
+      return NextResponse.json(
+        { error: 'OpenAI API key is not configured.' },
+        { status: 500 }
+      );
+    }
+
     const body = await req.json();
     const { experiment_title, statistics, data_summary, graph_url } = body;
 
@@ -26,13 +26,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("OPENAI_API_KEY is not set.");
-      return NextResponse.json(
-        { error: 'OpenAI API key is not configured.' },
-        { status: 500 }
-      );
-    }
+    const openai = new OpenAI({ apiKey });
 
     const prompt = `
 Given the following experiment results and statistics, write clear academic lab report sections for engineering students. 
@@ -55,10 +49,8 @@ Respond with ONLY a JSON object exactly matching this structure:
 }
 `;
 
-    const openai = getOpenAIClient(process.env.OPENAI_API_KEY);
-
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // or gpt-4o, gpt-3.5-turbo depending on preference
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -69,7 +61,7 @@ Respond with ONLY a JSON object exactly matching this structure:
           content: prompt,
         },
       ],
-      response_format: { type: "json_object" }, // Ensures OpenAI returns valid JSON
+      response_format: { type: "json_object" },
       temperature: 0.7,
     });
 

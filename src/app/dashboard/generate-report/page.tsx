@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle, FileText, Sparkles, Beaker, ShieldAlert, BadgeHelp } from "lucide-react";
+import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle, FileText, Sparkles, Beaker, ShieldAlert, BadgeHelp, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,6 +30,7 @@ export default function GenerateReportPage() {
   const [experimentTitle, setExperimentTitle] = useState("");
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [reportResult, setReportResult] = useState<any>(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   // Helper to extract first two numeric columns from a 2D array
   const processRawData = (rows: any[][]) => {
@@ -230,6 +231,61 @@ export default function GenerateReportPage() {
       setError(err.message);
     } finally {
       setIsGeneratingReport(false);
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!analysisResult || !reportResult) return;
+
+    setIsDownloadingPdf(true);
+    setError(null);
+
+    try {
+      // Format data for PDF
+      const observationTable = parsedData?.x.map((xVal, i) => ({
+        "Reading #": i + 1,
+        "X Value": xVal,
+        "Y Value": parsedData.y[i]
+      })) || [];
+
+      const res = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: experimentTitle || "Lab Experiment",
+          aim: "To investigate the relationship between experimental parameters through linear regression analysis.",
+          apparatus: "Laboratory test bench, digital sensors, and automated data logging system.",
+          theory: `The experiment utilizes linear regression (y = mx + b) to determine the correlation between variables. Calculated Slope: ${analysisResult.slope}, Mean: ${analysisResult.mean}.`,
+          procedure: "1. Calibrate sensors. 2. Record data points at intervals. 3. Process data using statistical analysis engines.",
+          observation_table: observationTable,
+          graph_url: analysisResult.graph_url,
+          calculations: `Mean of Y: ${analysisResult.mean}\nStandard Deviation: ${analysisResult.std_dev}\nSlope (m): ${analysisResult.slope}\nIntercept (b): ${analysisResult.intercept}\nAverage Error: ${analysisResult.error_percent}%`,
+          result: reportResult.result,
+          conclusion: reportResult.conclusion,
+          precautions: reportResult.precautions
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate PDF.");
+      }
+
+      // Trigger download
+      const link = document.createElement('a');
+      link.href = data.pdf_url;
+      link.download = `LabReport-${Date.now()}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsDownloadingPdf(false);
     }
   };
 
@@ -455,7 +511,7 @@ export default function GenerateReportPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex gap-4 flex-wrap">
               <Button 
                 onClick={handleGenerateReport} 
                 disabled={isGeneratingReport}
@@ -473,6 +529,27 @@ export default function GenerateReportPage() {
                   </>
                 )}
               </Button>
+
+              {reportResult && (
+                <Button 
+                  onClick={handleDownloadPdf}
+                  disabled={isDownloadingPdf}
+                  variant="outline"
+                  className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                >
+                  {isDownloadingPdf ? (
+                     <>
+                        <Download className="mr-2 h-4 w-4 animate-bounce" />
+                        Generating PDF...
+                     </>
+                  ) : (
+                    <>
+                       <Download className="mr-2 h-4 w-4" />
+                       Download Lab Report PDF
+                    </>
+                  )}
+                </Button>
+              )}
             </CardFooter>
           </Card>
 
