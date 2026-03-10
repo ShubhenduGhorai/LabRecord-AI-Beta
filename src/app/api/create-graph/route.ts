@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServer';
+import { userService } from '@/services/userService';
 
 export async function POST(request: Request) {
   try {
@@ -16,6 +17,13 @@ export async function POST(request: Request) {
     // xAxis and yAxis can be strings (labels), dataPoints can be the actual x/y dataset
     if (!dataPoints || !Array.isArray(dataPoints)) {
       return NextResponse.json({ error: 'Valid data points are required' }, { status: 400 });
+    }
+
+    // Enforce subscription plan limit
+    try {
+      await userService.checkReportGenerationLimit(user.id);
+    } catch (limitError: any) {
+      return NextResponse.json({ error: limitError.message }, { status: 403 });
     }
 
     const { data, error } = await supabase

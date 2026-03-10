@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServer';
+import { pdfService } from '@/services/pdfService';
+import { experimentService } from '@/services/experimentService';
+import { storageService } from '@/services/storageService';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
@@ -11,35 +16,35 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { experiment_id, report_data } = body;
+    const { experiment_id } = body;
 
-    if (!experiment_id || !report_data) {
-      return NextResponse.json({ error: 'Experiment ID and report data are required' }, { status: 400 });
+    if (!experiment_id) {
+      return NextResponse.json({ error: 'Experiment ID is required' }, { status: 400 });
     }
 
-    // Mock PDF generation process
-    // In a real scenario, use libraries like pdfkit, jspdf, or a service to generate PDF buffer
-    // and upload it to Supabase Storage, then get the URL.
-    const mockPdfFilePath = `documents/${user.id}/${experiment_id}-report.pdf`;
+    // Identical logic to generate-pdf as requested to handle export
+    const experimentData = await experimentService.getExperiment(experiment_id, user.id);
 
-    // Save report record in the database
-    const { data, error } = await supabase
-      .from('reports')
-      .insert({
-        user_id: user.id,
-        experiment_id: experiment_id,
-        file_path: mockPdfFilePath,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+    // Generate PDF lab report
+    const pdfBytes = await pdfService.generateLabReportPdf(experimentData);
 
-    if (error) {
-      console.error('Error saving report record:', error);
-      return NextResponse.json({ error: 'Failed to save report record' }, { status: 500 });
-    }
+    // Upload to Supabase storage
+    const filePath = `${user.id}/${experiment_id}.pdf`;
+    await storageService.uploadFile(pdfBytes, filePath, 'application/pdf');
 
-    return NextResponse.json({ success: true, file_path: mockPdfFilePath, report: data }, { status: 201 });
+    // Update experiment record
+    await experimentService.updateExperimentReportPath(experiment_id, filePath);
+
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('labreports')
+      .getPublicUrl(filePath);
+
+    return NextResponse.json({
+      success: true,
+      file_path: filePath,
+      download_url: publicUrlData.publicUrl
+    }, { status: 201 });
   } catch (err: any) {
     console.error('API Error:', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

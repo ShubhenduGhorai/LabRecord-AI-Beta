@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServer';
+import { aiService } from '@/services/aiService';
+import { experimentService } from '@/services/experimentService';
+import { userService } from '@/services/userService';
 
 export async function POST(request: Request) {
   try {
@@ -17,37 +20,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 });
     }
 
-    // TODO: Integrate actual AI service (e.g., OpenAI/Gemini) to generate the report sections
-    const generatedAim = `To study and understand ${title}`;
-    const generatedApparatus = 'Standard laboratory equipment required for the experiment.';
-    const generatedTheory = `Theoretical background of ${title} based on ${subject || 'general science'} principles.`;
-    const generatedProcedure = '1. Set up the apparatus.\n2. Follow standard guidelines.\n3. Record observations.';
-    const generatedResult = 'The experiment was conducted successfully and results match theoretical predictions.';
-
-    const { data, error } = await supabase
-      .from('experiments')
-      .insert({
-        user_id: user.id,
-        title,
-        subject,
-        description,
-        aim: generatedAim,
-        apparatus: generatedApparatus,
-        theory: generatedTheory,
-        procedure: generatedProcedure,
-        result: generatedResult,
-        status: 'completed',
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error saving experiment:', error);
-      return NextResponse.json({ error: 'Failed to save experiment' }, { status: 500 });
+    // Check if the user is allowed to generate a report
+    try {
+      await userService.checkReportGenerationLimit(user.id);
+    } catch (limitError: any) {
+      return NextResponse.json({ error: limitError.message }, { status: 403 });
     }
 
-    return NextResponse.json({ success: true, experiment: data }, { status: 201 });
+    // Generate the report content using OpenAI
+    const aiContent = await aiService.generateReport(title, subject, description);
+
+    // Save the experiment to the database
+    const experiment = await experimentService.createExperiment({
+      userId: user.id,
+      title: aiContent.title || title,
+      subject,
+      description,
+      aim: aiContent.aim,
+      apparatus: aiContent.apparatus,
+      theory: aiContent.theory,
+      procedure: aiContent.procedure,
+      result: aiContent.result,
+      precautions: aiContent.precautions,
+      conclusion: aiContent.conclusion,
+    });
+
+    return NextResponse.json({ success: true, experiment }, { status: 201 });
   } catch (err: any) {
     console.error('API Error:', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

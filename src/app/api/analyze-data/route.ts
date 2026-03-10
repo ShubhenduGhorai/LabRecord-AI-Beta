@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { mean, standardDeviation, linearRegression, linearRegressionLine } from "simple-statistics";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { userService } from "@/services/userService";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,7 +21,16 @@ export async function POST(req: NextRequest) {
     }
 
     if (x.length < 2) {
-       return NextResponse.json({ error: "At least two data points are required." }, { status: 400 });
+      return NextResponse.json({ error: "At least two data points are required." }, { status: 400 });
+    }
+
+    // Check plan limits unless it's a demo
+    if (user && !isDemo) {
+      try {
+        await userService.checkReportGenerationLimit(user.id);
+      } catch (limitError: any) {
+        return NextResponse.json({ error: limitError.message }, { status: 403 });
+      }
     }
 
     // Convert to number arrays to be safe
@@ -39,12 +49,12 @@ export async function POST(req: NextRequest) {
     // 3. Calculate Error Percentage (Mean Absolute Percentage Error)
     let mapeSum = 0;
     let n = 0;
-    for(let i = 0; i < numY.length; i++) {
-       if(numY[i] !== 0) { // prevent divide by zero
-          const yPredicted = regressionLineFunc(numX[i]);
-          mapeSum += Math.abs((numY[i] - yPredicted) / numY[i]);
-          n++;
-       }
+    for (let i = 0; i < numY.length; i++) {
+      if (numY[i] !== 0) { // prevent divide by zero
+        const yPredicted = regressionLineFunc(numX[i]);
+        mapeSum += Math.abs((numY[i] - yPredicted) / numY[i]);
+        n++;
+      }
     }
     const error_percent = n > 0 ? (mapeSum / n) * 100 : 0;
 

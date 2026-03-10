@@ -1,167 +1,50 @@
 import { NextResponse } from 'next/server';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import fs from 'fs';
-import path from 'path';
-
-// For jspdf-autotable TypeScript support
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: any;
-  }
-}
+import { createSupabaseServerClient } from '@/lib/supabaseServer';
+import { pdfService } from '@/services/pdfService';
+import { experimentService } from '@/services/experimentService';
+import { storageService } from '@/services/storageService';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
-    const { 
-      title, aim, apparatus, theory, procedure, 
-      observation_table, graph_url, calculations, 
-      result, conclusion, precautions 
-    } = body;
+    const { experiment_id } = body;
 
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    let currentY = 20;
-
-    // --- Header ---
-    doc.setFontSize(22);
-    doc.setTextColor(40, 44, 52);
-    doc.setFont('helvetica', 'bold');
-    doc.text(title?.toUpperCase() || 'LAB EXPERIMENT REPORT', pageWidth / 2, currentY, { align: 'center' });
-    currentY += 10;
-    
-    doc.setLineWidth(0.5);
-    doc.line(20, currentY, pageWidth - 20, currentY);
-    currentY += 15;
-
-    // Helper to add sections
-    const addSection = (heading: string, content: string) => {
-      if (!content) return;
-      
-      // Check for page overflow
-      if (currentY > 260) {
-        doc.addPage();
-        currentY = 20;
-      }
-
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(63, 81, 181);
-      doc.text(heading, 20, currentY);
-      currentY += 7;
-
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(50, 50, 50);
-      
-      const lines = doc.splitTextToSize(content, pageWidth - 40);
-      doc.text(lines, 20, currentY);
-      currentY += (lines.length * 5) + 12;
-    };
-
-    // --- Content Sections ---
-    addSection('AIM', aim);
-    addSection('APPARATUS', apparatus);
-    addSection('THEORY', theory);
-    addSection('PROCEDURE', procedure);
-
-    // --- Observation Table ---
-    if (observation_table && observation_table.length > 0) {
-      if (currentY > 240) {
-        doc.addPage();
-        currentY = 20;
-      }
-      
-      doc.setFontSize(14);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(63, 81, 181);
-      doc.text('OBSERVATION TABLE', 20, currentY);
-      currentY += 7;
-
-      const headers = Object.keys(observation_table[0]);
-      const rows = observation_table.map((row: any) => Object.values(row));
-
-      doc.autoTable({
-        startY: currentY,
-        head: [headers],
-        body: rows,
-        theme: 'grid',
-        headStyles: { fillColor: [63, 81, 181] },
-        styles: { fontSize: 10 },
-        margin: { left: 20, right: 20 }
-      });
-      
-      currentY = doc.autoTable.previous.finalY + 15;
+    if (!experiment_id) {
+      return NextResponse.json({ error: 'Experiment ID is required' }, { status: 400 });
     }
 
-    // --- Graph ---
-    if (graph_url) {
-        try {
-            if (currentY > 200) {
-              doc.addPage();
-              currentY = 20;
-            }
-            
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(63, 81, 181);
-            doc.text('DATA PLOT', 20, currentY);
-            currentY += 7;
+    // 1. Fetch experiment data from Supabase
+    const experimentData = await experimentService.getExperiment(experiment_id, user.id);
 
-            // Fetch image and add to PDF
-            // Note: Since jspdf runs on server, we can fetch images via buffer
-            let buffer: Buffer;
-            if (graph_url.startsWith('data:image/')) {
-               buffer = Buffer.from(graph_url.split(',')[1], 'base64');
-            } else {
-               const imgRes = await fetch(graph_url);
-               const arrayBuffer = await imgRes.arrayBuffer();
-               buffer = Buffer.from(arrayBuffer);
-            }
-            
-            const imgWidth = pageWidth - 40;
-            const imgHeight = 100;
-            
-            doc.addImage(buffer, 'PNG', 20, currentY, imgWidth, imgHeight);
-            currentY += imgHeight + 15;
-        } catch (err) {
-            console.error("Failed to add image to PDF:", err);
-        }
-    }
+    // 2. Generate PDF lab report using pdf-lib
+    const pdfBytes = await pdfService.generateLabReportPdf(experimentData);
 
-    addSection('CALCULATIONS', calculations);
-    addSection('RESULT', result);
-    addSection('CONCLUSION', conclusion);
-    addSection('PRECAUTIONS', precautions);
+    // 3. Upload the PDF to Supabase storage bucket labreports
+    const filePath = `${user.id}/${experiment_id}.pdf`;
+    await storageService.uploadFile(pdfBytes, filePath, 'application/pdf');
 
-    // --- Footer ---
-    const pageCount = (doc as any).internal.pages.length - 1;
-    for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setFontSize(10);
-        doc.setTextColor(150);
-        doc.text(`Generated by LabRecord AI - Page ${i} of ${pageCount}`, pageWidth / 2, 285, { align: 'center' });
-    }
+    // 4. Save the file path in experiments.report_path
+    await experimentService.updateExperimentReportPath(experiment_id, filePath);
 
-    // --- Save File ---
-    const fileName = `report-${Date.now()}.pdf`;
-    const reportsDir = path.join(process.cwd(), 'public', 'reports');
-    
-    // Ensure dir exists
-    if (!fs.existsSync(reportsDir)) {
-      fs.mkdirSync(reportsDir, { recursive: true });
-    }
+    // Get public or signed URL based on your bucket config (assuming public for now, or returning path)
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('labreports')
+      .getPublicUrl(filePath);
 
-    const filePath = path.join(reportsDir, fileName);
-    const pdfOutput = doc.output('arraybuffer');
-    fs.writeFileSync(filePath, Buffer.from(pdfOutput));
-
-    return NextResponse.json({ 
-      pdf_url: `/reports/${fileName}`,
-      success: true 
+    return NextResponse.json({
+      success: true,
+      file_path: filePath,
+      download_url: publicUrlData.publicUrl
     });
 
   } catch (error: any) {
