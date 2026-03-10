@@ -18,8 +18,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "LabRecord AI – Generate Lab Record Books in Minutes",
-  description: "AI-powered tool that generates engineering and pharmacy lab record books automatically.",
+  description: "AI-powered tool for generating lab reports and analyzing experiment data. Automates engineering and science lab record books.",
   keywords: "lab record generator, engineering lab record, lab report generator, labrecord ai",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
   openGraph: {
     title: "LabRecord AI",
     description: "Generate lab record books automatically",
