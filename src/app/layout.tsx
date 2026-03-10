@@ -20,8 +20,12 @@ export const metadata: Metadata = {
   title: "LabRecord AI – Generate Lab Record Books in Minutes",
   description: "AI-powered tool for generating lab reports and analyzing experiment data. Automates engineering and science lab record books.",
   keywords: "lab record generator, engineering lab record, lab report generator, labrecord ai",
+  manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico", sizes: "any" }
+    ],
     apple: "/apple-icon.png",
   },
   openGraph: {

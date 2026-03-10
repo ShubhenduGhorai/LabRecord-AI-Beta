@@ -7,19 +7,19 @@ export function CookieConsent() {
     const [show, setShow] = useState(false);
 
     useEffect(() => {
-        const consent = localStorage.getItem("cookieConsent");
+        const consent = document.cookie.split('; ').find(row => row.startsWith('cookieConsent='));
         if (!consent) {
             setShow(true);
         }
     }, []);
 
     const handleAccept = () => {
-        localStorage.setItem("cookieConsent", "accepted");
+        document.cookie = "cookieConsent=accepted; path=/; max-age=31536000"; // 1 year
         setShow(false);
     };
 
     const handleDecline = () => {
-        localStorage.setItem("cookieConsent", "declined");
+        document.cookie = "cookieConsent=declined; path=/; max-age=31536000"; // 1 year
         setShow(false);
     };
 
