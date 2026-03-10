@@ -30,8 +30,8 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link href="/about" className="hover:text-foreground transition-colors">About</Link></li>
               <li><Link href="/contact" className="hover:text-foreground transition-colors">Contact</Link></li>
-              <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link></li>
-              <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link></li>
+              <li><Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy</Link></li>
+              <li><Link href="/terms-of-service" className="hover:text-foreground transition-colors">Terms</Link></li>
               <li><Link href="/cookies" className="hover:text-foreground transition-colors">Cookies</Link></li>
             </ul>
           </div>
@@ -40,8 +40,8 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground flex flex-col md:flex-row justify-between items-center gap-4">
           <p>© {new Date().getFullYear()} LabRecord AI. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
-            <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</Link>
+            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
             <Link href="/cookies" className="hover:text-foreground transition-colors">Cookies Policy</Link>
           </div>
         </div>

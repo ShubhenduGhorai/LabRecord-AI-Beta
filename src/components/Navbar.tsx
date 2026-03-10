@@ -26,7 +26,10 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
           <Beaker className="h-6 w-6 text-indigo-600" />
           <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600">
-            LabRecord AI Beta
+            LabRecord AI
+          </span>
+          <span className="text-sm font-medium tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-blue-500">
+            Beta
           </span>
         </Link>
 

@@ -1,7 +1,37 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const ipTracker = new Map<string, { count: number; windowStart: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_REQUESTS = 100;
+
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith('/api/generate-record') || request.nextUrl.pathname.startsWith('/api/auth')) {
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    const now = Date.now();
+
+    if (Math.random() < 0.05) {
+      for (const [key, value] of ipTracker.entries()) {
+        if (now - value.windowStart > RATE_LIMIT_WINDOW_MS) {
+          ipTracker.delete(key);
+        }
+      }
+    }
+
+    const tracker = ipTracker.get(ip);
+    if (!tracker || now - tracker.windowStart > RATE_LIMIT_WINDOW_MS) {
+      ipTracker.set(ip, { count: 1, windowStart: now });
+    } else {
+      tracker.count++;
+      if (tracker.count > MAX_REQUESTS) {
+        return new NextResponse(
+          JSON.stringify({ error: 'Too Many Requests' }),
+          { status: 429, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })

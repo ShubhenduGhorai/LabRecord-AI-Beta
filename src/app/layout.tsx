@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +17,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LabRecord AI - Perfect Lab Reports",
-  description: "Turn raw lab data into perfect lab reports with AI.",
+  title: "LabRecord AI – Generate Lab Record Books in Minutes",
+  description: "AI-powered tool that generates engineering and pharmacy lab record books automatically.",
+  keywords: "lab record generator, engineering lab record, lab report generator, labrecord ai",
+  openGraph: {
+    title: "LabRecord AI",
+    description: "Generate lab record books automatically",
+    url: "https://labrecord.cloud",
+    siteName: "LabRecord AI",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LabRecord AI",
+    description: "Generate lab record books instantly",
+  },
 };
 
 export default function RootLayout({
@@ -36,6 +50,21 @@ export default function RootLayout({
         </main>
         <Footer />
         <CookieConsent />
+        <Analytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "LabRecord AI",
+              "applicationCategory": "EducationalApplication",
+              "operatingSystem": "Web",
+              "url": "https://labrecord.cloud",
+              "description": "AI tool for generating engineering lab record books."
+            }),
+          }}
+        />
       </body>
     </html>
   );
