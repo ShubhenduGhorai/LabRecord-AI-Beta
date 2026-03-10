@@ -15,16 +15,22 @@ export default function DashboardPage() {
     async function checkSub() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      
-      const { data: sub } = await supabase.from('subscriptions').select('status').eq('user_id', user.id).single();
-      if (sub?.status === 'active') {
+
+      // Admin Override
+      if (user.email === "YOUR_GMAIL@gmail.com") {
         setHasSubscription(true);
         return;
       }
-      const { data: legacy } = await supabase.from('users').select('subscription_status').eq('id', user.id).single();
-      if (legacy?.subscription_status === 'active') {
-         setHasSubscription(true);
-         return;
+
+      const { data: sub } = await supabase.from('subscriptions').select('status, plan').eq('user_id', user.id).single();
+      if (sub?.status === 'active' && sub?.plan === 'premium') {
+        setHasSubscription(true);
+        return;
+      }
+      const { data: legacy } = await supabase.from('users').select('subscription_status, plan').eq('id', user.id).single();
+      if (legacy?.subscription_status === 'active' && legacy?.plan === 'premium') {
+        setHasSubscription(true);
+        return;
       }
       setHasSubscription(false);
     }
@@ -112,19 +118,18 @@ export default function DashboardPage() {
               )}
             </CardContent>
             <CardFooter className="pt-2 pb-6">
-               <Link href={hasSubscription === false && tool.isPremium ? "/pricing" : tool.href} className="w-full">
-                  <Button 
-                    variant={hasSubscription === false && tool.isPremium ? "outline" : "default"} 
-                    className={`w-full font-semibold flex items-center justify-between ${
-                      hasSubscription === false && tool.isPremium
-                        ? "text-slate-700 hover:bg-slate-50"
-                        : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200"
+              <Link href={hasSubscription === false && tool.isPremium ? "/pricing" : tool.href} className="w-full">
+                <Button
+                  variant={hasSubscription === false && tool.isPremium ? "outline" : "default"}
+                  className={`w-full font-semibold flex items-center justify-between ${hasSubscription === false && tool.isPremium
+                      ? "text-slate-700 hover:bg-slate-50"
+                      : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200"
                     }`}
-                  >
-                    {hasSubscription === false && tool.isPremium ? "Unlock Feature" : "Open Tool"}
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-               </Link>
+                >
+                  {hasSubscription === false && tool.isPremium ? "Unlock Feature" : "Open Tool"}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         ))}

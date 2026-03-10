@@ -10,14 +10,19 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
     return false;
   }
 
+  // Admin override for development
+  if (user.email === "YOUR_GMAIL@gmail.com") {
+    return true;
+  }
+
   // 1. Check the new subscriptions table
   const { data: subscription } = await supabase
     .from('subscriptions')
-    .select('status, plan_name')
+    .select('status, plan')
     .eq('user_id', user.id)
     .single();
 
-  if (subscription?.status === 'active') {
+  if (subscription?.status === 'active' && subscription?.plan === 'premium') {
     return true;
   }
 
@@ -28,7 +33,7 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
     .eq('id', user.id)
     .single();
 
-  if (legacyUser?.subscription_status === 'active') {
+  if (legacyUser?.subscription_status === 'active' && legacyUser?.plan === 'premium') {
     return true;
   }
 

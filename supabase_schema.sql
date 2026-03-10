@@ -60,12 +60,46 @@ CREATE POLICY "Users can manage their own reports" ON public.reports FOR ALL USI
 CREATE TABLE public.subscriptions (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
-  plan_name TEXT NOT NULL,
+  plan TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'inactive',
   credits INTEGER DEFAULT 0,
-  expiry_date TIMESTAMP WITH TIME ZONE,
+  current_period_start TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+  current_period_end TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can read their own subscriptions" ON public.subscriptions FOR SELECT USING (auth.uid() = user_id);
+
+-- Trigger for syncing new users from Supabase Auth
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+as $$
+begin
+  insert into public.users (id, email, plan)
+  values (new.id, new.email, 'free');
+
+  insert into public.subscriptions (
+    user_id,
+    plan,
+    status,
+    current_period_start,
+    current_period_end
+  )
+  values (
+    new.id,
+    'free',
+    'active',
+    now(),
+    now() + interval '30 days'
+  );
+
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute procedure public.handle_new_user();
