@@ -29,13 +29,14 @@ export function Navbar() {
             LabRecord AI
           </span>
         </Link>
-        
+
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
           <Link href={isHome ? "#features" : "/#features"} className="hover:text-foreground transition-colors">Features</Link>
           <Link href={isHome ? "#how-it-works" : "/#how-it-works"} className="hover:text-foreground transition-colors">How It Works</Link>
           <Link href={isHome ? "#demo" : "/#demo"} className="hover:text-foreground transition-colors">Demo</Link>
           <Link href={isHome ? "#pricing" : "/#pricing"} className="hover:text-foreground transition-colors">Pricing</Link>
           <Link href={isHome ? "#faq" : "/#faq"} className="hover:text-foreground transition-colors">FAQ</Link>
+          <Link href="/docs" className="hover:text-foreground transition-colors">Docs</Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
@@ -71,6 +72,7 @@ export function Navbar() {
             <Link href={isHome ? "#demo" : "/#demo"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Demo</Link>
             <Link href={isHome ? "#pricing" : "/#pricing"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Pricing</Link>
             <Link href={isHome ? "#faq" : "/#faq"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">FAQ</Link>
+            <Link href="/docs" onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Docs</Link>
           </nav>
           <div className="flex flex-col space-y-3 pt-4 border-t">
             <Link href="/auth/login" onClick={closeMobileMenu} className="text-center py-3 min-h-[44px] flex flex-col justify-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
