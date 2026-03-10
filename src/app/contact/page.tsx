@@ -5,7 +5,7 @@ export default function ContactPage() {
             <div className="prose prose-slate max-w-none text-lg leading-relaxed text-slate-700">
                 <p>Have questions, issues, or want to discuss enterprise pricing? We're here to help.</p>
                 <p className="mt-4">
-                    Email us directly at <strong>support@labrecord-ai.com</strong> or use our in-app chat widget.
+                    Email us directly at <strong>support@labrecord.cloud</strong>
                 </p>
             </div>
         </div>
