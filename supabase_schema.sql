@@ -10,12 +10,21 @@ CREATE TABLE public.users (
 );
 
 -- Waitlist Table
-CREATE TABLE public.waitlist (
+CREATE TABLE IF NOT EXISTS public.waitlist (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Ensure required columns exist if the table was previously created without them
+ALTER TABLE public.waitlist ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.waitlist ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE public.waitlist ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+
+-- Add constraint to prevent duplicate emails
+ALTER TABLE public.waitlist DROP CONSTRAINT IF EXISTS unique_waitlist_email;
+ALTER TABLE public.waitlist ADD CONSTRAINT unique_waitlist_email UNIQUE (email);
 
 -- Experiments Table
 CREATE TABLE public.experiments (
