@@ -66,22 +66,22 @@ export function DemoPreview() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="md:w-7/12 w-full"
           >
-            <div className="bg-muted/30 border rounded-2xl p-4 shadow-2xl relative overflow-hidden group">
-              <div className="bg-background rounded-xl border overflow-hidden shadow-sm aspect-video flex flex-col relative">
+            <div className="bg-muted/30 border rounded-2xl p-2 md:p-4 shadow-2xl relative overflow-hidden group">
+              <div className="bg-background rounded-xl border overflow-hidden shadow-sm aspect-[4/3] md:aspect-video flex flex-col relative">
                 
                 {/* Mockup Header */}
-                <div className="flex items-center gap-2 border-b px-4 py-3 bg-muted/20">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                <div className="flex items-center justify-between md:justify-start gap-2 border-b px-3 md:px-4 py-2 md:py-3 bg-muted/20">
+                  <div className="flex gap-1.5 shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
                   </div>
-                  <div className="ml-4 flex gap-4">
+                  <div className="flex-1 md:ml-4 flex justify-end md:justify-start gap-3 md:gap-4 overflow-hidden">
                     {scenes.map((scene, idx) => (
                       <div 
                         key={scene.id}
-                        className={`text-[10px] font-bold uppercase tracking-wider transition-all duration-300 ${
-                          currentScene === idx ? "text-indigo-600 opacity-100" : "text-muted-foreground opacity-40"
+                        className={`text-[9px] md:text-[10px] font-bold uppercase tracking-wider transition-all duration-300 whitespace-nowrap ${
+                          currentScene === idx ? "text-indigo-600 opacity-100" : "text-muted-foreground opacity-40 md:opacity-40 hidden md:block"
                         }`}
                       >
                         {scene.title}
@@ -101,11 +101,11 @@ export function DemoPreview() {
                         exit={{ opacity: 0, y: -10 }}
                         className="space-y-4"
                       >
-                        <div className="flex items-center gap-2 mb-4">
-                          <Sparkles className="w-5 h-5 text-indigo-600" />
-                          <h3 className="font-bold text-indigo-600 text-sm">Generating Report...</h3>
+                        <div className="flex items-center gap-2 mb-3 md:mb-4">
+                          <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-indigo-600" />
+                          <h3 className="font-bold text-indigo-600 text-xs md:text-sm">Generating Report...</h3>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-2 md:space-y-3">
                           {[
                             { tag: "Aim", text: "To determine the acceleration due to gravity." },
                             { tag: "Theory", text: "The motion is governed by s = ut + 0.5at²." },
@@ -117,10 +117,10 @@ export function DemoPreview() {
                               initial={{ opacity: 0, x: -5 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: i * 0.4 }}
-                              className="border-l-2 border-indigo-200 pl-3 py-1"
+                              className="border-l-2 border-indigo-200 pl-2 md:pl-3 py-0.5 md:py-1"
                             >
-                              <span className="text-[10px] font-bold block text-muted-foreground/60">{line.tag}:</span>
-                              <span className="text-xs font-medium">{line.text}</span>
+                              <span className="text-[9px] md:text-[10px] font-bold block text-muted-foreground/60 leading-tight">{line.tag}:</span>
+                              <span className="text-[10px] md:text-xs font-medium leading-tight">{line.text}</span>
                             </motion.div>
                           ))}
                         </div>
@@ -135,21 +135,21 @@ export function DemoPreview() {
                         exit={{ opacity: 0, y: -10 }}
                         className="flex flex-col h-full"
                       >
-                        <div className="flex items-center gap-2 mb-6 border-b pb-3">
-                          <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center">
-                            <MessageSquare className="w-4 h-4 text-rose-500" />
+                        <div className="flex items-center gap-2 mb-4 md:mb-6 border-b pb-2 md:pb-3">
+                          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-rose-100 flex items-center justify-center">
+                            <MessageSquare className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500" />
                           </div>
                           <div>
-                            <h3 className="font-bold text-rose-500 text-sm">Viva Prep AI</h3>
-                            <p className="text-[10px] text-muted-foreground">Expert Evaluator</p>
+                            <h3 className="font-bold text-rose-500 text-xs md:text-sm">Viva Prep AI</h3>
+                            <p className="text-[9px] md:text-[10px] text-muted-foreground">Expert Evaluator</p>
                           </div>
                         </div>
-                        <div className="space-y-4">
+                        <div className="space-y-3 md:space-y-4">
                           <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 0.5 }}
-                            className="bg-muted p-3 rounded-2xl rounded-tl-none mr-12 text-xs font-medium"
+                            className="bg-muted p-2 md:p-3 rounded-2xl rounded-tl-none mr-8 md:mr-12 text-[10px] md:text-xs font-medium"
                           >
                             What is the purpose of regression analysis in this experiment?
                           </motion.div>
@@ -157,7 +157,7 @@ export function DemoPreview() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: 2 }}
-                            className="bg-rose-500 text-white p-3 rounded-2xl rounded-tr-none ml-12 text-xs"
+                            className="bg-rose-500 text-white p-2 md:p-3 rounded-2xl rounded-tr-none ml-8 md:ml-12 text-[10px] md:text-xs"
                           >
                             It helps us find the line of best fit to determine the relationship between time and displacement.
                           </motion.div>
@@ -173,7 +173,7 @@ export function DemoPreview() {
                         exit={{ opacity: 0, y: -10 }}
                         className="max-w-md mx-auto"
                       >
-                        <div className="border border-dashed p-6 rounded-lg bg-slate-50/50 flex flex-col gap-4 shadow-inner">
+                        <div className="border border-dashed p-4 md:p-6 rounded-lg bg-slate-50/50 flex flex-col gap-3 md:gap-4 shadow-inner">
                           <motion.div 
                             layout
                             className="h-6 bg-white border rounded shadow-sm px-2 flex items-center justify-center"
@@ -181,21 +181,21 @@ export function DemoPreview() {
                             <motion.span 
                               animate={{ fontWeight: [400, 700], scale: [1, 1.02, 1] }}
                               transition={{ duration: 1, delay: 0.5 }}
-                              className="text-[10px] text-center"
+                              className="text-[9px] md:text-[10px] text-center"
                             >
                               Experimental Velocity Analysis in Free Fall
                             </motion.span>
                           </motion.div>
                           
-                          <div className="space-y-2">
+                          <div className="space-y-1.5 md:space-y-2">
                             {[1, 2, 3].map((l) => (
                               <motion.div key={l} className="flex gap-2 items-start">
-                                <span className="h-3 w-full bg-muted rounded-full"></span>
+                                <span className="h-2 md:h-3 w-full bg-muted rounded-full"></span>
                                 <motion.div 
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
                                   transition={{ delay: 1 + l * 0.5 }}
-                                  className="shrink-0 w-3 h-3 rounded bg-emerald-100 border-emerald-300 border text-[8px] flex items-center justify-center font-bold text-emerald-700"
+                                  className="shrink-0 w-2.5 h-2.5 md:w-3 md:h-3 rounded bg-emerald-100 border-emerald-300 border text-[7px] md:text-[8px] flex items-center justify-center font-bold text-emerald-700"
                                 >
                                   {l}
                                 </motion.div>
@@ -204,13 +204,13 @@ export function DemoPreview() {
                           </div>
                           
                           <motion.div 
-                            animate={{ height: [40, 60], opacity: [0.6, 1] }}
+                            animate={{ height: [30, 50], opacity: [0.6, 1] }}
                             transition={{ delay: 2.5 }}
-                            className="bg-white border rounded p-2 flex flex-col gap-1.5"
+                            className="bg-white border rounded p-1.5 md:p-2 flex flex-col gap-1 md:gap-1.5"
                           >
-                            <div className="h-1.5 w-1/4 bg-emerald-400 rounded-full"></div>
-                            <div className="h-1.5 w-full bg-muted rounded-full"></div>
-                            <div className="h-1.5 w-5/6 bg-muted rounded-full"></div>
+                            <div className="h-1 md:h-1.5 w-1/4 bg-emerald-400 rounded-full"></div>
+                            <div className="h-1 md:h-1.5 w-full bg-muted rounded-full"></div>
+                            <div className="h-1 md:h-1.5 w-5/6 bg-muted rounded-full"></div>
                           </motion.div>
                         </div>
                         <div className="absolute bottom-4 right-4 flex items-center gap-1 text-emerald-600 font-bold italic text-[10px]">
