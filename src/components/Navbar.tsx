@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Beaker, Menu, X } from "lucide-react";
-import { WaitlistModal } from "@/components/WaitlistModal";
+import { NavbarProfileMenu } from "@/components/NavbarProfileMenu";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -43,19 +43,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/auth/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Log in
-          </Link>
-          <WaitlistModal>
-            <Button variant="outline" className="hidden lg:flex">
-              Join Waitlist
-            </Button>
-          </WaitlistModal>
-          <Link href="/auth/signup">
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all">
-              Get Started
-            </Button>
-          </Link>
+          <NavbarProfileMenu />
         </div>
 
         {/* Mobile menu button */}
@@ -77,21 +65,9 @@ export function Navbar() {
             <Link href={isHome ? "#faq" : "/#faq"} onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">FAQ</Link>
             <Link href="/docs" onClick={closeMobileMenu} className="hover:text-foreground transition-colors block py-3 min-h-[44px] flex flex-col justify-center">Docs</Link>
           </nav>
-          <div className="flex flex-col space-y-3 pt-4 border-t">
-            <Link href="/auth/login" onClick={closeMobileMenu} className="text-center py-3 min-h-[44px] flex flex-col justify-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Log in
-            </Link>
-            <WaitlistModal>
-              <Button variant="outline" className="w-full justify-center min-h-[44px]">
-                Join Waitlist
-              </Button>
-            </WaitlistModal>
-            <Link href="/auth/signup" onClick={closeMobileMenu} className="w-full">
-              <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md min-h-[44px]">
-                Get Started
-              </Button>
-            </Link>
-          </div>
+          
+          {/* Replaced Mobile Auth Section with NavbarProfileMenu */}
+          <NavbarProfileMenu />
         </div>
       )}
     </header>

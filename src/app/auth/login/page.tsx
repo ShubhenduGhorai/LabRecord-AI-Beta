@@ -54,6 +54,20 @@ export default function LoginPage() {
     }
   };
 
+  const handleAppleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message || "Failed to authenticate with Apple");
+    }
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       <div className="flex flex-col justify-center px-6 py-12 sm:px-16 md:px-24 bg-background z-10 h-full">
@@ -124,32 +138,47 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button 
-            variant="outline" 
-            className="w-full h-11 font-medium bg-white hover:bg-zinc-50 border-border/60" 
-            onClick={handleGoogleLogin}
-          >
-            <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
-              <path
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4"
-              />
-              <path
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853"
-              />
-              <path
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                fill="#FBBC05"
-              />
-              <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                fill="#EA4335"
-              />
-              <path d="M1 1h22v22H1z" fill="none" />
-            </svg>
-            Google
-          </Button>
+          <div className="flex flex-col gap-3">
+            <Button 
+              variant="outline" 
+              type="button"
+              className="w-full h-11 font-medium bg-white hover:bg-zinc-50 border-border/60" 
+              onClick={handleGoogleLogin}
+            >
+              <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                />
+                <path d="M1 1h22v22H1z" fill="none" />
+              </svg>
+              Google
+            </Button>
+
+            <Button 
+              variant="outline" 
+              type="button"
+              className="w-full h-11 font-medium bg-black hover:bg-zinc-800 text-white border-0" 
+              onClick={handleAppleLogin}
+            >
+              <svg className="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.43.916 3.96.948 1.637.026 2.62-1.416 3.603-2.818 1.13-1.65 1.582-3.25 1.6-3.328-.027-.013-3.136-1.201-3.17-4.79-.033-2.99 2.448-4.46 2.56-4.526-1.4-2.05-3.556-2.316-4.329-2.39-1.92-.206-3.79 1.127-4.85 1.127-1.06 0-2.584-1.09-4.103-1.05zM15.659 4.394c.887-1.074 1.488-2.56 1.325-4.04-1.28.052-2.835.85-3.743 1.905-.815.932-1.517 2.45-1.325 3.935 1.43.11 2.85-.705 3.743-1.8z" />
+              </svg>
+              Continue with Apple
+            </Button>
+          </div>
 
           <p className="text-center text-sm text-muted-foreground mt-8">
             Don't have an account?{" "}
