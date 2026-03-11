@@ -35,7 +35,7 @@ export default function AIVivaPreparation() {
                         Never be caught off guard by an examiner again. Automatically generate practice viva questions based on your exact lab experiment parameters and results.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-fuchsia-200">
                                 Generate Viva Questions <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -113,7 +113,7 @@ export default function AIVivaPreparation() {
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <BookOpen className="w-16 h-16 mx-auto text-fuchsia-400" />
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Ace your next lab evaluation.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-bold h-14 px-8 rounded-full">
                             Get Practice Questions
                         </Button>

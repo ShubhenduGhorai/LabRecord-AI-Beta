@@ -35,7 +35,7 @@ export default function CloudStoragePage() {
                         Never lose an experiment again. Save, organize, and instantly access all your formatted lab records in one centralized, secure dashboard.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-sky-600 hover:bg-sky-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-sky-200">
                                 Start Storing Records <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -85,7 +85,7 @@ export default function CloudStoragePage() {
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <Cloud className="w-16 h-16 mx-auto text-sky-400" />
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Consolidate your academic workflow.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-sky-500 hover:bg-sky-600 text-white font-bold h-14 px-8 rounded-full mt-4">
                             Create Your Cloud Vault
                         </Button>

@@ -35,7 +35,7 @@ export default function AILabDataAnalysis() {
                         Stop struggling with complex formulas. Automatically calculate mean, standard deviation, linear regression, and experimental error instantly with our advanced AI data analytics engine.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-blue-200">
                                 Analyze Your Lab Data <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -100,7 +100,7 @@ export default function AILabDataAnalysis() {
             <section className="py-24 px-6 sm:px-12 bg-slate-900 text-center text-white relative overflow-hidden">
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <h2 className="text-3xl md:text-4xl font-bold">Simplify Your Result Documentation</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-white hover:bg-slate-100 text-slate-900 font-bold h-14 px-8 rounded-full">
                             Start Analyzing Data For Free
                         </Button>

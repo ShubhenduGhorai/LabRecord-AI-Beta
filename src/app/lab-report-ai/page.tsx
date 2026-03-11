@@ -38,7 +38,7 @@ export default function LabReportAIPage() {
                         The smartest way for science, engineering, and pharmacy students to draft comprehensive lab reports automatically.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-blue-200">
                                 Write My Report <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -116,7 +116,7 @@ export default function LabReportAIPage() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/40 via-slate-900 to-slate-900 pointer-events-none" />
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Experience effortless lab reporting.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-white hover:bg-slate-100 text-slate-900 font-bold h-14 px-8 rounded-full mt-4">
                             Get Started for Free
                         </Button>

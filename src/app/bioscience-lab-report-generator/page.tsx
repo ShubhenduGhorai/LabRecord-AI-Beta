@@ -38,7 +38,7 @@ export default function BioscienceLabReportGenerator() {
                         Stop struggling with formatting intricate microbiology observations, genetic inheritance grids, and botany tables. Let our AI draft your bioscience lab records in standard format.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-emerald-200">
                                 Generate Bio Report <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -99,7 +99,7 @@ export default function BioscienceLabReportGenerator() {
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <Fingerprint className="w-16 h-16 mx-auto text-emerald-400" />
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Streamline your biological documentation.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-8 rounded-full mt-4">
                             Create My Bio Report
                         </Button>

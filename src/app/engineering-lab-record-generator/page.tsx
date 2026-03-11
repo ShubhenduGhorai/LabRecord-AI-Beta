@@ -36,7 +36,7 @@ export default function EngineeringLabRecordGenerator() {
                         Create formatted engineering lab record books instantly. Stop wasting hours compiling graphs and observation tables manually.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-indigo-200">
                                 Generate Your Record Book <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -122,7 +122,7 @@ export default function EngineeringLabRecordGenerator() {
                     <p className="text-xl text-slate-300">
                         Join thousands of engineering students saving time on documentation.
                     </p>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-white hover:bg-slate-100 text-slate-900 font-bold h-14 px-8 rounded-full">
                             Generate Your Record Book Now
                         </Button>

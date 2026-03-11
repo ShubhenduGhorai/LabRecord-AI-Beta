@@ -38,7 +38,7 @@ export default function ScienceLabReportGenerator() {
                         From high school chemistry to advanced university physics. Automate your calculations, chemical equations, and physics formulas instantly into a fully formatted report.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-cyan-200">
                                 Generate Science Report <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -99,7 +99,7 @@ export default function ScienceLabReportGenerator() {
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <Atom className="w-16 h-16 mx-auto text-cyan-400" />
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Turn scattered data into a polished PDF.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-white font-bold h-14 px-8 rounded-full mt-4">
                             Format Your Results
                         </Button>

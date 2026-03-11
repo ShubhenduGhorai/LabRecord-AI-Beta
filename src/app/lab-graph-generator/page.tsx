@@ -35,7 +35,7 @@ export default function LabGraphGenerator() {
                         Transform your raw CSV and Excel data into perfectly scaled, professional scientific graphs in seconds. Ready to plug right into your lab reports.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-emerald-200">
                                 Create a Graph <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -81,7 +81,7 @@ export default function LabGraphGenerator() {
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <BarChart3 className="w-16 h-16 mx-auto text-emerald-400" />
                     <h2 className="text-3xl md:text-4xl font-bold">Stop plotting points by hand.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-8 rounded-full">
                             Start Graphing Free
                         </Button>

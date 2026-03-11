@@ -35,7 +35,7 @@ export default function PharmacyLabRecordGenerator() {
                         Create detailed, accurately formatted pharmacy lab record books instantly with our specialized AI writing tool.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-emerald-200">
                                 Start Generating <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -114,7 +114,7 @@ export default function PharmacyLabRecordGenerator() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-900/30 via-slate-900 to-slate-900 pointer-events-none" />
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Streamline your pharmacy labs today.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-14 px-8 rounded-full mt-4">
                             Generate Your First Record
                         </Button>

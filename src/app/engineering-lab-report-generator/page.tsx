@@ -38,7 +38,7 @@ export default function EngineeringLabReportGenerator() {
                         Stop wasting hours formatting structural test results, mechanical readings, and electrical circuit graphs. Our AI generates complete engineering reports instantly.
                     </p>
                     <div className="pt-6">
-                        <Link href="/auth/signup">
+                        <Link href="/dashboard">
                             <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white font-semibold h-14 px-8 rounded-full shadow-lg shadow-orange-200">
                                 Generate Engineering Report <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
@@ -99,7 +99,7 @@ export default function EngineeringLabReportGenerator() {
                 <div className="max-w-3xl mx-auto space-y-8 relative z-10">
                     <Cog className="w-16 h-16 mx-auto text-orange-400" />
                     <h2 className="text-3xl md:text-4xl font-bold text-white">Focus on the engineering, not the formatting.</h2>
-                    <Link href="/auth/signup">
+                    <Link href="/dashboard">
                         <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-white font-bold h-14 px-8 rounded-full mt-4">
                             Create My First Engineering Report
                         </Button>
