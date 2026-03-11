@@ -15,52 +15,52 @@ export function HeroAnimatedPreview() {
   }, []);
 
   return (
-    <div className="mt-20 relative mx-auto max-w-5xl">
+    <div className="mt-12 md:mt-20 relative mx-auto max-w-5xl px-2 sm:px-4 md:px-0">
        {/* Floating Labels */}
       <motion.div 
         animate={{ y: [0, -10, 0] }}
         transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-        className="absolute -left-12 top-20 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-3 items-center gap-2 hidden md:flex"
+        className="absolute -left-2 sm:-left-8 md:-left-12 top-2 sm:top-10 md:top-20 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-2 md:p-3 flex items-center gap-1.5 md:gap-2 scale-[0.65] sm:scale-80 md:scale-100 origin-top-left"
       >
-        <div className="bg-indigo-100 p-2 rounded-lg text-indigo-600"><BarChart3 className="w-4 h-4" /></div>
-        <span className="text-sm font-semibold text-foreground">Auto Graph Generation</span>
+        <div className="bg-indigo-100 p-1.5 md:p-2 rounded-lg text-indigo-600"><BarChart3 className="w-3.5 h-3.5 md:w-4 md:h-4" /></div>
+        <span className="text-xs md:text-sm font-semibold text-foreground whitespace-nowrap">Auto Graph</span>
       </motion.div>
 
       <motion.div 
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-        className="absolute -right-8 top-32 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-3 items-center gap-2 hidden md:flex"
+        className="absolute -right-2 sm:-right-4 md:-right-8 top-16 sm:top-24 md:top-32 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-2 md:p-3 flex items-center gap-1.5 md:gap-2 scale-[0.65] sm:scale-80 md:scale-100 origin-top-right"
       >
-        <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><Calculator className="w-4 h-4" /></div>
-        <span className="text-sm font-semibold text-foreground">Error Calculation</span>
+        <div className="bg-blue-100 p-1.5 md:p-2 rounded-lg text-blue-600"><Calculator className="w-3.5 h-3.5 md:w-4 md:h-4" /></div>
+        <span className="text-xs md:text-sm font-semibold text-foreground whitespace-nowrap">Error Calc</span>
       </motion.div>
 
       <motion.div 
         animate={{ y: [0, -10, 0] }}
         transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 2 }}
-        className="absolute -left-6 bottom-32 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-3 items-center gap-2 hidden md:flex"
+        className="absolute -left-2 sm:-left-4 md:-left-6 bottom-32 sm:bottom-24 md:bottom-32 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-2 md:p-3 flex items-center gap-1.5 md:gap-2 scale-[0.65] sm:scale-80 md:scale-100 origin-bottom-left"
       >
-        <div className="bg-purple-100 p-2 rounded-lg text-purple-600"><FileText className="w-4 h-4" /></div>
-        <span className="text-sm font-semibold text-foreground">AI Lab Report</span>
+        <div className="bg-purple-100 p-1.5 md:p-2 rounded-lg text-purple-600"><FileText className="w-3.5 h-3.5 md:w-4 md:h-4" /></div>
+        <span className="text-xs md:text-sm font-semibold text-foreground whitespace-nowrap">AI Report</span>
       </motion.div>
 
       <motion.div 
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 1.5 }}
-        className="absolute -right-12 bottom-20 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-3 items-center gap-2 hidden md:flex"
+        className="absolute -right-2 sm:-right-8 md:-right-12 bottom-12 sm:bottom-16 md:bottom-20 z-20 bg-background/90 backdrop-blur-sm border shadow-lg rounded-xl p-2 md:p-3 flex items-center gap-1.5 md:gap-2 scale-[0.65] sm:scale-80 md:scale-100 origin-bottom-right"
       >
-        <div className="bg-amber-100 p-2 rounded-lg text-amber-600"><GraduationCap className="w-4 h-4" /></div>
-        <span className="text-sm font-semibold text-foreground">Viva Questions</span>
+        <div className="bg-amber-100 p-1.5 md:p-2 rounded-lg text-amber-600"><GraduationCap className="w-3.5 h-3.5 md:w-4 md:h-4" /></div>
+        <span className="text-xs md:text-sm font-semibold text-foreground whitespace-nowrap">Viva Prep</span>
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.2 }}
-        className="rounded-2xl border bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden p-2"
+        className="rounded-2xl border bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden p-1.5 md:p-2 relative z-10"
       >
-        <div className="rounded-xl overflow-hidden border bg-background flex flex-col md:flex-row h-[400px] md:h-[600px] shadow-sm">
-          <div className="w-full md:w-1/3 border-r bg-muted/30 p-4 space-y-4 flex flex-col justify-between">
+        <div className="rounded-xl overflow-hidden border bg-background flex flex-col md:flex-row min-h-[480px] md:h-[600px] shadow-sm">
+          <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r bg-muted/30 p-3 md:p-4 space-y-4 flex flex-col justify-between">
             <div className="space-y-4">
               <div className="h-8 bg-muted rounded-md w-1/2"></div>
               <div className="space-y-2">
@@ -101,8 +101,8 @@ export function HeroAnimatedPreview() {
               ) : "Analyze Data"}
             </motion.div>
           </div>
-          <div className="w-full md:w-2/3 p-6 flex flex-col">
-            <div className="flex justify-between items-center mb-6 border-b pb-4">
+          <div className="w-full md:w-2/3 p-4 md:p-6 flex flex-col flex-1">
+            <div className="flex justify-between items-center mb-4 md:mb-6 border-b pb-3 md:pb-4">
               <div className="h-6 bg-muted rounded w-1/3"></div>
               <motion.div 
                 animate={{
