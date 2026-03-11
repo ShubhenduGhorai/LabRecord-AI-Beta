@@ -23,10 +23,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/icon.png", type: "image/png", sizes: "512x512" },
-      { url: "/favicon.ico", sizes: "any" }
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/favicon-48x48.png?v=2", type: "image/png", sizes: "48x48" }
     ],
-    apple: "/apple-icon.png",
+    apple: [
+      { url: "/apple-touch-icon.png?v=2" }
+    ],
   },
   openGraph: {
     title: "LabRecord AI",

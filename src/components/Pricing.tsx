@@ -46,21 +46,12 @@ export function Pricing() {
     },
     {
       name: "Student Pro",
-      price: "$0",
+      price: "$8",
       period: "/month",
       description: "Everything you need to cruise through your semester.",
       features: ["Unlimited Lab Reports", "Advanced Graphs", "AI Conclusion Generator", "Viva Prep Sheet"],
-      buttonText: "Upgrade to Pro",
+      buttonText: "Upgrade Plan",
       popular: true,
-    },
-    {
-      name: "Researcher",
-      price: "$0",
-      period: "/year",
-      description: "For final year projects, thesis, and paper publications.",
-      features: ["Thesis Formatting", "Equation OCR", "Citation Manager", "Research Paper Export"],
-      buttonText: "Get Researcher Plan",
-      popular: false,
     },
   ];
 
@@ -76,7 +67,7 @@ export function Pricing() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -85,7 +76,7 @@ export function Pricing() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className={`h-full flex flex-col relative ${plan.popular ? 'border-indigo-600 shadow-xl scale-105 z-10' : 'border-border/50 bg-background/50'}`}>
+              <Card className={`h-full flex flex-col relative ${plan.popular ? 'border-indigo-500 border-2 shadow-2xl scale-105 z-10' : 'border-border/50 bg-background/50'}`}>
                 {plan.popular && (
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
                     <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0 py-1 px-3">
