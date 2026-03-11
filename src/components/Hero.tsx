@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart3, FileText, Calculator } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
+import { HeroAnimatedPreview } from "./HeroAnimatedPreview";
 
 export function Hero() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,7 +62,7 @@ export function Hero() {
             <Link href={ctaLink} className="w-full sm:w-auto">
               <Button size="lg" className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 w-full transition-all shadow-lg shadow-indigo-500/25">
                 {ctaText}
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2 h-5 w-5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
               </Button>
             </Link>
             <Link href="/demo" className="w-full sm:w-auto">
@@ -74,75 +74,25 @@ export function Hero() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto text-sm font-medium text-muted-foreground">
             <div className="flex items-center justify-center gap-2">
-              <BarChart3 className="h-4 w-4 text-indigo-500" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-indigo-500"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
               <span>Automatic Graphs</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <Calculator className="h-4 w-4 text-blue-500" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-blue-500"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
               <span>Error Analysis</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <FileText className="h-4 w-4 text-purple-500" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-purple-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
               <span>AI Conclusions</span>
             </div>
             <div className="flex items-center justify-center gap-2">
-              <FileText className="h-4 w-4 text-indigo-500" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-indigo-500"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
               <span>PDF Export</span>
             </div>
           </div>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-20 relative mx-auto max-w-5xl"
-        >
-          <div className="rounded-2xl border bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden p-2">
-            <div className="rounded-xl overflow-hidden border bg-background flex flex-col md:flex-row h-[400px] md:h-[600px] shadow-sm">
-              <div className="w-full md:w-1/3 border-r bg-muted/30 p-4 space-y-4">
-                <div className="h-8 bg-muted rounded-md w-1/2"></div>
-                <div className="space-y-2">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="flex gap-2">
-                      <div className="h-8 bg-background border rounded flex-1"></div>
-                      <div className="h-8 bg-background border rounded flex-1"></div>
-                    </div>
-                  ))}
-                </div>
-                <div className="h-10 bg-indigo-100 border border-indigo-200 rounded-md flex items-center justify-center text-sm font-medium text-indigo-700 mt-4">
-                  <Calculator className="h-4 w-4 mr-2" /> Calculating Errors...
-                </div>
-              </div>
-              <div className="w-full md:w-2/3 p-6 flex flex-col">
-                <div className="flex justify-between items-center mb-6 border-b pb-4">
-                  <div className="h-6 bg-muted rounded w-1/3"></div>
-                  <div className="h-8 w-24 bg-gradient-to-r from-indigo-500 to-blue-500 rounded text-xs text-white flex items-center justify-center">Export PDF</div>
-                </div>
-                <div className="flex-1 flex flex-col gap-6">
-                  <div className="flex-1 border rounded-lg bg-indigo-50/30 flex items-center justify-center relative overflow-hidden">
-                    <svg className="w-full h-full text-indigo-200" preserveAspectRatio="none" viewBox="0 0 100 100">
-                      <path d="M0,100 Q25,80 50,50 T100,0" fill="none" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="25" cy="70" r="2" fill="#4f46e5" />
-                      <circle cx="50" cy="50" r="2" fill="#4f46e5" />
-                      <circle cx="75" cy="30" r="2" fill="#4f46e5" />
-                      <circle cx="100" cy="0" r="2" fill="#4f46e5" />
-                    </svg>
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
-                  </div>
-                  <div className="h-32 border rounded-lg p-4 bg-muted/20">
-                    <div className="h-4 w-1/4 bg-muted rounded mb-3"></div>
-                    <div className="space-y-2">
-                      <div className="h-3 w-full bg-muted/60 rounded"></div>
-                      <div className="h-3 w-5/6 bg-muted/60 rounded"></div>
-                      <div className="h-3 w-4/6 bg-muted/60 rounded"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        <HeroAnimatedPreview />
       </div>
     </section>
   );
