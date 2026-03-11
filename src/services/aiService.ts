@@ -1,16 +1,12 @@
-import OpenAI from 'openai';
-
-// Ensure the OpenAI API key is set
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+import { openaiClient, MAX_TOKENS } from '@/lib/openai';
 
 export const aiService = {
-    /**
-     * Generates a structured experiment report based on title, subject, and description.
-     */
-    async generateReport(title: string, subject?: string, description?: string) {
-        const prompt = `
+  /**
+   * Generates a structured experiment report based on title, subject, and description.
+   * max_tokens is enforced globally to prevent cost overruns.
+   */
+  async generateReport(title: string, subject?: string, description?: string) {
+    const prompt = `
 Generate a structured laboratory experiment report.
 Title: ${title}
 Subject: ${subject || 'General Science'}
@@ -29,26 +25,28 @@ Please provide a JSON response with the following exact keys:
 Ensure the response is valid JSON only.
 `;
 
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini', // or gpt-3.5-turbo depending on preference
-            messages: [{ role: 'user', content: prompt }],
-            response_format: { type: 'json_object' },
-            temperature: 0.7,
-        });
+    const response = await openaiClient.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+      max_tokens: MAX_TOKENS,
+    });
 
-        const content = response.choices[0].message.content;
-        if (!content) {
-            throw new Error('No content received from OpenAI');
-        }
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content received from OpenAI');
+    }
 
-        return JSON.parse(content);
-    },
+    return JSON.parse(content);
+  },
 
-    /**
-     * Generates Viva questions based on an experiment title.
-     */
-    async generateVivaQuestions(experimentTitle: string) {
-        const prompt = `
+  /**
+   * Generates Viva questions based on an experiment title.
+   * max_tokens is enforced globally to prevent cost overruns.
+   */
+  async generateVivaQuestions(experimentTitle: string) {
+    const prompt = `
 Generate 5 common viva (oral examination) questions and their concise answers for a laboratory experiment titled: "${experimentTitle}".
 
 Please provide a JSON response with the following exact structure:
@@ -64,19 +62,20 @@ Please provide a JSON response with the following exact structure:
 Ensure the response is valid JSON only.
 `;
 
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [{ role: 'user', content: prompt }],
-            response_format: { type: 'json_object' },
-            temperature: 0.7,
-        });
+    const response = await openaiClient.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+      max_tokens: MAX_TOKENS,
+    });
 
-        const content = response.choices[0].message.content;
-        if (!content) {
-            throw new Error('No content received from OpenAI');
-        }
-
-        const parsed = JSON.parse(content);
-        return parsed.questions || [];
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content received from OpenAI');
     }
+
+    const parsed = JSON.parse(content);
+    return parsed.questions || [];
+  },
 };

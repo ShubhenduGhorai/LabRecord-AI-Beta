@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabaseClient";
@@ -9,15 +9,67 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Beaker } from "lucide-react";
 
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: HTMLElement, options: Record<string, unknown>) => string;
+      reset: (widgetId: string) => void;
+      getResponse: (widgetId: string) => string | undefined;
+    };
+  }
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const supabase = createSupabaseClient();
-  
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+  // Load and render the Turnstile widget
+  useEffect(() => {
+    if (!siteKey) return; // Skip in environments without Turnstile
+
+    const scriptId = "cf-turnstile-script";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+
+    const renderWidget = () => {
+      if (turnstileRef.current && window.turnstile && !widgetIdRef.current) {
+        widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
+          sitekey: siteKey,
+          callback: (token: string) => setCaptchaToken(token),
+          "expired-callback": () => setCaptchaToken(null),
+          "error-callback": () => setCaptchaToken(null),
+          theme: "light",
+        });
+      }
+    };
+
+    // Poll until the script loads
+    const interval = setInterval(() => {
+      if (window.turnstile) {
+        renderWidget();
+        clearInterval(interval);
+      }
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [siteKey]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,23 +77,45 @@ export default function SignupPage() {
     setError("");
 
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      // 1. Verify CAPTCHA (skip in dev if no site key)
+      if (siteKey) {
+        if (!captchaToken) {
+          setError("Please complete the CAPTCHA verification.");
+          setLoading(false);
+          return;
+        }
+
+        const verifyRes = await fetch("/api/verify-turnstile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: captchaToken }),
+        });
+
+        const verifyData = await verifyRes.json();
+        if (!verifyData.success) {
+          setError(verifyData.error || "CAPTCHA verification failed. Please try again.");
+          // Reset the widget so user can retry
+          if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
+          setCaptchaToken(null);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 2. Create Supabase user
+      const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            full_name: name,
-          },
+          data: { full_name: name },
         },
       });
 
       if (signUpError) throw signUpError;
-      
-      // Initialize free tier credits securely before redirect
-      await fetch('/api/init-user', { method: 'POST' });
 
-      // If sign up is successful, push to dashboard
-      // Note: Supabase might require email verification depending on settings
+      // 3. Initialize free tier credits
+      await fetch("/api/init-user", { method: "POST" });
+
       router.push("/dashboard");
       router.refresh();
     } catch (err: any) {
@@ -54,10 +128,8 @@ export default function SignupPage() {
   const handleGoogleLogin = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`,
-        },
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/dashboard` },
       });
       if (error) throw error;
     } catch (err: any) {
@@ -73,7 +145,7 @@ export default function SignupPage() {
             <Beaker className="h-8 w-8 text-indigo-600" />
             <span className="text-2xl font-bold tracking-tight">LabRecord AI</span>
           </Link>
-          
+
           <div className="space-y-3">
             <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
             <p className="text-muted-foreground">Automation for your lab reports starts here.</p>
@@ -91,7 +163,7 @@ export default function SignupPage() {
                 className="h-11 border-border/60 focus:border-indigo-500"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -119,6 +191,18 @@ export default function SignupPage() {
               />
             </div>
 
+            {/* Cloudflare Turnstile CAPTCHA */}
+            {siteKey && (
+              <div className="flex flex-col gap-2">
+                <div ref={turnstileRef} className="w-full" />
+                {!captchaToken && (
+                  <p className="text-xs text-muted-foreground">
+                    Please complete the security check above.
+                  </p>
+                )}
+              </div>
+            )}
+
             {error && (
               <div className="text-sm font-medium text-red-500 bg-red-50 p-3 rounded-md border border-red-100">
                 {error}
@@ -128,7 +212,7 @@ export default function SignupPage() {
             <Button
               type="submit"
               className="w-full h-11 bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20 transition-all font-semibold"
-              disabled={loading}
+              disabled={loading || (!!siteKey && !captchaToken)}
             >
               {loading ? "Creating account..." : "Create Account"}
             </Button>
@@ -143,28 +227,16 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <Button 
-            variant="outline" 
-            className="w-full h-11 font-medium bg-white hover:bg-zinc-50 border-border/60" 
+          <Button
+            variant="outline"
+            className="w-full h-11 font-medium bg-white hover:bg-zinc-50 border-border/60"
             onClick={handleGoogleLogin}
           >
             <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
-              <path
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                fill="#4285F4"
-              />
-              <path
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                fill="#34A853"
-              />
-              <path
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                fill="#FBBC05"
-              />
-              <path
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                fill="#EA4335"
-              />
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               <path d="M1 1h22v22H1z" fill="none" />
             </svg>
             Google
@@ -178,16 +250,16 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
-      
+
       <div className="hidden md:flex flex-col bg-slate-50 border-l justify-center items-center relative overflow-hidden">
         <div className="absolute inset-0 bg-indigo-600/5 backdrop-blur-3xl z-0" />
         <div className="absolute w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] mix-blend-multiply top-0 right-0" />
         <div className="absolute w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] mix-blend-multiply bottom-0 left-0" />
-        
+
         <div className="max-w-md text-center z-10 px-8 relative">
           <div className="bg-white/60 p-8 rounded-2xl border shadow-xl backdrop-blur-md mb-8">
             <h3 className="text-3xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-blue-700">
-              Stop formatting. <br/> Start shipping.
+              Stop formatting. <br /> Start shipping.
             </h3>
             <p className="text-slate-600 text-lg leading-relaxed">
               Join thousands of engineering students who save 4+ hours every week on boring lab report formatting using LabRecord AI.
