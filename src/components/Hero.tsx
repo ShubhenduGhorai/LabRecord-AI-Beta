@@ -4,8 +4,28 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, FileText, Calculator } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { createSupabaseClient } from "@/lib/supabaseClient";
 
 export function Hero() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createSupabaseClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const ctaLink = isLoggedIn ? "/dashboard" : "/auth/signup";
+  const ctaText = isLoggedIn ? "Go to Dashboard" : "Start Free";
+
   return (
     <section className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-40 lg:pb-32">
       <div className="absolute inset-0 max-w-full overflow-hidden">
@@ -39,9 +59,9 @@ export function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/auth/signup" className="w-full sm:w-auto">
+            <Link href={ctaLink} className="w-full sm:w-auto">
               <Button size="lg" className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 w-full transition-all shadow-lg shadow-indigo-500/25">
-                Start Free
+                {ctaText}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

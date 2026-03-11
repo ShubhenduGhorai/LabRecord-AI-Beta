@@ -5,8 +5,35 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { createSupabaseClient } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export function Pricing() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createSupabaseClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handlePlanClick = () => {
+    if (isLoggedIn) {
+      router.push("/dashboard");
+    } else {
+      router.push("/auth/signup");
+    }
+  };
+
   const plans = [
     {
       name: "Free",
@@ -19,7 +46,7 @@ export function Pricing() {
     },
     {
       name: "Student Pro",
-      price: "$9",
+      price: "$0",
       period: "/month",
       description: "Everything you need to cruise through your semester.",
       features: ["Unlimited Lab Reports", "Advanced Graphs", "AI Conclusion Generator", "Viva Prep Sheet"],
@@ -28,7 +55,7 @@ export function Pricing() {
     },
     {
       name: "Researcher",
-      price: "$99",
+      price: "$0",
       period: "/year",
       description: "For final year projects, thesis, and paper publications.",
       features: ["Thesis Formatting", "Equation OCR", "Citation Manager", "Research Paper Export"],
@@ -86,9 +113,10 @@ export function Pricing() {
                 </CardContent>
                 <CardFooter>
                   <Button
+                    onClick={handlePlanClick}
                     className={`w-full h-12 ${plan.popular ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-muted hover:bg-muted/80 text-foreground'}`}
                   >
-                    {plan.buttonText}
+                    {plan.name === "Free" && isLoggedIn ? "Go to Dashboard" : (isLoggedIn && plan.name !== "Free" ? "Upgrade Plan" : plan.buttonText)}
                   </Button>
                 </CardFooter>
               </Card>

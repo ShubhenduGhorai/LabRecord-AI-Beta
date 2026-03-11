@@ -4,8 +4,28 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { createSupabaseClient } from "@/lib/supabaseClient";
 
 export function FinalCTA() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createSupabaseClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const ctaLink = isLoggedIn ? "/dashboard" : "/auth/signup";
+  const ctaText = isLoggedIn ? "Go to Dashboard" : "Start Free";
+
   return (
     <section className="py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-indigo-600">
@@ -29,9 +49,9 @@ export function FinalCTA() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/auth/signup" className="w-full sm:w-auto">
+            <Link href={ctaLink} className="w-full sm:w-auto">
               <Button size="lg" className="h-14 px-8 text-base font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:opacity-90 w-full shadow-lg shadow-indigo-500/25">
-                Start Free
+                {ctaText}
               </Button>
             </Link>
             <Link href="/dashboard" className="w-full sm:w-auto">

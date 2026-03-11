@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle, FileText, Sparkles, Beaker, ShieldAlert, BadgeHelp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
+import { createSupabaseClient } from "@/lib/supabaseClient";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -44,6 +45,24 @@ export default function DemoPage() {
   const [reportResult, setReportResult] = useState<any>(null);
   const chartRef = useRef<any>(null);
   const [hasGeneratedOnce, setHasGeneratedOnce] = useState(false);
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createSupabaseClient();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const ctaLink = isLoggedIn ? "/dashboard" : "/auth/signup";
+  const ctaText = isLoggedIn ? "Go to Dashboard" : "Create Free Account";
 
   // --- Core Processing Mirrors Dashboard Lab Tool ---
   const processRawData = (rows: any[][]) => {
@@ -191,9 +210,9 @@ export default function DemoPage() {
               Generate a sample report to see how the system seamlessly converts structured raw datasets into perfectly engineered lab documents!
             </p>
           </div>
-          <Link href="/auth/signup" className="w-full md:w-auto shrink-0">
+          <Link href={ctaLink} className="w-full md:w-auto shrink-0">
              <Button className="w-full bg-white text-indigo-700 hover:bg-slate-100 font-bold h-12 px-6">
-                Create Free Account
+                {ctaText}
              </Button>
           </Link>
         </div>
@@ -328,9 +347,9 @@ export default function DemoPage() {
                      <h3 className="font-bold text-amber-900 text-lg mb-1">Create a free account to save and download your lab report!</h3>
                      <p className="text-amber-800 text-sm">Demo environments cannot write to PDFs or connect to cloud storage.</p>
                    </div>
-                   <Link href="/auth/signup">
+                   <Link href={ctaLink}>
                      <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
-                       Create Free Account
+                       {ctaText}
                      </Button>
                    </Link>
                 </div>
