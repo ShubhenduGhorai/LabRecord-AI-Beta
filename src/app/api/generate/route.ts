@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/auth';
 import { checkAIRateLimit, logAIRequest, logRateLimitViolation, logAPIError } from '@/lib/rate-limit';
-import { openaiClient, validateAndSanitizeInput, MAX_TOKENS } from '@/lib/openai';
+import { openai, validateAndSanitizeInput, MAX_TOKENS } from '@/lib/openai';
 
 /**
  * POST /api/generate
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         ? 'You are a helpful academic assistant that generates viva examination questions and answers for laboratory experiments. Respond only with valid JSON.'
         : 'You are a helpful academic assistant that generates structured laboratory experiment reports. Respond only with valid JSON.';
 
-    const response = await openaiClient.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
