@@ -282,3 +282,48 @@ BEGIN
 END;
 $$;
 
+
+-- ============================================================
+-- TOOL_USAGE TABLE
+-- Tracks cumulative AI usage per tool per user.
+-- Used for the new "1 use (Hobby) / 200 uses (Pro)" logic.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.tool_usage (
+  user_id    UUID    REFERENCES auth.users ON DELETE CASCADE NOT NULL,
+  tool_id    TEXT    NOT NULL,           -- e.g. "data-analysis", "graph-generator", etc.
+  count      INTEGER NOT NULL DEFAULT 0,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  PRIMARY KEY (user_id, tool_id)
+);
+
+-- RLS
+ALTER TABLE public.tool_usage ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read their own tool usage"
+  ON public.tool_usage FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own tool usage"
+  ON public.tool_usage FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own tool usage"
+  ON public.tool_usage FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- RPC: increment_tool_usage
+CREATE OR REPLACE FUNCTION public.increment_tool_usage(p_user_id UUID, p_tool_id TEXT)
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  new_count INTEGER;
+BEGIN
+  INSERT INTO public.tool_usage (user_id, tool_id, count, updated_at)
+  VALUES (p_user_id, p_tool_id, 1, now())
+  ON CONFLICT (user_id, tool_id)
+  DO UPDATE SET count = tool_usage.count + 1, updated_at = now()
+  RETURNING count INTO new_count;
+
+  RETURN new_count;
+END;
+$$;
