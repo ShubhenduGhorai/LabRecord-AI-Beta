@@ -25,10 +25,13 @@ import {
   Edit3,
   Loader2,
   ArrowRight,
+  AlertCircle,
   FileDown,
   Layout,
   Table as TableIcon,
-  RotateCcw
+  RotateCcw,
+  ChevronRight,
+  ClipboardCheck
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -90,9 +93,9 @@ export default function AIReportWriterPage() {
 
     REPORT_SECTIONS.forEach(s => {
       if (sections[s.id]) {
-        doc.setFontSize(12).setFont(undefined, "bold").text(s.label.toUpperCase(), 20, y);
+        doc.setFontSize(12).setFont("helvetica", "bold").text(s.label.toUpperCase(), 20, y);
         y += 7;
-        doc.setFontSize(10).setFont(undefined, "normal");
+        doc.setFontSize(10).setFont("helvetica", "normal");
         const lines = doc.splitTextToSize(sections[s.id], 170);
         doc.text(lines, 20, y);
         y += (lines.length * 5) + 10;
