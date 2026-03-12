@@ -21,13 +21,13 @@ export const PLANS = [
   {
     id: 'pro',
     name: 'Pro',
-    description: 'Unlimited reports for serious students.',
-    price: '$96',
+    description: 'The complete scientific toolset for serious students.',
+    price: '$8',
     originalPrice: '$149',
     discount: '35% OFF',
     amount: 96,
-    period: '/year',
-    monthlyEquivalent: '$8/month',
+    period: '/month',
+    billedYearly: 'billed yearly ($96)',
     features: [
       '200 uses per tool per year',
       'AI Data Analysis',

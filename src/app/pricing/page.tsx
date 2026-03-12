@@ -174,7 +174,7 @@ export default function PricingPage() {
       </motion.div>
 
       {/* Pricing Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-5xl items-stretch px-4">
         {plans.map((plan: any) => {
           const isPro = plan.id === 'pro';
           const isCurrent = currentPlan === plan.id || (!currentPlan && plan.id === 'free');
@@ -185,91 +185,91 @@ export default function PricingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: isPro ? 0.5 : 0.4 }}
-              className="h-full"
+              className="relative h-full"
             >
+              {isPro && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                  <div className="bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.2em] px-6 py-2 rounded-full shadow-xl">
+                    MOST POPULAR
+                  </div>
+                </div>
+              )}
+
               <Card 
                 className={cn(
-                  "relative h-full flex flex-col rounded-[3rem] p-4 transition-all duration-500",
+                  "relative h-full flex flex-col rounded-[3.5rem] p-4 transition-all duration-500 overflow-visible",
                   isPro 
-                    ? "border-4 border-indigo-600 shadow-3xl shadow-indigo-200/50 scale-[1.02] bg-white" 
-                    : "border-2 border-slate-100 shadow-xl shadow-slate-200/50 bg-white/50"
+                    ? "border-2 border-indigo-500 shadow-2xl scale-105 bg-gradient-to-b from-indigo-50/50 to-white z-10" 
+                    : "border border-slate-200 shadow-lg bg-white"
                 )}
               >
                 {isPro && (
-                  <>
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-indigo-600 text-white border-0 font-black px-6 py-2 text-[10px] uppercase tracking-[0.2em] shadow-2xl rounded-xl">
-                        BEST DEAL
-                      </Badge>
+                  <div className="absolute top-8 right-10">
+                    <div className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-200">
+                      {plan.discount}
                     </div>
-                    <div className="absolute top-6 right-6">
-                       <div className="bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-200">
-                         {plan.discount}
-                       </div>
-                    </div>
-                  </>
+                  </div>
                 )}
 
-                <CardHeader className="text-center px-10 pt-16 pb-10">
-                  <CardTitle className="text-3xl font-black uppercase italic tracking-tight mb-4 text-slate-900">
-                    {plan.name} Plan
+                <CardHeader className="text-center px-8 pt-16 pb-10">
+                  <CardTitle className="text-3xl font-black uppercase tracking-tight mb-4 text-slate-900">
+                    {plan.name}
                   </CardTitle>
                   
-                  <div className="space-y-1">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-6xl font-black tracking-tighter text-slate-900">{plan.price}</span>
-                      {plan.period && <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">{plan.period}</span>}
-                    </div>
-                    {plan.originalPrice && (
-                       <p className="text-slate-400 font-bold line-through text-sm">{plan.originalPrice}</p>
+                  <div className="space-y-2">
+                    {isPro && plan.originalPrice && (
+                      <p className="text-slate-400 font-bold line-through text-lg">{plan.originalPrice}</p>
                     )}
-                    {plan.monthlyEquivalent && (
-                       <p className="text-indigo-600 font-black text-xs uppercase tracking-widest mt-2">{plan.monthlyEquivalent} billed yearly</p>
+                    <div className="flex items-baseline justify-center gap-1">
+                      <span className="text-7xl font-black tracking-tighter text-slate-900">{plan.price}</span>
+                      {plan.period && <span className="text-slate-400 font-bold uppercase text-sm tracking-widest">{plan.period}</span>}
+                    </div>
+                    {isPro && plan.billedYearly && (
+                       <p className="text-slate-500 font-bold text-sm tracking-tight">{plan.billedYearly}</p>
                     )}
                   </div>
                   
-                  <CardDescription className="pt-8 text-sm font-bold text-slate-500 max-w-[240px] mx-auto uppercase tracking-tighter">
+                  <CardDescription className="pt-8 text-sm font-bold text-slate-500 max-w-[220px] mx-auto leading-relaxed">
                     {plan.description}
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent className="flex-1 px-10 pb-10">
                   <div className="space-y-6">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Included Features</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Plan Features</p>
                     <ul className="space-y-4">
                       {plan.features.map((feature: string, idx: number) => (
-                        <li key={idx} className="flex items-start gap-4 text-sm">
-                          <div className={cn(
-                            "mt-0.5 rounded-full p-1 shrink-0", 
-                            isPro ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-500'
-                          )}>
-                            <Check className="h-3 w-3 stroke-[4]" />
-                          </div>
-                          <span className="text-slate-700 font-bold leading-tight">{feature}</span>
+                        <li key={idx} className="flex items-start gap-3 text-sm">
+                          <Check className={cn(
+                            "h-5 w-5 shrink-0", 
+                            isPro ? 'text-indigo-600' : 'text-slate-300'
+                          )} />
+                          <span className="text-slate-600 font-semibold leading-tight">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                 </CardContent>
 
-                <CardFooter className="px-10 pb-10">
+                <CardFooter className="px-8 pb-10">
                   <Button 
                     onClick={() => plan.id !== 'free' && handleSubscribe(plan)}
                     disabled={isCurrent || loadingPriceId === plan.id}
                     className={cn(
-                      "w-full h-20 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl active:scale-95",
+                      "w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl active:scale-95 group overflow-hidden relative",
                       isPro 
-                        ? "bg-slate-900 hover:bg-black text-white shadow-indigo-200" 
-                        : "bg-white border-2 border-slate-100 text-slate-400 hover:bg-slate-50 hover:border-slate-200"
+                        ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200" 
+                        : "bg-slate-100 text-slate-400 hover:bg-slate-200"
                     )}
                   >
-                    {isCurrent ? "Active Plan" : 
-                     loadingPriceId === plan.id ? (
-                        <div className="flex items-center gap-2">
-                           <div className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full" />
-                           Initializing...
-                        </div>
-                     ) : (plan.id === 'free' ? "Get Started Free" : "Upgrade to Pro")}
+                    <span className="relative z-10">
+                      {isCurrent ? "Current Plan" : 
+                       loadingPriceId === plan.id ? "Processing..." : 
+                       (plan.id === 'free' ? "Active" : "Unlock Pro")}
+                    </span>
+                    {isPro && !isCurrent && (
+                      <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
+                    )}
                   </Button>
                 </CardFooter>
               </Card>

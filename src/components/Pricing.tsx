@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export function Pricing() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,21 +37,34 @@ export function Pricing() {
 
   const plans = [
     {
-      name: "Free",
+      name: "Hobby",
       price: "$0",
       period: "/month",
-      description: "Perfect for a single experiment to test the waters.",
-      features: ["3 Lab Reports", "Basic Graph Generator", "Standard PDF Export"],
+      description: "Perfect for testing the waters.",
+      features: [
+        "Use each tool 1 time",
+        "AI Data Analysis",
+        "Graph Generator",
+        "Scientific Observations",
+        "Standard Export"
+      ],
       buttonText: "Start Free",
       popular: false,
     },
     {
-      name: "Student Pro",
+      name: "Pro",
       price: "$8",
       period: "/month",
-      description: "Everything you need to cruise through your semester.",
-      features: ["Unlimited Lab Reports", "Advanced Graphs", "AI Conclusion Generator", "Viva Prep Sheet"],
-      buttonText: "Upgrade Plan",
+      description: "Everything you need for your entire degree.",
+      features: [
+        "200 uses per tool per year",
+        "Unlimited Data Analysis",
+        "Professional Graph Studio",
+        "AI Lab Report Writer",
+        "Experiment Vault Storage",
+        "Priority Support"
+      ],
+      buttonText: "Upgrade to Pro",
       popular: true,
     },
   ];
@@ -76,11 +90,16 @@ export function Pricing() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className={`h-full flex flex-col relative ${plan.popular ? 'border-indigo-500 border-2 shadow-2xl scale-105 z-10' : 'border-border/50 bg-background/50'}`}>
+              <Card className={cn(
+                "h-full flex flex-col relative transition-all duration-500 rounded-[2.5rem] overflow-visible",
+                plan.popular 
+                  ? "border-indigo-500 border-2 shadow-2xl scale-105 z-10 bg-gradient-to-b from-indigo-50/50 to-white" 
+                  : "border-border shadow-lg bg-background"
+              )}>
                 {plan.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0 py-1 px-3">
-                      Best Value
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                    <Badge className="bg-indigo-600 text-white border-0 font-black px-4 py-1 text-[10px] uppercase tracking-widest shadow-xl rounded-full">
+                      MOST POPULAR
                     </Badge>
                   </div>
                 )}
