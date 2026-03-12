@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BadgeHelp, Play, AlertCircle, Sparkles, MessageSquare } from "lucide-react";
-import { ErrorFallback } from "@/components/ErrorFallback";
 
 type VivaQuestion = {
   question: string;
@@ -48,10 +47,6 @@ export default function VivaPrepPage() {
       setIsGenerating(false);
     }
   };
-
-  if (error && questions.length === 0 && !isGenerating) {
-    return <ErrorFallback error={error} reset={() => setError(null)} />;
-  }
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto space-y-8 w-full">

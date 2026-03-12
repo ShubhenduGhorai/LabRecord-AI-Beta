@@ -9,14 +9,7 @@ export default async function ToolsLayout({
   children: React.ReactNode;
 }) {
   // Pass false to prevent the hard-redirect intercept
-  let hasAccess = false;
-  try {
-    hasAccess = await checkSubscription(false);
-  } catch (error) {
-    console.error("Server Error (Tools Layout):", error);
-    // Default to no access or handle as error state
-    hasAccess = false;
-  }
+  const hasAccess = await checkSubscription(false);
 
   return (
     <div className="flex-1 w-full flex flex-col min-h-[calc(100vh-4rem)] relative">

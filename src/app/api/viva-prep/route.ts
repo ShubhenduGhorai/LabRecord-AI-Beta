@@ -23,10 +23,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, questions }, { status: 200 });
   } catch (err: any) {
-    console.error("Server Error (Viva Prep):", err);
-    return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
-      { status: 500 }
-    );
+    console.error('API Error:', err);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

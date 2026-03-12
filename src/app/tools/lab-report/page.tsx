@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
-import { ErrorFallback } from "@/components/ErrorFallback";
 import {
   Chart as ChartJS,
   LinearScale,
@@ -306,14 +305,6 @@ export default function GenerateReportPage() {
       setIsDownloadingPdf(false);
     }
   };
-
-  if (error && !analysisResult && !isAnalyzing && !isGeneratingReport) {
-    return (
-      <div className="p-10">
-        <ErrorFallback error={error} reset={() => setError(null)} />
-      </div>
-    );
-  }
 
   return (
     <div className="px-4 py-8 md:p-10 max-w-5xl mx-auto space-y-8">

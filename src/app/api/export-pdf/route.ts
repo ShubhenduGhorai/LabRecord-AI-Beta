@@ -46,10 +46,7 @@ export async function POST(request: Request) {
       download_url: publicUrlData.publicUrl
     }, { status: 201 });
   } catch (err: any) {
-    console.error("Server Error (Export PDF):", err);
-    return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
-      { status: 500 }
-    );
+    console.error('API Error:', err);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

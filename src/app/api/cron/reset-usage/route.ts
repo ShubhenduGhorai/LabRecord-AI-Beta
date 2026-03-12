@@ -47,9 +47,9 @@ export async function GET(request: Request) {
       .neq('month', currentMonth);
 
     if (error) {
-      console.error("Server Error (Cron Reset):", error.message);
+      console.error('Error in database update query:', error.message);
       return NextResponse.json(
-        { error: "Something went wrong. Please try again." },
+        { error: 'Database update failed' },
         { status: 500 }
       );
     }
@@ -59,9 +59,9 @@ export async function GET(request: Request) {
       message: `Successfully reset usage limits for new month: ${currentMonth}`,
     });
   } catch (err) {
-    console.error("Server Error (Cron Reset Unexpected):", err);
+    console.error('Unexpected error during API processing:', err);
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

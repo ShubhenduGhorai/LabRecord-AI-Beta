@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LineChart, Play, AlertCircle, TrendingUp, Target, DivideSquare, Activity, Crosshair } from "lucide-react";
 import Papa from "papaparse";
-import { ErrorFallback } from "@/components/ErrorFallback";
 
 export default function DataAnalysisPage() {
   const [rawData, setRawData] = useState("");
@@ -60,10 +59,6 @@ export default function DataAnalysisPage() {
       setIsAnalyzing(false);
     }
   };
-
-  if (error && !stats && !isAnalyzing) {
-    return <ErrorFallback error={error} reset={() => setError(null)} />;
-  }
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8 w-full">

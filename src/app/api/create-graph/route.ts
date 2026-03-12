@@ -47,10 +47,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, graph: data }, { status: 201 });
   } catch (err: any) {
-    console.error("Server Error (Create Graph):", err);
-    return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
-      { status: 500 }
-    );
+    console.error('API Error:', err);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

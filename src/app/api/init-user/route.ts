@@ -36,9 +36,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Server Error (Init User):", error);
+    console.error('Error in init-user:', error);
     return NextResponse.json(
-      { error: "Something went wrong. Please try again." },
+      { error: error.message || 'Server error tracking init' },
       { status: 500 }
     );
   }
