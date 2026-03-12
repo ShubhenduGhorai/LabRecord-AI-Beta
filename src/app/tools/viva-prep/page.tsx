@@ -39,7 +39,8 @@ import {
   BarChart3,
   Search,
   ExternalLink,
-  Target
+  Target,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
