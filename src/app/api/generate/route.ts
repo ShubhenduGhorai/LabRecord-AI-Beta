@@ -17,6 +17,12 @@ export async function POST(request: Request) {
   let userId: string | undefined;
 
   try {
+    const openaiKey = process.env.OPENAI_API_KEY;
+    if (!openaiKey) {
+      console.error("Server Error: Missing OPENAI_API_KEY");
+      return NextResponse.json({ error: "API configuration error." }, { status: 500 });
+    }
+
     // 1. Authenticate
     const user = await getAuthenticatedUser();
     userId = user.id;
@@ -110,8 +116,9 @@ export async function POST(request: Request) {
     }
 
     logAPIError('/api/generate', err, userId);
+    console.error('Server Error (Generate API):', err);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Something went wrong. Please try again later.' },
       { status: 500 }
     );
   }

@@ -4,6 +4,15 @@ import { aiService } from '@/services/aiService';
 
 export async function POST(request: Request) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey || !openaiKey) {
+      console.error("Server Error: Missing environment variables for Viva Prep");
+      return NextResponse.json({ error: "Configuration error. Please contact support." }, { status: 500 });
+    }
+
     const supabase = await createSupabaseServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -11,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { experiment_title } = body;
 
     if (!experiment_title) {
@@ -23,7 +32,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, questions }, { status: 200 });
   } catch (err: any) {
-    console.error('API Error:', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Server Error (Viva Prep API):', err);
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

@@ -1,26 +1,32 @@
 export const PLANS = [
   {
+    id: 'free',
     name: 'Free',
     description: 'Perfect for getting started.',
-    price: '$0',
+    price: '₹0',
+    amount: 0,
     features: ['3 reports per month', 'Basic data analysis', 'Community support'],
     priceId: null,
   },
   {
+    id: 'pro',
     name: 'Pro',
     description: 'Unlimited reports for serious students.',
-    price: '$9',
+    price: '₹499',
+    amount: 499,
     period: '/month',
     features: ['Unlimited reports', 'AI report generation', 'PDF download', 'Priority support'],
-    priceId: 'price_pro_id', // Placeholder - User to replace
+    priceId: 'plan_pro', 
     popular: true,
   },
   {
+    id: 'research',
     name: 'Research',
     description: 'Advanced features for researchers.',
-    price: '$99',
+    price: '₹4,999',
+    amount: 4999,
     period: '/year',
     features: ['Unlimited reports', 'Advanced AI analysis', 'Viva preparation sheets', 'Priority processing'],
-    priceId: 'price_research_id', // Placeholder - User to replace
+    priceId: 'plan_research',
   },
 ];

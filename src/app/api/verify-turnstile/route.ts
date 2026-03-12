@@ -25,13 +25,13 @@ export async function POST(request: Request) {
 
     const secretKey = process.env.TURNSTILE_SECRET_KEY;
     if (!secretKey) {
-      console.error('[verify-turnstile] TURNSTILE_SECRET_KEY is not configured');
+      console.error('Server Configuration Error: TURNSTILE_SECRET_KEY is missing');
       // Fail open in development if not configured — will fail in production
       if (process.env.NODE_ENV === 'development') {
         return NextResponse.json({ success: true });
       }
       return NextResponse.json(
-        { success: false, error: 'CAPTCHA service not configured' },
+        { success: false, error: 'CAPTCHA service is temporarily unavailable.' },
         { status: 500 }
       );
     }
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     const data = await verifyResponse.json();
 
     if (!data.success) {
-      console.warn('[verify-turnstile] Verification failed:', data['error-codes']);
+      console.warn('Turnstile Verification Failed:', data['error-codes']);
       return NextResponse.json(
         {
           success: false,
@@ -61,9 +61,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err: any) {
-    console.error('[verify-turnstile] Error:', err.message);
+    console.error('Server Error (Verify Turnstile API):', err);
     return NextResponse.json(
-      { success: false, error: 'Internal Server Error' },
+      { success: false, error: 'Internal system error. Please try again.' },
       { status: 500 }
     );
   }

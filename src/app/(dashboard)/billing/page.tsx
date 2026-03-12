@@ -30,22 +30,40 @@ export default function BillingPage() {
     fetchUserPlan();
   }, []);
 
-  const handleUpgrade = async (priceId: string | null, planName: string) => {
-    if (!priceId) return;
+  const handleUpgrade = async (plan: any) => {
+    if (plan.id === 'free') return;
     
-    setLoading(planName);
+    setLoading(plan.id);
     try {
-      const res = await fetch("/api/create-checkout-session", {
+      const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ 
+          planId: plan.id,
+          amount: plan.amount 
+        }),
       });
       
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
+      const orderData = await res.json();
+      if (orderData.error) throw new Error(orderData.error);
+      
+      if (typeof window !== "undefined" && (window as any).Razorpay) {
+        const options = {
+          key: orderData.key_id,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "LabRecord AI",
+          description: `Upgrade to ${plan.name}`,
+          order_id: orderData.id,
+          handler: function (response: any) {
+             window.location.href = "/billing?payment_id=" + response.razorpay_payment_id;
+          },
+          theme: { color: "#4f46e5" },
+        };
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
       } else {
-        throw new Error(data.error || "Failed to create checkout session");
+        throw new Error("Razorpay SDK not loaded");
       }
     } catch (error) {
       console.error(error);
@@ -107,16 +125,16 @@ export default function BillingPage() {
             </CardContent>
             <CardFooter>
               <Button 
-                onClick={() => handleUpgrade(plan.priceId, plan.name)}
-                disabled={currentPlan === plan.name || (loading !== null) || !plan.priceId}
+                onClick={() => handleUpgrade(plan)}
+                disabled={currentPlan.toLowerCase() === plan.id.toLowerCase() || (loading !== null) || plan.id === 'free'}
                 variant={plan.popular ? "default" : "outline"}
                 className={`w-full py-6 font-semibold ${
                   plan.popular ? "bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200" : ""
                 }`}
               >
-                {loading === plan.name ? (
+                {loading === plan.id ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
-                ) : currentPlan === plan.name ? (
+                ) : currentPlan.toLowerCase() === plan.id.toLowerCase() ? (
                   "Active"
                 ) : (
                   `Upgrade to ${plan.name}`

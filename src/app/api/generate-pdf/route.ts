@@ -8,6 +8,14 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error("Server Error: Missing Supabase environment variables for PDF Generation");
+      return NextResponse.json({ error: "Configuration error. Please contact support." }, { status: 500 });
+    }
+
     const supabase = await createSupabaseServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -15,7 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { experiment_id } = body;
 
     if (!experiment_id) {
@@ -35,7 +43,7 @@ export async function POST(req: Request) {
     // 4. Save the file path in experiments.report_path
     await experimentService.updateExperimentReportPath(experiment_id, filePath);
 
-    // Get public or signed URL based on your bucket config (assuming public for now, or returning path)
+    // Get public URL
     const { data: publicUrlData } = supabase
       .storage
       .from('labreports')
@@ -48,9 +56,9 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    console.error('Error generating PDF:', error);
+    console.error('Server Error (Generate PDF API):', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to generate PDF' },
+      { error: 'Something went wrong while generating your PDF. Please try again.' },
       { status: 500 }
     );
   }

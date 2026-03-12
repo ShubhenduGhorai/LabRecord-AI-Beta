@@ -39,22 +39,50 @@ export default function PricingPage() {
     fetchUserPlan();
   }, []);
 
-  const handleSubscribe = async (priceId: string) => {
+  const handleSubscribe = async (plan: any) => {
     try {
-      setLoadingPriceId(priceId);
-      const res = await fetch("/api/create-checkout-session", {
+      setLoadingPriceId(plan.id);
+      
+      const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ 
+          planId: plan.id,
+          amount: plan.amount 
+        }),
       });
 
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url; // Redirect to Stripe
+      const orderData = await res.json();
+      if (orderData.error) throw new Error(orderData.error);
+
+      if (typeof window !== "undefined" && (window as any).Razorpay) {
+        const options = {
+          key: orderData.key_id,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "LabRecord AI",
+          description: `Subscription: ${plan.name} Plan`,
+          order_id: orderData.id,
+          handler: function (response: any) {
+            // Payment success callback
+            window.location.href = "/billing?payment_id=" + response.razorpay_payment_id;
+          },
+          prefill: {
+            name: "", // Will be filled by Razorpay if user is logged in
+            email: "", 
+            contact: "",
+          },
+          theme: {
+            color: "#4f46e5",
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
       } else {
-        throw new Error("No checkout URL returned");
+        throw new Error("Razorpay SDK not loaded");
       }
     } catch (error) {
       console.error("Subscription error:", error);
@@ -120,8 +148,8 @@ export default function PricingPage() {
                   {plan.name}
                 </CardTitle>
                 <div className="flex items-baseline justify-center gap-1.5">
-                  <span className="text-4xl font-extrabold tracking-tight">${plan.price}</span>
-                  <span className="text-muted-foreground font-medium">/{plan.interval}</span>
+                  <span className="text-4xl font-extrabold tracking-tight">{plan.price}</span>
+                  <span className="text-muted-foreground font-medium">{plan.period}</span>
                 </div>
                 <CardDescription className="pt-4 text-sm font-medium">
                   {plan.id === 'free' ? "Basic access limits apply." : "Full access to all tools."}
@@ -143,8 +171,8 @@ export default function PricingPage() {
 
               <CardFooter className="pt-8 pb-8">
                 <Button 
-                  onClick={() => plan.priceId && handleSubscribe(plan.priceId)}
-                  disabled={isCurrentPlan || !plan.priceId || loadingPriceId === plan.priceId}
+                  onClick={() => plan.id !== 'free' && handleSubscribe(plan)}
+                  disabled={isCurrentPlan || plan.id === 'free' || loadingPriceId === plan.id}
                   variant={isPopular ? "default" : "outline"}
                   className={`w-full h-12 text-base font-semibold ${
                     isPopular 
@@ -153,8 +181,8 @@ export default function PricingPage() {
                   }`}
                 >
                   {isCurrentPlan ? "Current Plan" : 
-                   loadingPriceId === plan.priceId ? "Processing..." : 
-                   !plan.priceId ? "Contact Sales" : "Upgrade Plan"}
+                   loadingPriceId === plan.id ? "Processing..." : 
+                   plan.id === 'free' ? "Default Plan" : "Upgrade Plan"}
                 </Button>
               </CardFooter>
             </Card>

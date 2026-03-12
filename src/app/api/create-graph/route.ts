@@ -4,6 +4,14 @@ import { userService } from '@/services/userService';
 
 export async function POST(request: Request) {
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error("Server Error: Missing Supabase environment variables");
+      return NextResponse.json({ error: "Configuration error. Please contact support." }, { status: 500 });
+    }
+
     const supabase = await createSupabaseServerClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -11,7 +19,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const { experiment_id, title, xAxis, yAxis, dataPoints } = body;
 
     // xAxis and yAxis can be strings (labels), dataPoints can be the actual x/y dataset
@@ -41,13 +49,13 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      console.error('Error saving graph:', error);
-      return NextResponse.json({ error: 'Failed to save graph' }, { status: 500 });
+      console.error('Database Error (Save Graph):', error);
+      return NextResponse.json({ error: 'Failed to save graph to database.' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, graph: data }, { status: 201 });
   } catch (err: any) {
-    console.error('API Error:', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Server Error (Create Graph API):', err);
+    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }
