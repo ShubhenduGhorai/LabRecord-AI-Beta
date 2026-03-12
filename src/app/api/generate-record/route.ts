@@ -118,6 +118,10 @@ Respond with valid JSON only.
     }
 
     logAPIError('/api/generate-record', err, userId);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Server Error (Generate Record):", err);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    );
   }
 }

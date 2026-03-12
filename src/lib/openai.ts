@@ -1,7 +1,11 @@
 import 'server-only';
 import OpenAI from 'openai';
 
-if (!process.env.OPENAI_API_KEY) {
+const apiKey = process.env.OPENAI_API_KEY;
+
+if (!apiKey) {
+  console.error("Server Error: OPENAI_API_KEY environment variable is missing.");
+  // We throw here because AI features cannot function without this key.
   throw new Error('Missing OPENAI_API_KEY environment variable');
 }
 

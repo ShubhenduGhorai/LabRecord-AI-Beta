@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HardDrive, UploadCloud, File, AlertCircle, CheckCircle2 } from "lucide-react";
+import { ErrorFallback } from "@/components/ErrorFallback";
 
 export default function CloudStoragePage() {
   const [file, setFile] = useState<File | null>(null);
@@ -60,6 +61,10 @@ export default function CloudStoragePage() {
       setIsUploading(false);
     }
   };
+
+  if (error && !file && !isUploading) {
+    return <ErrorFallback error={error} reset={() => setError(null)} />;
+  }
 
   return (
     <div className="p-6 md:p-10 max-w-4xl mx-auto space-y-8 w-full">

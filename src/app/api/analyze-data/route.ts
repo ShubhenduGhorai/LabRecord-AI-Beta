@@ -68,7 +68,10 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("Analysis Error:", error);
-    return NextResponse.json({ error: "Failed to analyze data." }, { status: 500 });
+    console.error("Server Error (Analysis):", error);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    );
   }
 }

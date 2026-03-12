@@ -48,9 +48,9 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    console.error('Error generating PDF:', error);
+    console.error("Server Error (Generate PDF):", error);
     return NextResponse.json(
-      { error: error.message || 'Failed to generate PDF' },
+      { error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }

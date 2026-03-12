@@ -1,7 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
+import { ErrorFallback } from "@/components/ErrorFallback";
 
 export default function ResearchFormattingPage() {
+  // This page is currently a placeholder, but we harden it anyway.
+  const error = null; 
+
+  if (error) return <ErrorFallback error={error} />;
+
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8 w-full">
       <Card className="border-purple-100 shadow-sm bg-gradient-to-br from-purple-50/50 to-white">

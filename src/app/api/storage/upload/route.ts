@@ -34,7 +34,10 @@ export async function POST(request: Request) {
     // 4. Return uploaded file path
     return NextResponse.json({ success: true, file_path: fileName }, { status: 201 });
   } catch (err: any) {
-    console.error('API Error:', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Server Error (Storage Upload):", err);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    );
   }
 }

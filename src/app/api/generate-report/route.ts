@@ -90,6 +90,10 @@ export async function POST(request: Request) {
     }
 
     logAPIError('/api/generate-report', err, userId);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Server Error (Generate Report):", err);
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    );
   }
 }

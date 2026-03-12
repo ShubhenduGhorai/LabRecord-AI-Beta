@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { BarChart2, Play, AlertCircle, LayoutTemplate } from "lucide-react";
 import Papa from "papaparse";
+import { ErrorFallback } from "@/components/ErrorFallback";
 import { Chart as ChartJS, LinearScale, PointElement, LineElement, Tooltip, Legend, CategoryScale, BarElement } from 'chart.js';
 import { Scatter, Bar, Line } from 'react-chartjs-2';
 
@@ -120,6 +121,10 @@ export default function GraphGeneratorPage() {
         return <Scatter ref={chartRef} data={data} options={options as any} />;
     }
   };
+
+  if (error && !graphData && !isGenerating) {
+    return <ErrorFallback error={error} reset={() => setError(null)} />;
+  }
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8 w-full">
