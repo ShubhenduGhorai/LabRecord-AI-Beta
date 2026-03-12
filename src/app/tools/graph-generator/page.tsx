@@ -23,6 +23,7 @@ import {
   Plus, 
   RefreshCw,
   Zap,
+  TrendingUp,
   ChevronRight,
   Database,
   BarChart2,
