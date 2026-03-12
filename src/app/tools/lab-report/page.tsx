@@ -68,32 +68,45 @@ export default function AIReportWriterPage() {
     setError(null);
     setStatus("processing");
     setProcessingStep("Synthesizing experiment context...");
-    
+
     try {
       await new Promise(r => setTimeout(r, 1000));
-      setProcessingStep("Drafting academic sections...");
+      setProcessingStep("AI is generating your result...");
       await new Promise(r => setTimeout(r, 1000));
-      setProcessingStep("Aligning scientific nomenclature...");
+
+      const prompt = `Generate a professional, structured laboratory experiment report.
+Title: ${metadata.name}
+Subject: ${metadata.subject || 'General Science'}
+Context/Observations: ${metadata.description || 'Standard laboratory experiment'}
+
+Please provide a JSON response with the following exact keys:
+- "aim": Clear objective
+- "theory": Scientific background and laws
+- "apparatus": List of equipment
+- "procedure": Step-by-step instructions
+- "observations": What was noticed
+- "calculations": Formulas or mock data processing
+- "result": Final findings
+- "conclusion": Scientific summary
+- "precautions": Safety and error mitigation
+
+Ensure the response is valid JSON only.`;
 
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           tool: "lab-report", 
-          content: {
-            title: metadata.name, 
-            subject: metadata.subject, 
-            description: metadata.description 
-          }
+          prompt: prompt
         })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "AI Generation failed");
-      setSections(data.result);
+      if (!res.ok) throw new Error(data.error || "AI failed");
+      setSections(JSON.parse(data.result));
       setStatus("completed");
       setViewMode("preview");
     } catch (err: any) {
-      setError(err.message);
+      setError("AI service temporarily unavailable. Please try again.");
       setStatus("idle");
     }
   };

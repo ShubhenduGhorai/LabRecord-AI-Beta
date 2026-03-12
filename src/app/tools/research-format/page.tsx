@@ -63,30 +63,40 @@ export default function ResearchFormattingPage() {
 
   const runAIFormat = async () => {
     setError(null);
-    setStatus("processing");
-    setProcessingStep("Analyzing manuscript structure...");
-    
     try {
       await new Promise(r => setTimeout(r, 800));
-      setProcessingStep(`Applying ${style} citation logic...`);
+      setProcessingStep("AI is generating your result...");
       await new Promise(r => setTimeout(r, 800));
-      setProcessingStep("Extracting semantic sections...");
+
+      const prompt = `Format the following research text into a structured ${style} layout.
+Identify: Abstract, Introduction, Methodology, Results, and Conclusion.
+
+Provide a JSON response:
+{
+  "abstract": "...",
+  "introduction": "...",
+  "methodology": "...",
+  "results": "...",
+  "conclusion": "...",
+  "citations": ["..."]
+}
+
+Text: ${text}`;
 
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           tool: "research-format", 
-          content: text,
-          options: { style }
+          prompt: prompt
         })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Formatting failed");
-      setResult(data.result);
+      if (!res.ok) throw new Error(data.error || "AI failed");
+      setResult(JSON.parse(data.result));
       setStatus("completed");
     } catch (err: any) {
-      setError(err.message);
+      setError("AI service temporarily unavailable. Please try again.");
       setStatus("idle");
     }
   };

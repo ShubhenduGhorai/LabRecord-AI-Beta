@@ -130,30 +130,45 @@ export default function GraphGeneratorPage() {
     
     try {
       await new Promise(r => setTimeout(r, 600));
-      setProcessingStep("Optimizing axis scales...");
+      setProcessingStep("AI is generating your result...");
       await new Promise(r => setTimeout(r, 600));
-      setProcessingStep("Detecting best visualization type...");
 
       const csvData = Papa.unparse(dataPoints.filter(p => p.x !== "" && p.y !== ""));
+      const prompt = `Based on this scientific dataset, recommend the best visualization:
+${csvData}
+
+Provide:
+1. Chart type (scatter, line, bar)
+2. Axis labels
+3. Scientific title
+
+Respond in valid JSON format:
+{
+  "type": "...",
+  "xAxis": "...",
+  "yAxis": "...",
+  "title": "..."
+}`;
+
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           tool: "graph-generator", 
-          content: csvData 
+          prompt: prompt
         })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "AI Prediction failed");
+      if (!res.ok) throw new Error(data.error || "AI failed");
       
-      const config = data.result;
+      const config = JSON.parse(data.result);
       setGraphType(config.type as any);
       setXAxisLabel(config.xAxis);
       setYAxisLabel(config.yAxis);
       setTitle(config.title);
       setStatus("completed");
     } catch (err: any) {
-      setError(err.message);
+      setError("AI service temporarily unavailable. Please try again.");
       setStatus("idle");
     }
   };

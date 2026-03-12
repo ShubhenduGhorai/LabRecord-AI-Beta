@@ -94,29 +94,45 @@ export default function AdvancedVivaSimulatorPage() {
     
     try {
       await new Promise(r => setTimeout(r, 800));
-      setProcessingStep("Tailoring difficulty parameters...");
+      setProcessingStep("AI is generating your result...");
       await new Promise(r => setTimeout(r, 800));
-      setProcessingStep("Initializing neural defense model...");
+
+      const prompt = `Generate 5 technical viva questions and detailed answers for: "${title}" at ${difficulty} level.
+Include a mix of: Conceptual theory, Mathematical/Calculation based, and Graph/Data interpretation.
+
+Provide a JSON response:
+{
+  "questions": [
+    {
+      "question": "...",
+      "answer": "...",
+      "type": "Conceptual | Calculation | Graph Analysis",
+      "explanation": "..."
+    }
+  ]
+}`;
 
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           tool: "viva-prep", 
-          content: title,
-          options: { difficulty }
+          prompt: prompt
         })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Session initialization failed");
+      if (!res.ok) throw new Error(data.error || "AI failed");
       
-      setQuestions(data.result);
+      const parsed = JSON.parse(data.result);
+      const questionsData = parsed.questions || [];
+      
+      setQuestions(questionsData);
       setStatus("active");
       setViewMode("interview");
       setIsTimerActive(true);
-      setMessages([{ role: "ai", text: `Welcome. I am your AI Examiner. We will now begin the ${difficulty} defense for: ${title}. \n\nStarting with ${data.result[0].type}: ${data.result[0].question}` }]);
+      setMessages([{ role: "ai", text: `Welcome. I am your AI Examiner. We will now begin the ${difficulty} defense for: ${title}. \n\nStarting with ${questionsData[0].type}: ${questionsData[0].question}` }]);
     } catch (err: any) {
-      setError(err.message);
+      setError("AI service temporarily unavailable. Please try again.");
       setStatus("idle");
     }
   };

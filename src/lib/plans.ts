@@ -39,7 +39,7 @@ export const PLANS = [
       'PDF & DOCX Export',
       'Priority AI processing'
     ],
-    priceId: 'plan_pro_yearly', 
+    priceId: 'plan_pro_yearly',
     popular: true,
     limit: 200,
   },

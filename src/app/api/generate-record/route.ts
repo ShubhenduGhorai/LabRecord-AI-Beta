@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     let sanitizedPrompt: string;
     try {
       const rawInput = prompt ?? [title, subject, description].filter(Boolean).join(' – ') ?? '';
-      sanitizedPrompt = validateAndSanitizeInput(rawInput, 'Prompt');
+      sanitizedPrompt = validateAndSanitizeInput(rawInput);
     } catch (validationErr: any) {
       return NextResponse.json({ error: validationErr.message }, { status: 400 });
     }

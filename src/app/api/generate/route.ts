@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         prompt ??
         [title, subject, description].filter(Boolean).join(' – ') ??
         '';
-      sanitizedInput = validateAndSanitizeInput(rawInput, 'Prompt');
+      sanitizedInput = validateAndSanitizeInput(rawInput);
     } catch (validationError: any) {
       return NextResponse.json(
         { error: validationError.message },

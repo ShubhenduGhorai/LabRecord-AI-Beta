@@ -133,27 +133,44 @@ export default function DataAnalysisPage() {
 
     try {
       await new Promise(r => setTimeout(r, 800));
-      setProcessingStep("Calculating statistical moments...");
+      setProcessingStep("AI is generating your result...");
       await new Promise(r => setTimeout(r, 800));
-      setProcessingStep("Computing linear regression model...");
 
       const csvData = Papa.unparse(dataPoints.filter(p => p.x !== "" && p.y !== ""));
+      const prompt = `Analyze this scientific dataset:
+${csvData}
+
+Provide:
+1. Mean and Standard Deviation
+2. Linear Regression (slope, intercept, R-squared)
+3. Correlation Coefficient
+4. A brief scientific interpretation.
+
+Respond in valid JSON format:
+{
+  "mean": 0,
+  "stdDev": 0,
+  "regression": { "slope": 0, "intercept": 0, "r2": 0 },
+  "correlation": 0,
+  "summary": "..."
+}`;
+
       const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           tool: "data-analysis", 
-          content: csvData 
+          prompt: prompt
         })
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "AI Analysis failed");
+      if (!res.ok) throw new Error(data.error || "AI failed");
 
-      setResults(data.result);
+      setResults(JSON.parse(data.result));
       setStatus("completed");
     } catch (err: any) {
-      setError(err.message);
+      setError("AI service temporarily unavailable. Please try again.");
       setStatus("idle");
     }
   };
