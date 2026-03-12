@@ -31,7 +31,8 @@ import {
   Zap,
   Loader2,
   FileSearch,
-  Cloud
+  Cloud,
+  Download
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
