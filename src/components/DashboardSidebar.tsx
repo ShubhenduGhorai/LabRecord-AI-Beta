@@ -8,7 +8,6 @@ import {
   LayoutDashboard, 
   FlaskConical, 
   FileText, 
-  CreditCard, 
   Settings, 
   LogOut,
   Beaker,
@@ -35,7 +34,6 @@ export function Sidebar() {
     { name: "Experiments", href: "/experiments", icon: FlaskConical },
     { name: "My Reports", href: "/reports", icon: FileText },
     { name: "Cloud Storage", href: "/storage", icon: FlaskConical },
-    { name: "Billing", href: "/billing", icon: CreditCard },
     { name: "Account Settings", href: "/settings", icon: Settings },
   ];
 

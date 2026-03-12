@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import { User } from "@supabase/supabase-js";
-import { Settings, LayoutDashboard, LogOut, ChevronDown, User as UserIcon } from "lucide-react";
+import { Settings, LayoutDashboard, LogOut, ChevronDown, User as UserIcon, CreditCard } from "lucide-react";
 
 export function NavbarProfileMenu() {
   const [user, setUser] = useState<User | null>(null);
@@ -77,6 +77,9 @@ export function NavbarProfileMenu() {
         <Link href="/dashboard" className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors">
           <LayoutDashboard className="w-4 h-4" /> My Reports
         </Link>
+        <Link href="/billing" className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors">
+          <CreditCard className="w-4 h-4" /> Billing & Subscription
+        </Link>
         <Link href="/settings" className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors">
           <Settings className="w-4 h-4" /> Account Settings
         </Link>
@@ -111,6 +114,9 @@ export function NavbarProfileMenu() {
             
             <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
               <LayoutDashboard className="w-4 h-4" /> My Reports
+            </Link>
+            <Link href="/billing" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
+              <CreditCard className="w-4 h-4" /> Billing & Subscription
             </Link>
             <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
               <Settings className="w-4 h-4" /> Account Settings
