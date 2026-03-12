@@ -194,7 +194,7 @@ export default function DashboardPage() {
     {
       title: "Cloud Storage",
       description: "Securely save, organize, and access all your generated PDF reports.",
-      href: "/tools/storage",
+      href: "/storage",
       color: "from-emerald-600 to-teal-600",
       isPremium: false,
       illustration: (

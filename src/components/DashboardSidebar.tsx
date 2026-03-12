@@ -8,11 +8,14 @@ import {
   LayoutDashboard, 
   FlaskConical, 
   FileText, 
-  Settings, 
+  X,
+  Database,
+  Calculator,
+  HardDrive,
+  Settings,
   LogOut,
   Beaker,
-  Menu,
-  X
+  Menu
 } from "lucide-react";
 import { useState } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
@@ -32,8 +35,9 @@ export function Sidebar() {
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Experiments", href: "/experiments", icon: FlaskConical },
+    { name: "Analysis Studio", href: "/tools/data-analysis", icon: Calculator },
     { name: "My Reports", href: "/reports", icon: FileText },
-    { name: "Cloud Storage", href: "/storage", icon: FlaskConical },
+    { name: "Experiment Vault", href: "/storage", icon: Database },
     { name: "Account Settings", href: "/settings", icon: Settings },
   ];
 
