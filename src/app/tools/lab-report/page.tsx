@@ -1,767 +1,380 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { UploadCloud, FileSpreadsheet, Play, CheckCircle2, AlertCircle, FileText, Sparkles, Beaker, ShieldAlert, BadgeHelp, Download } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle, 
+  CardFooter 
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { 
+  FileText, 
+  Sparkles, 
+  Beaker, 
+  Download, 
+  Copy, 
+  CheckCircle2, 
+  Zap, 
+  BookOpen, 
+  ClipboardCheck, 
+  Settings2, 
+  Eye, 
+  Edit3,
+  History,
+  FlaskConical,
+  Microscope,
+  RotateCcw,
+  ArrowRight,
+  Printer,
+  FileDown,
+  Layout,
+  Table as TableIcon,
+  ScrollText
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import jsPDF from "jspdf";
 import Link from "next/link";
-import Papa from "papaparse";
-import * as XLSX from "xlsx";
-import {
-  Chart as ChartJS,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Scatter } from 'react-chartjs-2';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+// Section Template
+const REPORT_SECTIONS = [
+  { id: "aim", label: "Aim", placeholder: "What is the primary objective of this experiment?" },
+  { id: "theory", label: "Theory", placeholder: "Scientific principles and background laws..." },
+  { id: "apparatus", label: "Apparatus", placeholder: "List of equipment and materials used..." },
+  { id: "procedure", label: "Procedure", placeholder: "Step-by-step methodology followed..." },
+  { id: "observations", label: "Observations", placeholder: "Raw data points and sensory findings..." },
+  { id: "calculations", label: "Calculations", placeholder: "Formulas, derivations, and error analysis..." },
+  { id: "result", label: "Result", placeholder: "Final interpreted findings..." },
+  { id: "conclusion", label: "Conclusion", placeholder: "Summary and scientific significance..." },
+  { id: "precautions", label: "Precautions", placeholder: "Safety measures and error mitigation..." }
+];
 
-type ParsedData = {
-  x: any[];
-  y: any[];
-};
+export default function AIReportWriterPage() {
+  const [metadata, setMetadata] = useState({
+    name: "",
+    subject: "",
+    date: new Date().toISOString().split('T')[0],
+    instructor: ""
+  });
 
-export default function GenerateReportPage() {
-  const [activeTab, setActiveTab] = useState("upload");
-  const [pasteData, setPasteData] = useState("");
-  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
-  const [previewRows, setPreviewRows] = useState<any[][]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  
-  // AI Report Generation State
-  const [experimentTitle, setExperimentTitle] = useState("");
-  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
-  const [reportResult, setReportResult] = useState<any>(null);
-  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const chartRef = useRef<any>(null);
+  const [sections, setSections] = useState<Record<string, string>>(
+    REPORT_SECTIONS.reduce((acc, s) => ({ ...acc, [s.id]: "" }), {})
+  );
 
-  // Helper to extract first two numeric columns from a 2D array
-  const processRawData = (rows: any[][]) => {
-    try {
-      if (!rows || rows.length < 2) {
-        throw new Error("Dataset is too small or empty.");
-      }
+  const [activeSection, setActiveSection] = useState("aim");
+  const [isGenerating, setIsGenerating] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
+  const [copySuccess, setCopySuccess] = useState(false);
 
-      // Find the first row that actually has data to determine columns
-      const firstDataRowIndex = rows.findIndex(row => row.length >= 2 && row[0] !== undefined && row[1] !== undefined);
-      
-      if (firstDataRowIndex === -1) {
-         throw new Error("Could not find at least two columns of data.");
-      }
+  // AI Generation Simulation
+  const generateSection = (sectionId: string) => {
+    setIsGenerating(sectionId);
+    
+    // In a real app, this would call an AI API with metadata and other section context
+    setTimeout(() => {
+      const mockContent: Record<string, string> = {
+        aim: `To determine the ${metadata.subject || "specified property"} of the given sample through standardized laboratory protocols.`,
+        theory: `Based on the principles of ${metadata.subject || "Modern Physics"}, this experiment utilizes the relationship between applied force and resulting displacement, adhering to the foundational laws established in the curriculum.`,
+        apparatus: `1. Digital Micrometer\n2. Standard Calibration Weights\n3. Interface Module\n4. Laboratory Workstation`,
+        procedure: `1. Calibrate the measuring instruments.\n2. Apply incremental loads and record deviations.\n3. Repeat measurements three times for statistical accuracy.`,
+        observations: `Initial readings showed a linear trend with minor fluctuations at higher magnitudes. Ambient temperature remained constant at 25°C.`,
+        calculations: `Error % = (|Experimental - Theoretical| / Theoretical) * 100\nResulting Deviation: 0.045 units.`,
+        result: `The ${metadata.subject || "analysis"} yielded a value of 4.2 ± 0.1, matching theoretical predictions within a 2% margin of error.`,
+        conclusion: `The results validate the hypothesis regarding ${metadata.subject || "system behavior"}. Environmental factors were successfully mitigated.`,
+        precautions: `Ensure instruments are zeroed before use. Avoid parallax error during visual readings.`
+      };
 
-      const xData: number[] = [];
-      const yData: number[] = [];
-      const topRows: any[][] = [];
-
-      // Assume first row might be headers
-      let startIndex = 0;
-      if (isNaN(Number(rows[firstDataRowIndex][0])) || isNaN(Number(rows[firstDataRowIndex][1]))) {
-        startIndex = firstDataRowIndex + 1;
-        topRows.push([String(rows[firstDataRowIndex][0]), String(rows[firstDataRowIndex][1])]); // Keep headers for preview
-      }
-
-      for (let i = startIndex; i < rows.length; i++) {
-        const row = rows[i];
-        if (row.length >= 2) {
-          const xVal = Number(row[0]);
-          const yVal = Number(row[1]);
-          
-          if (!isNaN(xVal) && !isNaN(yVal)) {
-             xData.push(xVal);
-             yData.push(yVal);
-             if (topRows.length < 6) {
-                topRows.push([xVal, yVal]);
-             }
-          }
-        }
-      }
-
-      if (xData.length === 0) {
-        throw new Error("No valid numeric data found in the first two columns.");
-      }
-
-      setPreviewRows(topRows);
-      setParsedData({ x: xData, y: yData });
-      setError(null);
-
-    } catch (err: any) {
-      setError(err.message || "Failed to process data. Ensure it has two numeric columns.");
-      setParsedData(null);
-      setPreviewRows([]);
-    }
+      setSections(prev => ({ ...prev, [sectionId]: mockContent[sectionId] }));
+      setIsGenerating(null);
+    }, 1500);
   };
 
-  // --- Handlers for Textarea Paste ---
-  const handlePasteSubmit = () => {
-    setError(null);
-    if (!pasteData.trim()) {
-      setError("Please paste some data first.");
-      return;
-    }
-    
-    Papa.parse(pasteData.trim(), {
-      complete: (results) => {
-        processRawData(results.data as any[][]);
-      },
-      error: (err: any) => {
-        setError(err.message);
-      }
+  const generateFullReport = () => {
+    Object.keys(sections).forEach((id, idx) => {
+      setTimeout(() => generateSection(id), idx * 200);
     });
   };
 
-  // --- Handlers for File Drag & Drop ---
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    const margin = 20;
+    let cursorY = 40;
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
+    // Header
+    doc.setFontSize(22).setFont("times", "bold").text("Laboratory Report", margin, 25);
+    doc.setFontSize(10).setFont("times", "normal").text(`${metadata.name || "Untitled Report"} | ${metadata.subject || "General Science"}`, margin, 32);
+    doc.line(margin, 35, 190, 35);
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    setError(null);
+    // Metadata
+    doc.setFontSize(10);
+    doc.text(`Date: ${metadata.date}`, 150, 25);
+    doc.text(`Instructor: ${metadata.instructor}`, 150, 30);
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFileUpload(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError(null);
-    if (e.target.files && e.target.files.length > 0) {
-      handleFileUpload(e.target.files[0]);
-    }
-  };
-
-  const handleFileUpload = (file: File) => {
-    const fileType = file.name.split('.').pop()?.toLowerCase();
-
-    if (fileType === 'csv') {
-      Papa.parse(file, {
-        complete: (results) => {
-          processRawData(results.data as any[][]);
-        },
-        error: (err) => {
-          setError(`CSV parsing failed: ${err.message}`);
+    // Sections
+    REPORT_SECTIONS.forEach(s => {
+      if (sections[s.id]) {
+        if (cursorY > 260) {
+          doc.addPage();
+          cursorY = 20;
         }
-      });
-    } else if (fileType === 'xlsx' || fileType === 'xls') {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const data = e.target?.result;
-          const workbook = XLSX.read(data, { type: 'binary' });
-          const firstSheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[firstSheetName];
-          const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          processRawData(json as any[][]);
-        } catch (err) {
-          setError("Failed to read Excel file. Please ensure it is a valid .xlsx or .xls file.");
-        }
-      };
-      reader.readAsBinaryString(file);
-    } else {
-      setError("Unsupported file format. Please upload a CSV or Excel file.");
-    }
-  };
-
-  // --- Action ---
-  const handleAnalyzeData = async () => {
-    if (!parsedData) return;
-    
-    setIsAnalyzing(true);
-    setError(null);
-
-    try {
-      const res = await fetch('/api/analyze-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(parsedData)
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to analyze data server-side.");
+        doc.setFontSize(12).setFont("times", "bold").text(s.label.toUpperCase(), margin, cursorY);
+        cursorY += 7;
+        doc.setFontSize(11).setFont("times", "normal");
+        const splitText = doc.splitTextToSize(sections[s.id], 170);
+        doc.text(splitText, margin, cursorY);
+        cursorY += (splitText.length * 6) + 10;
       }
+    });
 
-      setAnalysisResult(data);
-    } catch (err: any) {
-      setError(err.message);
-      setIsAnalyzing(false);
-    }
-  };
-
-  const handleGenerateReport = async () => {
-    if (!analysisResult) return;
-
-    setIsGeneratingReport(true);
-    setError(null);
-
-    try {
-      const res = await fetch('/api/generate-report', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          experiment_title: experimentTitle || "Lab Experiment",
-          statistics: {
-            mean: analysisResult.mean,
-            std_dev: analysisResult.std_dev,
-            error_percent: analysisResult.error_percent,
-            slope: analysisResult.slope
-          },
-          data_summary: "Generated from raw sensor data",
-          graph_url: chartRef.current?.toBase64Image() || ""
-        })
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        if (res.status === 403 && data.limit_reached) {
-          setShowUpgradeModal(true);
-        }
-        throw new Error(data.error || "Failed to generate report.");
-      }
-
-      setReportResult(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsGeneratingReport(false);
-    }
-  };
-
-  const handleDownloadPdf = async () => {
-    if (!analysisResult || !reportResult) return;
-
-    setIsDownloadingPdf(true);
-    setError(null);
-
-    try {
-      // Format data for PDF
-      const observationTable = parsedData?.x.map((xVal, i) => ({
-        "Reading #": i + 1,
-        "X Value": xVal,
-        "Y Value": parsedData.y[i]
-      })) || [];
-
-      const res = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: experimentTitle || "Lab Experiment",
-          aim: reportResult.aim,
-          apparatus: reportResult.apparatus,
-          theory: reportResult.theory,
-          procedure: reportResult.procedure,
-          observation_table: observationTable,
-          graph_url: chartRef.current?.toBase64Image() || "",
-          calculations: `Mean of Y: ${analysisResult.mean}\nStandard Deviation: ${analysisResult.std_dev}\nSlope (m): ${analysisResult.slope}\nIntercept (b): ${analysisResult.intercept}\nAverage Error: ${analysisResult.error_percent}%`,
-          result: reportResult.result,
-          conclusion: reportResult.conclusion,
-          precautions: reportResult.precautions
-        })
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to generate PDF.");
-      }
-
-      // Trigger download
-      const link = document.createElement('a');
-      link.href = data.pdf_url;
-      link.download = `LabReport-${Date.now()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsDownloadingPdf(false);
-    }
+    doc.save(`${metadata.name.toLowerCase().replace(/\s+/g, '-') || 'lab-report'}.pdf`);
   };
 
   return (
-    <div className="px-4 py-8 md:p-10 max-w-5xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Upload Experiment Data</h1>
-        <p className="text-muted-foreground mt-2 text-slate-500">
-          Upload your raw lab dataset or paste it manually to begin AI analysis.
-        </p>
-      </div>
-
-      {showUpgradeModal && (
-        <Card className="border-indigo-200 bg-indigo-50 shadow-md animate-in fade-in slide-in-from-top-4 duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-indigo-900 flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5" />
-              Upgrade Required cost
-            </CardTitle>
-            <CardDescription className="text-indigo-700 font-medium">
-              You've reached your monthly limit of 3 reports on the Free plan.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Link href="/dashboard/billing">
-              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold">
-                Upgrade to Pro
-              </Button>
-            </Link>
-          </CardFooter>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="min-h-screen bg-[#f8f9fa] p-4 md:p-8 font-sans antialiased text-slate-900">
+      <div className="max-w-[1600px] mx-auto space-y-6">
         
-        {/* Left Column: Input Methods */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg">Data Source</CardTitle>
-            <CardDescription>Select how you want to provide your data.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="upload">File Upload</TabsTrigger>
-                <TabsTrigger value="paste">Paste Data</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="upload" className="space-y-4">
-                <div 
-                  className={`border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center text-center transition-colors cursor-pointer ${
-                    isDragging ? "border-indigo-500 bg-indigo-50" : "border-slate-300 hover:border-indigo-400 hover:bg-slate-50"
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                  onClick={() => document.getElementById("file-upload")?.click()}
-                >
-                  <div className="p-4 bg-white rounded-full shadow-sm border border-slate-100 mb-4">
-                    <UploadCloud className="h-8 w-8 text-indigo-500" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-slate-700 mb-1">Click to upload or drag and drop</h3>
-                  <p className="text-xs text-slate-500">CSV or Excel files (.xlsx) supported</p>
-                  <input 
-                    id="file-upload" 
-                    type="file" 
-                    accept=".csv, .xlsx, .xls" 
-                    className="hidden" 
-                    onChange={handleFileInput}
-                  />
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="paste" className="space-y-4">
-                <div className="space-y-3">
-                  <Textarea 
-                    placeholder="Time, Voltage&#10;0, 1.2&#10;1, 1.4&#10;2, 1.8" 
-                    className="min-h-[220px] font-mono text-sm bg-slate-50 border-slate-200 focus-visible:ring-indigo-500 rounded-lg"
-                    value={pasteData}
-                    onChange={(e) => setPasteData(e.target.value)}
-                  />
-                  <Button 
-                    onClick={handlePasteSubmit} 
-                    variant="secondary" 
-                    className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium"
-                  >
-                    Parse Pasted Data
-                  </Button>
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            {error && (
-              <div className="mt-6 flex items-start gap-3 p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-100">
-                <AlertCircle className="h-5 w-5 shrink-0" />
-                <p>{error}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Right Column: Preview & Action */}
-        <div className="space-y-6">
-          <Card className="shadow-sm border-slate-200 h-full flex flex-col">
-            <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <FileSpreadsheet className="h-5 w-5 text-indigo-500" />
-                    Data Preview
-                  </CardTitle>
-                  <CardDescription className="mt-1">
-                    {parsedData 
-                      ? `${parsedData.x.length} data points extracted successfully.` 
-                      : "Upload or paste data to see a preview."}
-                  </CardDescription>
-                </div>
-                {parsedData && <CheckCircle2 className="h-6 w-6 text-green-500" />}
-              </div>
-            </CardHeader>
-            <CardContent className="p-0 flex-1 relative min-h-[250px]">
-              {previewRows.length > 0 ? (
-                <div className="w-full overflow-x-auto pb-2">
-                  <Table>
-                    <TableHeader className="bg-slate-50/80">
-                      <TableRow>
-                        <TableHead className="w-1/2 font-semibold text-slate-700">Column 1 (X)</TableHead>
-                        <TableHead className="w-1/2 font-semibold text-slate-700">Column 2 (Y)</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {previewRows.map((row, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell className="font-mono text-xs">{row[0]}</TableCell>
-                          <TableCell className="font-mono text-xs">{row[1]}</TableCell>
-                        </TableRow>
-                      ))}
-                      {parsedData && parsedData.x.length > previewRows.length && (
-                         <TableRow>
-                           <TableCell colSpan={2} className="text-center text-xs text-slate-400 italic py-3 bg-slate-50/30">
-                             ... and {parsedData.x.length - previewRows.length + (isNaN(Number(previewRows[0]?.[0])) ? 1 : 0)} more rows
-                           </TableCell>
-                         </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                  <Table className="h-12 w-12 mb-3 opacity-20" />
-                  <p className="text-sm">No data to preview</p>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-xl mt-auto">
-              <Button 
-                onClick={handleAnalyzeData}
-                disabled={!parsedData || isAnalyzing}
-                className="w-full h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 disabled:shadow-none disabled:bg-slate-200 disabled:text-slate-400 transition-all"
-              >
-                <Play className="mr-2 h-4 w-4 fill-current" />
-                {isAnalyzing ? "Analyzing..." : "Analyze Data"}
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-
-      </div>
-
-      {/* Analysis Results Section */}
-      {analysisResult && (
-        <div className="mt-12 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 border-b pb-2">Analysis Results</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="shadow-sm border-slate-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500">Mean (Y)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-slate-800">{analysisResult.mean}</div>
-              </CardContent>
-            </Card>
-            
-            <Card className="shadow-sm border-slate-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500">Standard Deviation (Y)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-slate-800">{analysisResult.std_dev}</div>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-sm border-slate-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-slate-500">Linear Regression</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm space-y-1.5 text-slate-600">
-                  <p><span className="font-semibold text-slate-800">Slope (m):</span> {analysisResult.slope}</p>
-                  <p><span className="font-semibold text-slate-800">Intercept (b):</span> {analysisResult.intercept}</p>
-                  <p><span className="font-semibold text-red-600">Avg % Error:</span> {analysisResult.error_percent}%</p>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Workspace Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
+          <div className="flex items-center gap-5">
+            <div className="h-14 w-14 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-100 shrink-0">
+               <FileText className="h-7 w-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">AI Lab Report Writer</h1>
+              <p className="text-sm font-medium text-slate-500 mt-1 flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-indigo-500" /> Professional-grade experiment documentation & sectioning
+              </p>
+            </div>
           </div>
 
-          <Card className="overflow-hidden shadow-sm border-slate-200">
-            <CardHeader className="bg-slate-50 border-b border-slate-100">
-              <CardTitle>Generated Plot</CardTitle>
-              <CardDescription>Experimental Data vs. Calculated Linear Regression</CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 bg-white flex justify-center py-8 h-[400px] w-full">
-               <Scatter 
-                 ref={chartRef}
-                 data={{
-                   datasets: [
-                     {
-                       type: 'scatter' as const,
-                       label: 'Regression Line',
-                       data: parsedData ? parsedData.x.map((xVal) => ({ x: xVal, y: analysisResult.slope * xVal + analysisResult.intercept })) : [],
-                       borderColor: 'rgb(255, 99, 132)',
-                       borderWidth: 2,
-                       pointRadius: 0,
-                       showLine: true
-                     },
-                     {
-                       type: 'scatter' as const,
-                       label: 'Data Points',
-                       data: parsedData ? parsedData.x.map((xVal, i) => ({ x: xVal, y: parsedData.y[i] })) : [],
-                       backgroundColor: 'rgb(54, 162, 235)'
-                     }
-                   ]
-                 }}
-                 options={{
-                   maintainAspectRatio: false,
-                   responsive: true,
-                   animation: false,
-                   scales: {
-                     x: { title: { display: true, text: 'X Values' } },
-                     y: { title: { display: true, text: 'Y Values' } }
-                   }
-                 }}
-               />
-            </CardContent>
-          </Card>
-
-          {/* AI Report Generation Section */}
-          <Card className="shadow-sm border-slate-200 mt-8 bg-gradient-to-br from-slate-50 to-white">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-indigo-500" />
-                AI Lab Report Generator
-              </CardTitle>
-              <CardDescription>
-                Let our AI draft a comprehensive, academic report based on these results.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="experiment-title" className="text-sm font-medium text-slate-700">
-                  Experiment Title <span className="text-slate-400 font-normal">(Optional)</span>
-                </label>
-                <Input 
-                  id="experiment-title"
-                  placeholder="e.g. Voltage vs Time Constants" 
-                  value={experimentTitle}
-                  onChange={(e) => setExperimentTitle(e.target.value)}
-                  className="max-w-md bg-white"
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex gap-4 flex-wrap">
-              <Button 
-                onClick={handleGenerateReport} 
-                disabled={isGeneratingReport}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20"
-              >
-                {isGeneratingReport ? (
-                   <>
-                     <Sparkles className="mr-2 h-4 w-4 animate-pulse" />
-                     Drafting Report...
-                   </>
-                ) : (
-                  <>
-                     <FileText className="mr-2 h-4 w-4" />
-                     Generate AI Report
-                  </>
-                )}
-              </Button>
-
-              {reportResult && (
-                <Button 
-                  onClick={handleDownloadPdf}
-                  disabled={isDownloadingPdf}
-                  variant="outline"
-                  className="border-indigo-200 text-indigo-600 hover:bg-indigo-50"
-                >
-                  {isDownloadingPdf ? (
-                     <>
-                        <Download className="mr-2 h-4 w-4 animate-bounce" />
-                        Generating PDF...
-                     </>
-                  ) : (
-                    <>
-                       <Download className="mr-2 h-4 w-4" />
-                       Download Lab Report PDF
-                    </>
-                  )}
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-
-          {/* Generated Report Output */}
-          {reportResult && (
-            <div className="mt-8 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 border-b pb-2 flex items-center gap-2">
-                <FileText className="h-6 w-6 text-indigo-600" />
-                Generated Report
-              </h2>
-              
-              <div className="space-y-6">
-                
-                {/* Aim & Apparatus */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
-                        <Sparkles className="h-5 w-5 text-indigo-500" />
-                        Aim
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.aim}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
-                        <Beaker className="h-5 w-5 text-indigo-500" />
-                        Apparatus
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.apparatus}
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Theory & Procedure */}
-                <div className="grid grid-cols-1 gap-6">
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
-                        <FileText className="h-5 w-5 text-indigo-500" />
-                        Theory
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.theory}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
-                        <FileText className="h-5 w-5 text-indigo-500" />
-                        Procedure
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.procedure}
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                {/* Result & Conclusion */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
-                        <Beaker className="h-5 w-5 text-indigo-500" />
-                        Result
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.result}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <CardTitle className="text-lg flex items-center gap-2 text-indigo-900">
-                        <CheckCircle2 className="h-5 w-5 text-indigo-500" />
-                        Conclusion
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.conclusion}
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Error Analysis & Precautions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-red-50/30">
-                      <CardTitle className="text-lg flex items-center gap-2 text-red-900">
-                        <AlertCircle className="h-5 w-5 text-red-500" />
-                        Error Analysis
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.error_analysis}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="shadow-sm border-slate-200">
-                    <CardHeader className="pb-3 border-b border-slate-100 bg-amber-50/30">
-                      <CardTitle className="text-lg flex items-center gap-2 text-amber-900">
-                        <ShieldAlert className="h-5 w-5 text-amber-500" />
-                        Precautions
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4 text-slate-700 text-sm leading-relaxed whitespace-pre-line">
-                      {reportResult.precautions}
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Viva Questions */}
-                <Card className="shadow-sm border-slate-200 mb-10">
-                  <CardHeader className="pb-3 border-b border-slate-100 bg-emerald-50/30">
-                    <CardTitle className="text-lg flex items-center gap-2 text-emerald-900">
-                      <BadgeHelp className="h-5 w-5 text-emerald-500" />
-                      Viva Questions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-4">
-                    <ul className="space-y-3">
-                      {reportResult.viva_questions?.map((question: string, index: number) => (
-                        <li key={index} className="flex gap-3 text-sm text-slate-700">
-                           <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-medium text-xs">
-                             {index + 1}
-                           </span>
-                           <span className="pt-0.5 leading-relaxed">{question}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-
-              </div>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+             <Button variant="outline" onClick={generateFullReport} className="text-indigo-600 border-indigo-100 hover:bg-indigo-50 font-bold text-xs uppercase tracking-widest px-6 h-11 rounded-xl">
+                <Zap className="h-4 w-4 mr-2" /> Auto-Generate All
+             </Button>
+             <Link href="/tools/research-format">
+               <Button variant="secondary" className="bg-slate-900 text-white hover:bg-slate-800 font-bold text-xs uppercase tracking-widest px-6 h-11 rounded-xl shadow-lg shadow-slate-200">
+                  <Layout className="h-4 w-4 mr-2" /> Advanced Formatter
+               </Button>
+             </Link>
+          </div>
         </div>
-      )}
+
+        {/* Workspace Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* Left Panel: Configuration & Sections */}
+          <div className="lg:col-span-5 space-y-6 order-2 lg:order-1">
+             <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden bg-white">
+                <CardHeader className="bg-slate-50/50 border-b border-slate-100">
+                   <CardTitle className="text-lg flex items-center gap-2">
+                      <Settings2 className="h-5 w-5 text-slate-400" /> Experiment Metadata
+                   </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Experiment Name</Label>
+                      <Input 
+                        placeholder="e.g. Young's Modulus" 
+                        value={metadata.name}
+                        onChange={(e) => setMetadata({...metadata, name: e.target.value})}
+                        className="rounded-xl border-slate-200 focus:ring-indigo-500/10"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Subject Area</Label>
+                      <Input 
+                        placeholder="e.g. Applied Physics" 
+                        value={metadata.subject}
+                        onChange={(e) => setMetadata({...metadata, subject: e.target.value})}
+                        className="rounded-xl border-slate-200"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Submission Date</Label>
+                      <Input 
+                        type="date"
+                        value={metadata.date}
+                        onChange={(e) => setMetadata({...metadata, date: e.target.value})}
+                        className="rounded-xl border-slate-200"
+                      />
+                   </div>
+                   <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Instructor Name</Label>
+                      <Input 
+                        placeholder="e.g. Dr. Richards" 
+                        value={metadata.instructor}
+                        onChange={(e) => setMetadata({...metadata, instructor: e.target.value})}
+                        className="rounded-xl border-slate-200"
+                      />
+                   </div>
+                </CardContent>
+             </Card>
+
+             <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden bg-white">
+                <div className="flex bg-slate-50/50 border-b border-slate-100 overflow-x-auto no-scrollbar">
+                   {REPORT_SECTIONS.map(s => (
+                     <button
+                       key={s.id}
+                       onClick={() => setActiveSection(s.id)}
+                       className={cn(
+                         "px-4 py-4 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 whitespace-nowrap",
+                         activeSection === s.id ? "border-indigo-600 text-indigo-600 bg-white" : "border-transparent text-slate-400 hover:text-slate-600"
+                       )}
+                     >
+                       {s.label}
+                     </button>
+                   ))}
+                </div>
+                <CardContent className="p-6 space-y-4">
+                   <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-bold text-slate-800 text-sm uppercase tracking-tighter">Drafting: {REPORT_SECTIONS.find(s => s.id === activeSection)?.label}</h3>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="text-indigo-600 font-bold text-[10px] uppercase h-7 hover:bg-indigo-50"
+                        onClick={() => generateSection(activeSection)}
+                        disabled={isGenerating !== null}
+                      >
+                         {isGenerating === activeSection ? <RotateCcw className="h-3 w-3 mr-2 animate-spin" /> : <Sparkles className="h-3 w-3 mr-2" />}
+                         AI Assist
+                      </Button>
+                   </div>
+                   <Textarea 
+                     className="min-h-[300px] rounded-2xl border-slate-200 focus:ring-indigo-500/10 text-slate-700 leading-relaxed resize-none p-6"
+                     placeholder={REPORT_SECTIONS.find(s => s.id === activeSection)?.placeholder}
+                     value={sections[activeSection]}
+                     onChange={(e) => setSections(prev => ({...prev, [activeSection]: e.target.value}))}
+                   />
+                </CardContent>
+                <CardFooter className="p-4 bg-slate-50/50 flex justify-between">
+                    <Button variant="ghost" size="sm" className="text-[10px] font-bold text-slate-400" onClick={() => setSections(prev => ({...prev, [activeSection]: ""}))}>
+                       Clear Section
+                    </Button>
+                    <div className="flex gap-2">
+                       <Button variant="outline" size="sm" className="h-8 text-[10px] font-bold uppercase rounded-lg">
+                          Load Obs. Data
+                       </Button>
+                       <Button size="sm" className="h-8 text-[10px] font-bold uppercase rounded-lg bg-indigo-600" onClick={() => {
+                          const idx = REPORT_SECTIONS.findIndex(s => s.id === activeSection);
+                          if (idx < REPORT_SECTIONS.length - 1) setActiveSection(REPORT_SECTIONS[idx+1].id);
+                       }}>
+                          Next Section <ArrowRight className="h-3 w-3 ml-2" />
+                       </Button>
+                    </div>
+                </CardFooter>
+             </Card>
+          </div>
+
+          {/* Right Panel: Live Preview */}
+          <div className="lg:col-span-7 space-y-6 order-1 lg:order-2">
+             <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 p-1 bg-white rounded-xl border border-slate-200 shadow-sm">
+                   <Button 
+                     size="sm" 
+                     variant={viewMode === "edit" ? "secondary" : "ghost"}
+                     className={cn("h-8 px-4 rounded-lg text-[10px] font-black uppercase tracking-wider", viewMode === "edit" ? "bg-slate-100" : "")}
+                     onClick={() => setViewMode("edit")}
+                   >
+                      <Edit3 className="h-3.5 w-3.5 mr-2" /> Editor
+                   </Button>
+                   <Button 
+                     size="sm" 
+                     variant={viewMode === "preview" ? "secondary" : "ghost"}
+                     className={cn("h-8 px-4 rounded-lg text-[10px] font-black uppercase tracking-wider", viewMode === "preview" ? "bg-slate-100" : "")}
+                     onClick={() => setViewMode("preview")}
+                   >
+                      <Eye className="h-3.5 w-3.5 mr-2" /> Publication Preview
+                   </Button>
+                </div>
+
+                <div className="flex gap-2">
+                   <Button variant="outline" size="sm" onClick={() => {
+                      navigator.clipboard.writeText(Object.values(sections).join('\n\n'));
+                      setCopySuccess(true);
+                      setTimeout(() => setCopySuccess(false), 2000);
+                   }} className="h-9 px-4 rounded-xl text-[10px] font-black uppercase">
+                      {copySuccess ? <CheckCircle2 className="h-3.5 w-3.5 mr-2 text-emerald-500" /> : <Copy className="h-3.5 w-3.5 mr-2" />}
+                      Copy Text
+                   </Button>
+                   <Button size="sm" onClick={exportPDF} className="h-9 px-4 rounded-xl text-[10px] font-black uppercase bg-slate-900 shadow-lg shadow-slate-200">
+                      <FileDown className="h-3.5 w-3.5 mr-2" /> Export PDF
+                   </Button>
+                </div>
+             </div>
+
+             <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden min-h-[850px] flex flex-col">
+                <div className="h-px w-full bg-slate-100 mt-20 md:mt-32" />
+                <div className="p-8 md:p-16 flex-1 space-y-10 font-serif">
+                   
+                   {/* Report Header */}
+                   <div className="text-center space-y-4">
+                      <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 leading-none">
+                         {metadata.name || "UNNAMED LABORATORY REPORT"}
+                      </h2>
+                      <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-400">
+                         <span className="flex items-center gap-2"><FlaskConical className="h-3 w-3" /> {metadata.subject || "GENERAL SCIENCE"}</span>
+                         <span className="flex items-center gap-2 border-l border-slate-200 pl-8"><History className="h-3 w-3" /> {metadata.date}</span>
+                         <span className="flex items-center gap-2 border-l border-slate-200 pl-8"><Microscope className="h-3 w-3" /> {metadata.instructor || "UNASSIGNED"}</span>
+                      </div>
+                   </div>
+
+                   <div className="h-px w-24 bg-slate-900 mx-auto opacity-20" />
+
+                   {/* Report Content Sections */}
+                   <div className="space-y-12">
+                      {REPORT_SECTIONS.map(s => (
+                        sections[s.id] && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            key={s.id} 
+                            className="group relative"
+                          >
+                             <div className="absolute -left-8 md:-left-12 top-1 text-[9px] font-black text-slate-300 transform -rotate-90 origin-right transition-colors group-hover:text-indigo-400">
+                                SECTION.{s.id.toUpperCase()}
+                             </div>
+                             <h4 className="text-sm md:text-base font-black uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-3">
+                                {s.label}
+                                <span className="h-px bg-slate-900 flex-1 opacity-10" />
+                             </h4>
+                             <p className="text-slate-700 leading-relaxed text-sm md:text-base whitespace-pre-wrap pl-2 md:pl-4 border-l-2 border-transparent group-hover:border-indigo-100 transition-all">
+                                {sections[s.id]}
+                             </p>
+                          </motion.div>
+                        )
+                      ))}
+
+                      {Object.values(sections).every(v => v === "") && (
+                        <div className="py-32 flex flex-col items-center justify-center text-center opacity-30">
+                           <BookOpen className="h-16 w-16 mb-4 text-slate-300" />
+                           <p className="text-sm font-black uppercase tracking-[0.2em]">Awaiting Technical Input</p>
+                           <p className="text-xs mt-2 font-serif italic max-w-xs">Data populated via AI Assist or Manual Entry will be rendered in high-fidelity academic typography here.</p>
+                        </div>
+                      )}
+                   </div>
+                </div>
+                
+                <div className="p-8 border-t border-slate-50 bg-slate-50/50 mt-auto">
+                   <div className="flex justify-between items-center text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      <span>LabRecord AI Security Protocol 4.2</span>
+                      <div className="flex gap-4">
+                         <span>Page 01 / 01</span>
+                         <span className="flex items-center gap-1 text-emerald-500"><ClipboardCheck className="h-3 w-3" /> Verification: Pass</span>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
   );
 }
