@@ -138,10 +138,13 @@ export default function DataAnalysisPage() {
       setProcessingStep("Computing linear regression model...");
 
       const csvData = Papa.unparse(dataPoints.filter(p => p.x !== "" && p.y !== ""));
-      const res = await fetch("/api/ai/analyze", {
+      const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: csvData, details: expDetails })
+        body: JSON.stringify({ 
+          tool: "data-analysis", 
+          content: csvData 
+        })
       });
 
       const data = await res.json();

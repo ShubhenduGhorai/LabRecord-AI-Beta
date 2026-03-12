@@ -75,13 +75,16 @@ export default function AIReportWriterPage() {
       await new Promise(r => setTimeout(r, 1000));
       setProcessingStep("Aligning scientific nomenclature...");
 
-      const res = await fetch("/api/ai/report", {
+      const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          title: metadata.name, 
-          subject: metadata.subject, 
-          description: metadata.description 
+          tool: "lab-report", 
+          content: {
+            title: metadata.name, 
+            subject: metadata.subject, 
+            description: metadata.description 
+          }
         })
       });
       const data = await res.json();

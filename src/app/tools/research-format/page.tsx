@@ -72,10 +72,14 @@ export default function ResearchFormattingPage() {
       await new Promise(r => setTimeout(r, 800));
       setProcessingStep("Extracting semantic sections...");
 
-      const res = await fetch("/api/ai/format", {
+      const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, style })
+        body: JSON.stringify({ 
+          tool: "research-format", 
+          content: text,
+          options: { style }
+        })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Formatting failed");

@@ -135,10 +135,13 @@ export default function GraphGeneratorPage() {
       setProcessingStep("Detecting best visualization type...");
 
       const csvData = Papa.unparse(dataPoints.filter(p => p.x !== "" && p.y !== ""));
-      const res = await fetch("/api/ai/graph", {
+      const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: csvData })
+        body: JSON.stringify({ 
+          tool: "graph-generator", 
+          content: csvData 
+        })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "AI Prediction failed");

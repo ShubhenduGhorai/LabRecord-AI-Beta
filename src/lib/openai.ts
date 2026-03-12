@@ -2,15 +2,10 @@ import 'server-only';
 import OpenAI from 'openai';
 
 if (!process.env.OPENAI_API_KEY) {
-  throw new Error('Missing OPENAI_API_KEY environment variable');
+  throw new Error("OPENAI_API_KEY is missing");
 }
 
-/**
- * Server-only OpenAI client.
- * Importing this file in client components will throw a build error,
- * preventing accidental exposure of the API key.
- */
-export const openaiClient = new OpenAI({
+export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 

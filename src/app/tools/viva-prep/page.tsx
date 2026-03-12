@@ -98,19 +98,23 @@ export default function AdvancedVivaSimulatorPage() {
       await new Promise(r => setTimeout(r, 800));
       setProcessingStep("Initializing neural defense model...");
 
-      const res = await fetch("/api/ai/viva", {
+      const res = await fetch("/api/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ experiment_title: title, difficulty })
+        body: JSON.stringify({ 
+          tool: "viva-prep", 
+          content: title,
+          options: { difficulty }
+        })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Session initialization failed");
       
-      setQuestions(data.questions);
+      setQuestions(data.result);
       setStatus("active");
       setViewMode("interview");
       setIsTimerActive(true);
-      setMessages([{ role: "ai", text: `Welcome. I am your AI Examiner. We will now begin the ${difficulty} defense for: ${title}. \n\nStarting with ${data.questions[0].type}: ${data.questions[0].question}` }]);
+      setMessages([{ role: "ai", text: `Welcome. I am your AI Examiner. We will now begin the ${difficulty} defense for: ${title}. \n\nStarting with ${data.result[0].type}: ${data.result[0].question}` }]);
     } catch (err: any) {
       setError(err.message);
       setStatus("idle");

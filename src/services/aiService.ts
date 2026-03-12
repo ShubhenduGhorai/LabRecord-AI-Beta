@@ -1,4 +1,4 @@
-import { openaiClient, MAX_TOKENS } from '@/lib/openai';
+import { openai, MAX_TOKENS } from '@/lib/openai';
 
 export const aiService = {
   /**
@@ -25,7 +25,7 @@ Please provide a JSON response with the following exact keys:
 Ensure the response is valid JSON only.
 `;
 
-    const response = await openaiClient.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
@@ -62,7 +62,7 @@ Provide a JSON response:
 }
 `;
 
-    const response = await openaiClient.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
@@ -98,7 +98,7 @@ Provide a JSON response:
 }
 `;
 
-    const response = await openaiClient.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
@@ -129,7 +129,7 @@ Provide a JSON response:
 }
 `;
 
-    const response = await openaiClient.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
@@ -163,7 +163,7 @@ Provide a JSON response:
 Text: ${text}
 `;
 
-    const response = await openaiClient.chat.completions.create({
+    const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
