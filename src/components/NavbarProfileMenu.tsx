@@ -77,7 +77,7 @@ export function NavbarProfileMenu() {
         <Link href="/dashboard" className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors">
           <LayoutDashboard className="w-4 h-4" /> My Reports
         </Link>
-        <Link href="/account" className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors">
+        <Link href="/settings" className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors">
           <Settings className="w-4 h-4" /> Account Settings
         </Link>
         <button onClick={handleLogout} className="flex flex-row w-full items-center gap-3 px-3 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-2">
@@ -112,7 +112,7 @@ export function NavbarProfileMenu() {
             <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
               <LayoutDashboard className="w-4 h-4" /> My Reports
             </Link>
-            <Link href="/account" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
+            <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
               <Settings className="w-4 h-4" /> Account Settings
             </Link>
             
