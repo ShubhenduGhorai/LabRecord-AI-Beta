@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/auth';
 import { checkToolUsage, incrementToolUsage } from '@/lib/usage';
-import { openaiClient, validateAndSanitizeInput, MAX_TOKENS } from '@/lib/openai';
+import { openai, validateAndSanitizeInput, MAX_TOKENS } from '@/lib/openai';
 import { logAIRequest, logRateLimitViolation, logAPIError } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
@@ -54,16 +54,17 @@ Provide a JSON response with these keys:
 Respond with valid JSON only.
 `.trim();
 
-    const response = await openaiClient.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: MAX_TOKENS,
-    });
+    const response = await openai
+      .chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+        max_tokens: MAX_TOKENS,
+      });
 
     const content = response.choices[0]?.message?.content;
     if (!content) throw new Error('No content received from OpenAI');
