@@ -24,6 +24,74 @@ import { PLANS as plans } from "@/lib/plans";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Script from "next/script";
+
+function PayPalButton({ planId, amount, onSuccess }: { planId: string, amount: number, onSuccess: (data: any) => void }) {
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const renderButtons = () => {
+      if (typeof window !== "undefined" && (window as any).paypal) {
+        (window as any).paypal.Buttons({
+          createOrder: (data: any, actions: any) => {
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  value: amount.toString(),
+                  currency_code: "USD"
+                },
+                description: `LabRecord AI ${planId === 'pro_yearly' ? 'Yearly' : 'Monthly'} Subscription`,
+              }]
+            });
+          },
+          onApprove: async (data: any, actions: any) => {
+            try {
+              const res = await fetch("/api/paypal/capture-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                  orderID: data.orderID,
+                  planId: planId
+                }),
+              });
+              const result = await res.json();
+              if (result.status === "success") {
+                onSuccess(result.data);
+              } else {
+                setError(result.error || "Capture failed");
+              }
+            } catch (err) {
+              console.error(err);
+              setError("An error occurred during payment verification.");
+            }
+          },
+          onError: (err: any) => {
+            console.error("PayPal Error:", err);
+            setError("PayPal checkout failed.");
+          },
+          style: {
+            layout: 'horizontal',
+            color: 'blue',
+            shape: 'pill',
+            label: 'subscribe',
+            height: 55
+          }
+        }).render(`#paypal-button-container-${planId}`);
+      }
+    };
+
+    // Delay slightly to ensure script is loaded
+    const timer = setTimeout(renderButtons, 1000);
+    return () => clearTimeout(timer);
+  }, [planId, amount, onSuccess]);
+
+  return (
+    <div className="w-full">
+      <div id={`paypal-button-container-${planId}`} className="w-full"></div>
+      {error && <p className="text-rose-500 text-[10px] font-bold mt-2 text-center">{error}</p>}
+    </div>
+  );
+}
 
 export default function PricingPage() {
   const [loadingPriceId, setLoadingPriceId] = useState<string | null>(null);
@@ -58,61 +126,21 @@ export default function PricingPage() {
   }, []);
 
   const handleSubscribe = async (plan: any) => {
-    try {
-      setLoadingPriceId(plan.id);
-      
-      const res = await fetch("/api/razorpay/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          planId: plan.id,
-          amount: plan.amount,
-          currency: "USD" 
-        }),
-      });
-
-      const orderData = await res.json();
-      if (orderData.error) throw new Error(orderData.error);
-
-      if (typeof window !== "undefined" && (window as any).Razorpay) {
-        const options = {
-          key: orderData.key_id,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          name: "LabRecord AI",
-          description: `Subscription: ${plan.name} Plan`,
-          order_id: orderData.id,
-          handler: function (response: any) {
-             window.location.href = "/billing?payment_id=" + response.razorpay_payment_id;
-          },
-          prefill: { name: "", email: "", contact: "" },
-          theme: { color: "#4f46e5" },
-        };
-
-        const rzp = new (window as any).Razorpay(options);
-        rzp.open();
-      } else {
-        throw new Error("Razorpay SDK not loaded");
-      }
-    } catch (error) {
-      console.error("Subscription error:", error);
-      alert("Checkout failed. Please try again.");
-    } finally {
-      setLoadingPriceId(null);
-    }
+    // This function is now partially handled by PayPal buttons below
+    // but we can keep it for any pre-checks if needed.
+    if (plan.id === 'free') return;
+    setLoadingPriceId(plan.id);
   };
 
-  if (loadingData) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
+  const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] py-20 px-4 flex flex-col items-center">
-      
+      {/* Add PayPal SDK Script dynamically */}
+      <Script 
+        src={`https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD&components=buttons`}
+        strategy="afterInteractive"
+      />
       {/* Header Section */}
       <div className="text-center space-y-6 max-w-4xl mx-auto mb-16">
         <motion.div 
@@ -251,26 +279,26 @@ export default function PricingPage() {
                   </div>
                 </CardContent>
 
-                <CardFooter className="px-8 pb-10">
-                  <Button 
-                    onClick={() => plan.id !== 'free' && handleSubscribe(plan)}
-                    disabled={isCurrent || loadingPriceId === plan.id}
-                    className={cn(
-                      "w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl active:scale-95 group overflow-hidden relative",
-                      isPro 
-                        ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200" 
-                        : "bg-slate-100 text-slate-400 hover:bg-slate-200"
-                    )}
-                  >
-                    <span className="relative z-10">
-                      {isCurrent ? "Current Plan" : 
-                       loadingPriceId === plan.id ? "Processing..." : 
-                       (plan.id === 'free' ? "Active" : "Unlock Pro")}
-                    </span>
-                    {isPro && !isCurrent && (
-                      <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-                    )}
-                  </Button>
+                <CardFooter className="px-8 pb-10 flex flex-col gap-4">
+                  {isCurrent ? (
+                    <Button disabled className="w-full h-16 rounded-2xl bg-slate-100 text-slate-400 font-black uppercase tracking-[0.2em] text-xs">
+                       Current Plan
+                    </Button>
+                  ) : plan.id === 'free' ? (
+                    <Button disabled className="w-full h-16 rounded-2xl bg-slate-100 text-slate-400 font-black uppercase tracking-[0.2em] text-xs">
+                       Active
+                    </Button>
+                  ) : (
+                    <div className="w-full min-h-[64px]">
+                       <PayPalButton 
+                        planId={plan.id} 
+                        amount={plan.amount} 
+                        onSuccess={(data) => {
+                          window.location.href = `/payment-success?order_id=${data.id}`;
+                        }}
+                       />
+                    </div>
+                  )}
                 </CardFooter>
               </Card>
             </motion.div>

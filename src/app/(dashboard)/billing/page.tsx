@@ -6,9 +6,75 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Check, CreditCard, Loader2, Sparkles } from "lucide-react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
+import Script from "next/script";
+
+function PayPalButton({ planId, amount, onSuccess }: { planId: string, amount: number, onSuccess: (data: any) => void }) {
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const renderButtons = () => {
+      if (typeof window !== "undefined" && (window as any).paypal) {
+        (window as any).paypal.Buttons({
+          createOrder: (data: any, actions: any) => {
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  value: amount.toString(),
+                  currency_code: "USD"
+                },
+                description: `LabRecord AI ${planId === 'pro_yearly' ? 'Yearly' : 'Monthly'} Upgrade`,
+              }]
+            });
+          },
+          onApprove: async (data: any, actions: any) => {
+            try {
+              const res = await fetch("/api/paypal/capture-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                  orderID: data.orderID,
+                  planId: planId
+                }),
+              });
+              const result = await res.json();
+              if (result.status === "success") {
+                onSuccess(result.data);
+              } else {
+                setError(result.error || "Capture failed");
+              }
+            } catch (err) {
+              console.error(err);
+              setError("An error occurred during payment verification.");
+            }
+          },
+          onError: (err: any) => {
+            console.error("PayPal Error:", err);
+            setError("PayPal checkout failed.");
+          },
+          style: {
+            layout: 'horizontal',
+            color: 'blue',
+            shape: 'pill',
+            label: 'subscribe',
+            height: 45
+          }
+        }).render(`#paypal-button-container-${planId}`);
+      }
+    };
+
+    const timer = setTimeout(renderButtons, 1000);
+    return () => clearTimeout(timer);
+  }, [planId, amount, onSuccess]);
+
+  return (
+    <div className="w-full">
+      <div id={`paypal-button-container-${planId}`} className="w-full"></div>
+      {error && <p className="text-rose-500 text-[10px] font-bold mt-2 text-center">{error}</p>}
+    </div>
+  );
+}
 
 export default function BillingPage() {
-  const [loading, setLoading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string>("Free");
   const supabase = createSupabaseClient();
 
@@ -30,51 +96,14 @@ export default function BillingPage() {
     fetchUserPlan();
   }, []);
 
-  const handleUpgrade = async (plan: any) => {
-    if (plan.id === 'free') return;
-    
-    setLoading(plan.id);
-    try {
-      const res = await fetch("/api/razorpay/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          planId: plan.id,
-          amount: plan.amount 
-        }),
-      });
-      
-      const orderData = await res.json();
-      if (orderData.error) throw new Error(orderData.error);
-      
-      if (typeof window !== "undefined" && (window as any).Razorpay) {
-        const options = {
-          key: orderData.key_id,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          name: "LabRecord AI",
-          description: `Upgrade to ${plan.name}`,
-          order_id: orderData.id,
-          handler: function (response: any) {
-             window.location.href = "/billing?payment_id=" + response.razorpay_payment_id;
-          },
-          theme: { color: "#4f46e5" },
-        };
-        const rzp = new (window as any).Razorpay(options);
-        rzp.open();
-      } else {
-        throw new Error("Razorpay SDK not loaded");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setLoading(null);
-    }
-  };
+  const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-10">
+      <Script 
+        src={`https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD&components=buttons`}
+        strategy="afterInteractive"
+      />
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Billing & Subscription</h1>
         <p className="text-muted-foreground mt-2 text-slate-500">
@@ -100,7 +129,7 @@ export default function BillingPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>{plan.name}</span>
-                {currentPlan === plan.name && (
+                {currentPlan.toLowerCase() === plan.name.toLowerCase().replace('pro ', '').split(' ')[0] && (
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                     Current Plan
                   </span>
@@ -124,22 +153,21 @@ export default function BillingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button 
-                onClick={() => handleUpgrade(plan)}
-                disabled={currentPlan.toLowerCase() === plan.id.toLowerCase() || (loading !== null) || plan.id === 'free'}
-                variant={plan.popular ? "default" : "outline"}
-                className={`w-full py-6 font-semibold ${
-                  plan.popular ? "bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200" : ""
-                }`}
-              >
-                {loading === plan.id ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : currentPlan.toLowerCase() === plan.id.toLowerCase() ? (
-                  "Active"
-                ) : (
-                  `Upgrade to ${plan.name}`
-                )}
-              </Button>
+               {(currentPlan.toLowerCase() === plan.name.toLowerCase().replace('pro ', '').split(' ')[0]) || plan.id === 'free' ? (
+                  <Button disabled variant="outline" className="w-full py-6 font-semibold">
+                    {plan.id === 'free' ? "Default" : "Active"}
+                  </Button>
+               ) : (
+                  <div className="w-full min-h-[50px]">
+                     <PayPalButton 
+                      planId={plan.id} 
+                      amount={plan.amount} 
+                      onSuccess={(data) => {
+                        window.location.href = `/payment-success?order_id=${data.id}`;
+                      }}
+                     />
+                  </div>
+               )}
             </CardFooter>
           </Card>
         ))}
