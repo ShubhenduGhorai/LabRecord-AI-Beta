@@ -41,8 +41,15 @@ function PayPalButton({ planId, onSuccess }: { planId: string, onSuccess: (data:
       }
     };
 
-    const timer = setTimeout(renderButtons, 1000);
-    return () => clearTimeout(timer);
+    // Poll for paypal availability if the script is still loading
+    const interval = setInterval(() => {
+        if ((window as any).paypal) {
+            renderButtons();
+            clearInterval(interval);
+        }
+    }, 500);
+
+    return () => clearInterval(interval);
   }, [planId, onSuccess]);
 
   return (
@@ -134,9 +141,12 @@ export default function BillingPage() {
                   <Button disabled className="w-full h-16 rounded-2xl bg-slate-100 text-slate-400 font-black uppercase tracking-widest text-xs">
                     ACTIVE
                   </Button>
-               ) : plan.id === 'free' ? (
-                  <Button disabled className="w-full h-16 rounded-2xl bg-slate-100 text-slate-400 font-black uppercase tracking-widest text-xs">
-                    DEFAULT
+                ) : plan.id === 'free' ? (
+                  <Button 
+                    onClick={() => window.location.href='/dashboard'}
+                    className="w-full h-16 rounded-2xl bg-[#111] hover:bg-black text-white font-black uppercase tracking-widest text-xs"
+                  >
+                    START FREE
                   </Button>
                ) : (
                   <PayPalButton 

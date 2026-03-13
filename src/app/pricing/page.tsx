@@ -44,8 +44,15 @@ function PayPalButton({ planId, onSuccess }: { planId: string, onSuccess: (data:
       }
     };
 
-    const timer = setTimeout(renderButtons, 1000);
-    return () => clearTimeout(timer);
+    // Poll for paypal availability if the script is still loading
+    const interval = setInterval(() => {
+        if ((window as any).paypal) {
+            renderButtons();
+            clearInterval(interval);
+        }
+    }, 500);
+
+    return () => clearInterval(interval);
   }, [planId, onSuccess]);
 
   return (
@@ -131,12 +138,12 @@ export default function PricingPage() {
 
               <CardFooter className="px-8 pb-12">
                  {plan.id === 'free' ? (
-                    <Button 
-                      onClick={() => window.location.href='/dashboard'}
-                      className="w-full h-20 rounded-3xl bg-[#111] hover:bg-black text-white font-bold uppercase tracking-widest text-sm"
-                    >
-                      GO TO DASHBOARD
-                    </Button>
+                  <Button 
+                    onClick={() => window.location.href='/dashboard'}
+                    className="w-full h-16 rounded-2xl bg-[#111] hover:bg-black text-white font-black uppercase tracking-widest text-xs"
+                  >
+                    START FREE
+                  </Button>
                  ) : (
                     <PayPalButton planId={plan.id} onSuccess={() => window.location.href = "/dashboard"} />
                  )}

@@ -10,38 +10,16 @@ import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { PLANS } from "@/lib/plans";
+import Script from "next/script";
 
-export function Pricing() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
-  const supabase = createSupabaseClient();
-  const router = useRouter();
-
+function PayPalButtonComponent({ onSuccess }: { onSuccess: () => void }) {
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
-      if (session) {
-        fetchUserPlan(session.user.id);
-      }
-    });
+    const renderButtons = () => {
+      if (typeof window !== "undefined" && (window as any).paypal) {
+        // Clear container if it was previously rendered to avoid duplicates
+        const container = document.getElementById("paypal-button-container-pro");
+        if (container) container.innerHTML = "";
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-      if (session) {
-        fetchUserPlan(session.user.id);
-      } else {
-        setCurrentPlan(null);
-      }
-    });
-
-    // Load PayPal SDK
-    const script = document.createElement("script");
-    script.src = "https://www.paypal.com/sdk/js?client-id=AWAhvks8m67O_uy4XGScMaqDiWkha5RnP9VvCTlFsPPZuHSfOpQ5mPy10hSrjENyeR4KZC4yvUZOhuPV&vault=true&intent=subscription";
-    script.setAttribute("data-sdk-integration-source", "button-factory");
-    script.async = true;
-
-    script.onload = () => {
-      if ((window as any).paypal) {
         (window as any).paypal.Buttons({
           style: {
             shape: "rect",
@@ -55,31 +33,51 @@ export function Pricing() {
             });
           },
           onApprove: function(data: any) {
-             console.log("Subscription ID:", data.subscriptionID);
-            
+            console.log("Subscription ID:", data.subscriptionID);
             fetch("/api/save-subscription", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ subscription_id: data.subscriptionID })
             }).then(() => {
-                window.location.href = "/dashboard";
+                onSuccess();
             });
           }
-        }).render("#paypal-button-container");
+        }).render("#paypal-button-container-pro");
       }
     };
 
-    document.body.appendChild(script);
+    // Poll for paypal availability if the script is still loading
+    const interval = setInterval(() => {
+        if ((window as any).paypal) {
+            renderButtons();
+            clearInterval(interval);
+        }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [onSuccess]);
+
+  return <div id="paypal-button-container-pro" className="w-full min-h-[50px]"></div>;
+}
+
+export function Pricing() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createSupabaseClient();
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
 
     return () => {
       subscription.unsubscribe();
     };
   }, []);
-
-  async function fetchUserPlan(userId: string) {
-    const { data } = await supabase.from("users").select("plan").eq("id", userId).single();
-    if (data) setCurrentPlan(data.plan);
-  }
 
   const handleHobbyClick = () => {
     if (isLoggedIn) router.push("/dashboard");
@@ -88,6 +86,10 @@ export function Pricing() {
 
   return (
     <section id="pricing" className="py-24 bg-[#fcfcfc]">
+      <Script 
+        src="https://www.paypal.com/sdk/js?client-id=AWAhvks8m67O_uy4XGScMaqDiWkha5RnP9VvCTlFsPPZuHSfOpQ5mPy10hSrjENyeR4KZC4yvUZOhuPV&vault=true&intent=subscription"
+        strategy="lazyOnload"
+      />
       <div className="container mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto items-stretch py-10">
           
@@ -100,7 +102,7 @@ export function Pricing() {
           >
             <Card className="h-full flex flex-col rounded-[3rem] border-slate-200 shadow-xl bg-white overflow-hidden p-4">
               <CardHeader className="pt-12 text-center">
-                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">HOBBY</CardTitle>
+                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900 uppercase">Hobby</CardTitle>
                 <CardDescription className="pt-2 text-slate-500 font-medium">Perfect for testing the waters.</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 px-8 pt-8">
@@ -124,7 +126,7 @@ export function Pricing() {
                   onClick={handleHobbyClick}
                   className="w-full h-20 rounded-3xl bg-[#111] hover:bg-black text-white font-bold uppercase tracking-widest text-sm"
                 >
-                  {isLoggedIn ? "GO TO DASHBOARD" : "START FREE"}
+                  START FREE
                 </Button>
               </CardFooter>
             </Card>
@@ -144,7 +146,7 @@ export function Pricing() {
                 </div>
               </div>
               <CardHeader className="pt-14 text-center">
-                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">PRO</CardTitle>
+                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900 uppercase">Pro</CardTitle>
                 <CardDescription className="pt-2 text-slate-500 font-medium">Everything you need for your entire degree.</CardDescription>
               </CardHeader>
               <CardContent className="flex-1 px-8 pt-6">
@@ -166,8 +168,8 @@ export function Pricing() {
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="pb-8 px-8">
-                <div id="paypal-button-container" className="w-full min-h-[50px]"></div>
+              <CardFooter className="pb-8 px-8 flex flex-col gap-4">
+                <PayPalButtonComponent onSuccess={() => router.push("/dashboard")} />
               </CardFooter>
             </Card>
           </motion.div>
