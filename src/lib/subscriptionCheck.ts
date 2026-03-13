@@ -18,11 +18,11 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
   // 1. Check the new subscriptions table
   const { data: subscription } = await supabase
     .from('subscriptions')
-    .select('status, plan')
+    .select('status, plan_name')
     .eq('user_id', user.id)
     .single();
 
-  if (subscription?.status === 'active' && subscription?.plan === 'premium') {
+  if (subscription?.status === 'active') {
     return true;
   }
 
@@ -33,7 +33,7 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
     .eq('id', user.id)
     .single();
 
-  if (legacyUser?.subscription_status === 'active' && legacyUser?.plan === 'premium') {
+  if (legacyUser?.subscription_status === 'active' || legacyUser?.plan === 'pro') {
     return true;
   }
 

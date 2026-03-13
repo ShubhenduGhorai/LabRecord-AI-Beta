@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, Sparkles } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,19 +9,29 @@ import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { PLANS } from "@/lib/plans";
 
 export function Pricing() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const supabase = createSupabaseClient();
   const router = useRouter();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
+      if (session) {
+        fetchUserPlan(session.user.id);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
+      if (session) {
+        fetchUserPlan(session.user.id);
+      } else {
+        setCurrentPlan(null);
+      }
     });
 
     // Load PayPal SDK
@@ -45,19 +55,13 @@ export function Pricing() {
             });
           },
           onApprove: function(data: any) {
-            console.log("Subscription ID:", data.subscriptionID);
+             console.log("Subscription ID:", data.subscriptionID);
             
-            // call backend to save subscription
             fetch("/api/save-subscription", {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                subscription_id: data.subscriptionID
-              })
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ subscription_id: data.subscriptionID })
             }).then(() => {
-                // redirect user
                 window.location.href = "/dashboard";
             });
           }
@@ -69,72 +73,58 @@ export function Pricing() {
 
     return () => {
       subscription.unsubscribe();
-      // Only remove if it's the exact script we added, though usually we keep it for SPA
     };
   }, []);
 
-  const handleFreeClick = () => {
-    if (isLoggedIn) {
-      router.push("/dashboard");
-    } else {
-      router.push("/auth/signup");
-    }
+  async function fetchUserPlan(userId: string) {
+    const { data } = await supabase.from("users").select("plan").eq("id", userId).single();
+    if (data) setCurrentPlan(data.plan);
+  }
+
+  const handleHobbyClick = () => {
+    if (isLoggedIn) router.push("/dashboard");
+    else router.push("/auth/signup");
   };
 
   return (
-    <section id="pricing" className="py-24 bg-muted/30">
+    <section id="pricing" className="py-24 bg-[#fcfcfc]">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge className="mb-4 bg-indigo-100 text-indigo-700 hover:bg-indigo-100 border-none px-4 py-1 rounded-full uppercase text-[10px] font-black tracking-widest">
-            Simple Pricing
-          </Badge>
-          <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-6 text-foreground">
-            Focus on Research, <br/>Not Costs.
-          </h2>
-          <p className="text-lg text-muted-foreground font-medium">
-            Affordable plans designed for students working on weekly lab reports.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto items-stretch py-10">
+          
           {/* Hobby Plan */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
             className="h-full"
           >
-            <Card className="h-full flex flex-col relative transition-all duration-500 rounded-[3rem] overflow-visible border-border shadow-lg bg-background">
-              <CardHeader className="pt-10 pb-6 text-center">
-                <CardTitle className="text-2xl font-bold uppercase tracking-tight">Hobby</CardTitle>
-                <CardDescription className="pt-2 font-medium">Perfect for testing the waters.</CardDescription>
+            <Card className="h-full flex flex-col rounded-[3rem] border-slate-200 shadow-xl bg-white overflow-hidden p-4">
+              <CardHeader className="pt-12 text-center">
+                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">HOBBY</CardTitle>
+                <CardDescription className="pt-2 text-slate-500 font-medium">Perfect for testing the waters.</CardDescription>
               </CardHeader>
-              <CardContent className="flex-1 px-8">
-                <div className="mb-8 text-center">
+              <CardContent className="flex-1 px-8 pt-8">
+                <div className="mb-12 text-center">
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-6xl font-extrabold text-foreground">$0</span>
-                    <span className="text-muted-foreground font-bold uppercase text-xs tracking-widest">/month</span>
+                    <span className="text-7xl font-bold text-slate-900">$0</span>
+                    <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">/MONTH</span>
                   </div>
                 </div>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">Use each tool 1 time</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">AI Data Analysis</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">Graph Generator</span>
-                  </li>
+                <ul className="space-y-6 mb-12">
+                   {PLANS[0].features.slice(0, 3).map((feature, i) => (
+                    <li key={i} className="flex items-center gap-4">
+                      <Check className="h-5 w-5 text-indigo-600 shrink-0" />
+                      <span className="text-slate-600 font-bold">{feature}</span>
+                    </li>
+                  ))}
                 </ul>
               </CardContent>
-              <CardFooter className="pb-10 px-8">
-                <Button onClick={handleFreeClick} className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest text-xs">
-                  {isLoggedIn ? "Go to Dashboard" : "Start Free"}
+              <CardFooter className="pb-12 px-8">
+                <Button 
+                  onClick={handleHobbyClick}
+                  className="w-full h-20 rounded-3xl bg-[#111] hover:bg-black text-white font-bold uppercase tracking-widest text-sm"
+                >
+                  {isLoggedIn ? "GO TO DASHBOARD" : "START FREE"}
                 </Button>
               </CardFooter>
             </Card>
@@ -142,53 +132,42 @@ export function Pricing() {
 
           {/* Pro Plan */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
             className="h-full"
           >
-            <Card className="h-full flex flex-col relative transition-all duration-500 rounded-[3rem] overflow-visible border-indigo-500 border-2 shadow-2xl scale-105 z-10 bg-gradient-to-b from-indigo-50/50 to-white">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                <Badge className="bg-indigo-600 text-white border-0 font-bold px-6 py-2 text-[10px] uppercase tracking-[0.2em] shadow-xl rounded-full">
+            <Card className="h-full flex flex-col relative rounded-[3rem] border-[#818cf8] border-[3px] shadow-2xl bg-white overflow-hidden p-4">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-0.5 z-20">
+                <div className="bg-[#4338ca] text-white font-black px-10 py-2.5 text-[10px] uppercase tracking-[0.2em] rounded-b-2xl shadow-lg">
                   MOST POPULAR
-                </Badge>
+                </div>
               </div>
-              <CardHeader className="pt-10 pb-6 text-center">
-                <CardTitle className="text-2xl font-bold uppercase tracking-tight">Pro</CardTitle>
-                <CardDescription className="pt-2 font-medium">Everything you need for your entire degree.</CardDescription>
+              <CardHeader className="pt-14 text-center">
+                <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">PRO</CardTitle>
+                <CardDescription className="pt-2 text-slate-500 font-medium">Everything you need for your entire degree.</CardDescription>
               </CardHeader>
-              <CardContent className="flex-1 px-8">
-                <div className="mb-8 text-center">
+              <CardContent className="flex-1 px-8 pt-6">
+                <div className="mb-10 text-center">
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-6xl font-extrabold text-foreground">$8</span>
-                    <span className="text-muted-foreground font-bold uppercase text-xs tracking-widest">/month</span>
+                    <span className="text-7xl font-bold text-slate-900">$8</span>
+                    <span className="text-slate-400 font-bold uppercase text-xs tracking-widest">/MONTH</span>
                   </div>
-                  <p className="text-sm text-indigo-600 font-bold mt-1 uppercase tracking-wider">
-                    Billed yearly ($96)
+                  <p className="text-sm text-[#6366f1] font-black mt-2 uppercase tracking-widest">
+                    BILLED YEARLY ($96)
                   </p>
                 </div>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">Unlimited uses per tool</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">AI Lab Report Writer</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">Priority AI processing</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm font-semibold">PDF & DOCX Export</span>
-                  </li>
+                <ul className="space-y-6 mb-10">
+                   {PLANS[1].features.slice(0, 4).map((feature, i) => (
+                    <li key={i} className="flex items-center gap-4">
+                      <Check className="h-5 w-5 text-indigo-600 shrink-0" />
+                      <span className="text-slate-600 font-bold">{feature}</span>
+                    </li>
+                  ))}
                 </ul>
               </CardContent>
-              <CardFooter className="pb-10 px-8 flex flex-col gap-4">
-                <div id="paypal-button-container" className="w-full"></div>
+              <CardFooter className="pb-8 px-8">
+                <div id="paypal-button-container" className="w-full min-h-[50px]"></div>
               </CardFooter>
             </Card>
           </motion.div>
