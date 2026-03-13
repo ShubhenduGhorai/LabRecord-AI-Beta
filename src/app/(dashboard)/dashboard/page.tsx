@@ -22,16 +22,30 @@ export default function DashboardPage() {
         return;
       }
 
-      const { data: sub } = await supabase.from('subscriptions').select('status, plan').eq('user_id', user.id).single();
-      if (sub?.status === 'active' && sub?.plan === 'premium') {
+      const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('status, plan_name')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+
+      if (sub) {
         setHasSubscription(true);
         return;
       }
-      const { data: legacy } = await supabase.from('users').select('subscription_status, plan').eq('id', user.id).single();
-      if (legacy?.subscription_status === 'active' && legacy?.plan === 'premium') {
+
+      // Check users table as fallback (legacy/manual)
+      const { data: userData } = await supabase
+        .from('users')
+        .select('plan, subscription_status')
+        .eq('id', user.id)
+        .single();
+
+      if (userData?.plan === 'pro' || userData?.subscription_status === 'active') {
         setHasSubscription(true);
         return;
       }
+
       setHasSubscription(false);
     }
     checkSub();

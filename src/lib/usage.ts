@@ -82,14 +82,26 @@ export async function getUserUsage(userId: string): Promise<any> {
 export async function checkToolUsage(userId: string, toolId: string): Promise<ToolCheckResult> {
   const supabase = await createSupabaseServerClient();
   
-  // 1. Get user plan from users table
-  const { data: userData } = await supabase
-    .from('users')
-    .select('plan')
-    .eq('id', userId)
+  // 1. Get user plan from subscriptions table first (the source of truth for recurring subs)
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select('status')
+    .eq('user_id', userId)
+    .eq('status', 'active')
     .single();
   
-  const plan = userData?.plan === 'pro' ? 'pro' : 'hobby';
+  let plan = 'hobby';
+  if (subData) {
+    plan = 'pro';
+  } else {
+    // Fallback: Check users table for legacy or manual plan overrides
+    const { data: userData } = await supabase
+      .from('users')
+      .select('plan')
+      .eq('id', userId)
+      .single();
+    plan = userData?.plan === 'pro' ? 'pro' : 'hobby';
+  }
   const limits = TOOL_LIMITS[toolId];
   if (!limits) throw new Error(`Invalid tool ID: ${toolId}`);
   
