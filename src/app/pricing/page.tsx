@@ -33,41 +33,36 @@ function PayPalButton({ planId, amount, onSuccess }: { planId: string, amount: n
     const renderButtons = () => {
       if (typeof window !== "undefined" && (window as any).paypal) {
         (window as any).paypal.Buttons({
-          createOrder: (data: any, actions: any) => {
-            return actions.order.create({
-              purchase_units: [{
-                amount: {
-                  value: amount.toString(),
-                  currency_code: "USD"
-                },
-                description: `LabRecord AI ${planId === 'pro_yearly' ? 'Yearly' : 'Monthly'} Subscription`,
-              }]
+          createSubscription: (data: any, actions: any) => {
+            const plan = plans.find(p => p.id === planId);
+            return actions.subscription.create({
+              plan_id: plan?.paypalPlanId || 'P-34W2022987790400UNG2DXJY'
             });
           },
           onApprove: async (data: any, actions: any) => {
             try {
-              const res = await fetch("/api/paypal/capture-order", {
+              const res = await fetch("/api/paypal/verify-subscription", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
-                  orderID: data.orderID,
+                  subscriptionID: data.subscriptionID,
                   planId: planId
                 }),
               });
               const result = await res.json();
               if (result.status === "success") {
-                onSuccess(result.data);
+                onSuccess(result);
               } else {
-                setError(result.error || "Capture failed");
+                setError(result.error || "Verification failed");
               }
             } catch (err) {
               console.error(err);
-              setError("An error occurred during payment verification.");
+              setError("An error occurred during subscription verification.");
             }
           },
           onError: (err: any) => {
             console.error("PayPal Error:", err);
-            setError("PayPal checkout failed.");
+            setError("PayPal subscription failed.");
           },
           style: {
             layout: 'horizontal',
@@ -138,7 +133,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-[#f8fafc] py-20 px-4 flex flex-col items-center">
       {/* Add PayPal SDK Script dynamically */}
       <Script 
-        src={`https://www.paypal.com/sdk/js?client-id=${paypalClientId}&currency=USD&components=buttons`}
+        src={`https://www.paypal.com/sdk/js?client-id=${paypalClientId}&vault=true&intent=subscription`}
         strategy="afterInteractive"
       />
       {/* Header Section */}

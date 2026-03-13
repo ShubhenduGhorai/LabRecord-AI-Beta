@@ -37,6 +37,7 @@ export const PLANS = [
       'Priority AI processing'
     ],
     priceId: 'plan_pro_monthly',
+    paypalPlanId: 'PRO_MONTHLY_ID_HERE', // Placeholder
     popular: false,
     limit: 200,
   },
@@ -62,6 +63,7 @@ export const PLANS = [
       'Priority AI processing'
     ],
     priceId: 'plan_pro_yearly',
+    paypalPlanId: 'P-34W2022987790400UNG2DXJY',
     popular: true,
     limit: 1000, // Effectively unlimited for student use
   },
