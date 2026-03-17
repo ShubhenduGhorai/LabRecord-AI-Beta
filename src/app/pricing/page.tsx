@@ -11,16 +11,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-    title: "LabRecord AI Pricing | Affordable Plans for Students",
-    description: "Choose the right plan for your lab reporting needs. Start for free or unlock unlimited reports.",
-    alternates: {
-        canonical: "/pricing",
-    },
-};
-
 function PayPalButton({ planId, onSuccess }: { planId: string, onSuccess: (data: any) => void }) {
   const [error, setError] = useState<string | null>(null);
 
