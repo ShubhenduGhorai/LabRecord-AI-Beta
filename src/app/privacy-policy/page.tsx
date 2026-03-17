@@ -1,4 +1,14 @@
-export default function PrivacyPage() {
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Privacy Policy | LabRecord AI",
+    description: "Our commitment to protecting your data and privacy while using LabRecord AI.",
+    alternates: {
+        canonical: "/privacy-policy",
+    },
+};
+
+export default function PrivacyPolicy() {
     return (
         <div className="max-w-4xl mx-auto py-20 px-6">
             <h1 className="text-4xl font-bold tracking-tight mb-6 text-slate-900">Privacy Policy</h1>

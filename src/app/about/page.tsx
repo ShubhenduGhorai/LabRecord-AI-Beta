@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "About LabRecord AI | Mission & Vision",
+    description: "Learn about the mission behind LabRecord AI - automating lab reporting for engineers and science students.",
+    alternates: {
+        canonical: "/about",
+    },
+};
+
 export default function AboutPage() {
     return (
         <div className="max-w-4xl mx-auto py-20 px-6">

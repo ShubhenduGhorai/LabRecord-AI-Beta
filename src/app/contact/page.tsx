@@ -1,3 +1,13 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Contact LabRecord AI | Support & Inquiries",
+    description: "Got questions? Reach out to the LabRecord AI team for support, feedback, or partnership inquiries.",
+    alternates: {
+        canonical: "/contact",
+    },
+};
+
 export default function ContactPage() {
     return (
         <div className="max-w-4xl mx-auto py-20 px-6">

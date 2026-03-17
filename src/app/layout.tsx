@@ -18,6 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://labrecord.cloud'),
   title: "LabRecord AI – Generate Lab Record Books in Minutes",
   description: "AI-powered tool for generating lab reports and analyzing experiment data. Automates engineering and science lab record books.",
   keywords: "lab record generator, engineering lab record, lab report generator, labrecord ai",
@@ -42,6 +43,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "LabRecord AI",
     description: "Generate lab record books instantly",
+  },
+  alternates: {
+    canonical: '/',
   },
 };
 

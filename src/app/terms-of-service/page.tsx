@@ -1,4 +1,14 @@
-export default function TermsPage() {
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: "Terms of Service | LabRecord AI",
+    description: "Read the terms and conditions for using LabRecord AI services.",
+    alternates: {
+        canonical: "/terms-of-service",
+    },
+};
+
+export default function TermsOfService() {
     return (
         <div className="max-w-4xl mx-auto py-20 px-6">
             <h1 className="text-4xl font-bold tracking-tight mb-6 text-slate-900">Terms of Service</h1>
