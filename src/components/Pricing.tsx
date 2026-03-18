@@ -91,6 +91,7 @@ export function Pricing({ onSelectPlan }: PricingProps = {}) {
   // Check auth at click-time to avoid routing based on stale React state
   const handleHobbyClick = async () => {
     const { data } = await supabase.auth.getUser();
+    console.log("USER:", data?.user);
     if (data?.user) router.push("/dashboard");
     else router.push("/auth/signup");
   };
