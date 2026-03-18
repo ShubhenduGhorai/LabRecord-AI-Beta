@@ -71,14 +71,13 @@ export function Pricing({ onSelectPlan }: PricingProps = {}) {
   const router = useRouter();
 
   useEffect(() => {
-    // Initial check using getUser() — more reliable than getSession() on first render
+    // Use getSession() — reads from local cookie storage, no server round-trip
     async function checkUser() {
-      const { data } = await supabase.auth.getUser();
-      setIsLoggedIn(!!data.user);
+      const { data } = await supabase.auth.getSession();
+      setIsLoggedIn(!!data.session?.user);
     }
     checkUser();
 
-    // Keep listener for subsequent auth state changes (sign in / sign out)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session?.user);
     });
@@ -88,11 +87,11 @@ export function Pricing({ onSelectPlan }: PricingProps = {}) {
     };
   }, []);
 
-  // Check auth at click-time to avoid routing based on stale React state
+  // Use getSession() — reads local cookie, never returns null for a valid logged-in user
   const handleHobbyClick = async () => {
-    const { data } = await supabase.auth.getUser();
-    console.log("USER:", data?.user);
-    if (data?.user) router.push("/dashboard");
+    const { data } = await supabase.auth.getSession();
+    console.log("SESSION:", data?.session?.user);
+    if (data?.session?.user) router.push("/dashboard");
     else router.push("/auth/signup");
   };
 
