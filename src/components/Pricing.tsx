@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { PLANS } from "@/lib/plans";
 import Script from "next/script";
 
+
 // ---------------------------------------------------------------------------
 // Props: onSelectPlan is optional. If provided, clicking "Upgrade" triggers
 // the modal instead of navigating to /pricing or /billing.
@@ -33,12 +34,12 @@ function PayPalButtonComponent({ onSuccess }: { onSuccess: () => void }) {
             layout: "vertical",
             label: "subscribe"
           },
-          createSubscription: function(data: any, actions: any) {
+          createSubscription: function (data: any, actions: any) {
             return actions.subscription.create({
               plan_id: "P-34W2022987790400UNG2DXJY"
             });
           },
-          onApprove: function(data: any) {
+          onApprove: function (data: any) {
             fetch("/api/save-subscription", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -70,12 +71,16 @@ export function Pricing({ onSelectPlan }: PricingProps = {}) {
   const router = useRouter();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
-    });
+    // Initial check using getUser() — more reliable than getSession() on first render
+    async function checkUser() {
+      const { data } = await supabase.auth.getUser();
+      setIsLoggedIn(!!data.user);
+    }
+    checkUser();
 
+    // Keep listener for subsequent auth state changes (sign in / sign out)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
+      setIsLoggedIn(!!session?.user);
     });
 
     return () => {
@@ -83,8 +88,10 @@ export function Pricing({ onSelectPlan }: PricingProps = {}) {
     };
   }, []);
 
-  const handleHobbyClick = () => {
-    if (isLoggedIn) router.push("/dashboard");
+  // Check auth at click-time to avoid routing based on stale React state
+  const handleHobbyClick = async () => {
+    const { data } = await supabase.auth.getUser();
+    if (data?.user) router.push("/dashboard");
     else router.push("/auth/signup");
   };
 
