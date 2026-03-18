@@ -11,25 +11,27 @@ import {
   X,
   Database,
   Calculator,
-  HardDrive,
   Settings,
   LogOut,
   Beaker,
-  Menu
+  Menu,
+  Zap
 } from "lucide-react";
 import { useState } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
+import { useSubscription } from "@/context/SubscriptionContext";
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const supabase = createSupabaseClient();
+  const { currentPlan, isActive, openUpgradeModal } = useSubscription();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
-    router.refresh(); // Refresh routing cache to bounce back out
+    router.refresh();
   };
 
   const navItems = [
@@ -76,7 +78,23 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="px-4 mt-auto">
+      <div className="px-4 mt-auto space-y-2">
+        {/* Upgrade button — only shown for free users */}
+        {!isActive && (
+          <Button
+            onClick={() => { openUpgradeModal(); setIsOpen(false); }}
+            className="w-full justify-start gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-6 shadow-md shadow-indigo-200"
+          >
+            <Zap className="h-5 w-5" />
+            Upgrade to Pro
+          </Button>
+        )}
+        {isActive && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-200">
+            <Zap className="h-4 w-4 text-emerald-600" />
+            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Pro Active ✅</span>
+          </div>
+        )}
         <Button 
           variant="ghost" 
           onClick={handleLogout}

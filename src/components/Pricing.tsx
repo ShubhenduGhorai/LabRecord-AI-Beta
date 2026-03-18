@@ -4,19 +4,25 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { PLANS } from "@/lib/plans";
 import Script from "next/script";
+
+// ---------------------------------------------------------------------------
+// Props: onSelectPlan is optional. If provided, clicking "Upgrade" triggers
+// the modal instead of navigating to /pricing or /billing.
+// ---------------------------------------------------------------------------
+interface PricingProps {
+  /** Called when user clicks a paid plan CTA. Use this to open UpgradeModal. */
+  onSelectPlan?: (planId: string) => void;
+}
 
 function PayPalButtonComponent({ onSuccess }: { onSuccess: () => void }) {
   useEffect(() => {
     const renderButtons = () => {
       if (typeof window !== "undefined" && (window as any).paypal) {
-        // Clear container if it was previously rendered to avoid duplicates
         const container = document.getElementById("paypal-button-container-pro");
         if (container) container.innerHTML = "";
 
@@ -33,25 +39,23 @@ function PayPalButtonComponent({ onSuccess }: { onSuccess: () => void }) {
             });
           },
           onApprove: function(data: any) {
-            console.log("Subscription ID:", data.subscriptionID);
             fetch("/api/save-subscription", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ subscription_id: data.subscriptionID })
             }).then(() => {
-                onSuccess();
+              onSuccess();
             });
           }
         }).render("#paypal-button-container-pro");
       }
     };
 
-    // Poll for paypal availability if the script is still loading
     const interval = setInterval(() => {
-        if ((window as any).paypal) {
-            renderButtons();
-            clearInterval(interval);
-        }
+      if ((window as any).paypal) {
+        renderButtons();
+        clearInterval(interval);
+      }
     }, 500);
 
     return () => clearInterval(interval);
@@ -60,7 +64,7 @@ function PayPalButtonComponent({ onSuccess }: { onSuccess: () => void }) {
   return <div id="paypal-button-container-pro" className="w-full min-h-[50px]"></div>;
 }
 
-export function Pricing() {
+export function Pricing({ onSelectPlan }: PricingProps = {}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const supabase = createSupabaseClient();
   const router = useRouter();
@@ -84,15 +88,24 @@ export function Pricing() {
     else router.push("/auth/signup");
   };
 
+  // When a paid plan is selected: if onSelectPlan is provided → open modal,
+  // otherwise fall through to the inline PayPal button (landing page behaviour).
+  const handleProClick = () => {
+    if (onSelectPlan) {
+      onSelectPlan("pro_yearly");
+    }
+    // If no onSelectPlan, the PayPalButtonComponent renders below
+  };
+
   return (
     <section id="pricing" className="py-24 bg-[#fcfcfc]">
-      <Script 
+      <Script
         src="https://www.paypal.com/sdk/js?client-id=AWAhvks8m67O_uy4XGScMaqDiWkha5RnP9VvCTlFsPPZuHSfOpQ5mPy10hSrjENyeR4KZC4yvUZOhuPV&vault=true&intent=subscription"
         strategy="lazyOnload"
       />
       <div className="container mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto items-stretch py-10">
-          
+
           {/* Hobby Plan */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -113,7 +126,7 @@ export function Pricing() {
                   </div>
                 </div>
                 <ul className="space-y-6 mb-12">
-                   {PLANS[0].features.slice(0, 3).map((feature, i) => (
+                  {PLANS[0].features.slice(0, 3).map((feature, i) => (
                     <li key={i} className="flex items-center gap-4">
                       <Check className="h-5 w-5 text-indigo-600 shrink-0" />
                       <span className="text-slate-600 font-bold">{feature}</span>
@@ -122,7 +135,7 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter className="pb-12 px-8">
-                <Button 
+                <Button
                   onClick={handleHobbyClick}
                   className="w-full h-20 rounded-3xl bg-[#111] hover:bg-black text-white font-bold uppercase tracking-widest text-sm"
                 >
@@ -160,7 +173,7 @@ export function Pricing() {
                   </p>
                 </div>
                 <ul className="space-y-6 mb-10">
-                   {PLANS[1].features.slice(0, 4).map((feature, i) => (
+                  {PLANS[1].features.slice(0, 4).map((feature, i) => (
                     <li key={i} className="flex items-center gap-4">
                       <Check className="h-5 w-5 text-indigo-600 shrink-0" />
                       <span className="text-slate-600 font-bold">{feature}</span>
@@ -169,7 +182,17 @@ export function Pricing() {
                 </ul>
               </CardContent>
               <CardFooter className="pb-8 px-8 flex flex-col gap-4">
-                <PayPalButtonComponent onSuccess={() => router.push("/dashboard")} />
+                {/* If modal handler provided, show a button instead of inline PayPal */}
+                {onSelectPlan ? (
+                  <Button
+                    onClick={handleProClick}
+                    className="w-full h-16 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-widest text-sm"
+                  >
+                    Get Pro →
+                  </Button>
+                ) : (
+                  <PayPalButtonComponent onSuccess={() => router.push("/dashboard")} />
+                )}
               </CardFooter>
             </Card>
           </motion.div>

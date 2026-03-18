@@ -6,50 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { LineChart, BarChart2, FileText, BadgeHelp, BookOpen, HardDrive, Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useSubscription } from "@/context/SubscriptionContext";
 
 export default function DashboardPage() {
-  const [hasSubscription, setHasSubscription] = useState<boolean | null>(null);
-  const supabase = createSupabaseClient();
-
-  useEffect(() => {
-    async function checkSub() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Admin Override
-      if (user.email === "YOUR_GMAIL@gmail.com") {
-        setHasSubscription(true);
-        return;
-      }
-
-      const { data: sub } = await supabase
-        .from('subscriptions')
-        .select('status, plan_name')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
-
-      if (sub) {
-        setHasSubscription(true);
-        return;
-      }
-
-      // Check users table as fallback (legacy/manual)
-      const { data: userData } = await supabase
-        .from('users')
-        .select('plan, subscription_status')
-        .eq('id', user.id)
-        .single();
-
-      if (userData?.plan === 'pro' || userData?.subscription_status === 'active') {
-        setHasSubscription(true);
-        return;
-      }
-
-      setHasSubscription(false);
-    }
-    checkSub();
-  }, []);
+  const { isActive, isLoading, openUpgradeModal } = useSubscription();
 
   const tools = [
     {
@@ -71,7 +31,6 @@ export default function DashboardPage() {
             </linearGradient>
           </defs>
           <rect width="400" height="160" fill="url(#db-grad-analysis)" />
-          {/* Nodes and Lines */}
           <g className="group-hover:opacity-100 transition-opacity duration-500">
             <circle cx="100" cy="80" r="4" fill="#3b82f6" />
             <circle cx="200" cy="50" r="4" fill="#0ea5e9" />
@@ -79,7 +38,6 @@ export default function DashboardPage() {
             <line x1="100" y1="80" x2="200" y2="50" stroke="#3b82f6" strokeWidth="2" strokeDasharray="4 4" />
             <line x1="200" y1="50" x2="300" y2="110" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="4 4" />
           </g>
-          {/* Statistical lines */}
           <path d="M 50 130 L 120 100 L 180 110 L 250 40 L 350 70" fill="none" stroke="url(#line-grad)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 transition-transform duration-500" />
           <rect x="50" y="30" width="40" height="60" rx="4" fill="#ffffff" fillOpacity="0.6" stroke="#3b82f6" strokeWidth="1" />
           <rect x="58" y="40" width="24" height="4" rx="2" fill="#3b82f6" />
@@ -103,7 +61,6 @@ export default function DashboardPage() {
             </linearGradient>
           </defs>
           <rect width="400" height="160" fill="url(#db-grad-graph)" />
-          {/* Grid */}
           <g stroke="#ffffff" strokeWidth="1" strokeOpacity="0.4">
             <line x1="40" y1="0" x2="40" y2="160" />
             <line x1="120" y1="0" x2="120" y2="160" />
@@ -143,7 +100,6 @@ export default function DashboardPage() {
             <rect x="20" y="65" width="100" height="6" rx="3" fill="#d946ef" fillOpacity="0.2" />
             <rect x="20" y="80" width="70" height="4" rx="2" fill="#f1f5f9" />
             <rect x="20" y="90" width="85" height="4" rx="2" fill="#f1f5f9" />
-            {/* Sparkle AI icon */}
             <path d="M 120 100 Q 120 110 130 110 Q 120 110 120 120 Q 120 110 110 110 Q 120 110 120 100" fill="#d946ef" />
           </g>
         </svg>
@@ -165,13 +121,10 @@ export default function DashboardPage() {
           </defs>
           <rect width="400" height="160" fill="url(#db-grad-viva)" />
           <g transform="translate(100, 30)">
-            {/* Student circle */}
             <circle cx="40" cy="50" r="30" fill="#ffffff" />
             <circle cx="40" cy="40" r="10" fill="#fb7185" fillOpacity="0.3" />
-            {/* AI circle */}
             <circle cx="160" cy="50" r="35" fill="#ffffff" fillOpacity="0.8" />
             <path d="M 150 40 Q 160 30 170 40 Q 160 50 150 40" fill="#ef4444" fillOpacity="0.5" />
-            {/* Connecting dialog dots */}
             <circle cx="90" cy="50" r="3" fill="#cbd5e1" />
             <circle cx="110" cy="50" r="3" fill="#cbd5e1" />
           </g>
@@ -195,10 +148,8 @@ export default function DashboardPage() {
           <rect width="400" height="160" fill="url(#db-grad-format)" />
           <g transform="translate(140, 20)">
             <rect width="120" height="120" rx="2" fill="#ffffff" />
-            {/* Columns structure */}
             <rect x="10" y="10" width="45" height="100" rx="1" fill="#f1f5f9" />
             <rect x="65" y="10" width="45" height="100" rx="1" fill="#f1f5f9" />
-            {/* Formatting markers */}
             <rect x="15" y="20" width="30" height="3" rx="1.5" fill="#fb923c" fillOpacity="0.4" />
             <rect x="70" y="40" width="35" height="3" rx="1.5" fill="#f59e0b" fillOpacity="0.4" />
           </g>
@@ -222,7 +173,6 @@ export default function DashboardPage() {
           <rect width="400" height="160" fill="url(#db-grad-storage)" />
           <g transform="translate(140, 40)">
             <path d="M 20 60 Q 20 20 60 20 Q 80 10 100 20 Q 120 20 120 60 L 20 60 Z" fill="#ffffff" />
-            {/* Icon inside cloud */}
             <rect x="55" y="50" width="30" height="30" rx="4" fill="#34d399" fillOpacity="0.2" />
             <path d="M 60 65 L 70 75 L 80 65" fill="none" stroke="#14b8a6" strokeWidth="2" />
           </g>
@@ -236,48 +186,59 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Lab Suite Workspace</h1>
         <p className="text-muted-foreground mt-2 text-slate-500">
-          Select a tool below to begin. Access requires an active premium subscription.
+          Select a tool below to begin. Premium tools require an active subscription.
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {tools.map((tool, idx) => (
-          <Card key={idx} className="group relative flex flex-col hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-slate-200 overflow-hidden">
-            <div className="w-full relative overflow-hidden h-32 bg-slate-50">
-              {tool.illustration}
-            </div>
-            <CardHeader className="pb-4">
-              <CardTitle className={`text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${tool.color}`}>
-                {tool.title}
-              </CardTitle>
-              <CardDescription className="text-slate-600 mt-2 line-clamp-2 min-h-[40px]">
-                {tool.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1 pt-6 pb-2">
-              {hasSubscription === false && tool.isPremium && (
-                <div className="flex items-center gap-2 text-sm text-slate-700 font-medium bg-slate-100 p-2 rounded-md mb-2 border border-slate-200">
-                  <Lock className="h-4 w-4 text-slate-500" />
-                  Premium Feature
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="pt-2 pb-6">
-              <Link href={hasSubscription === false && tool.isPremium ? "/pricing" : tool.href} className="w-full">
-                <Button
-                  variant={hasSubscription === false && tool.isPremium ? "outline" : "default"}
-                  className={`w-full font-semibold flex items-center justify-between ${hasSubscription === false && tool.isPremium
-                      ? "text-slate-700 hover:bg-slate-50"
-                      : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200"
-                    }`}
-                >
-                  {hasSubscription === false && tool.isPremium ? "Unlock Feature" : "Open Tool"}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-            </CardFooter>
-          </Card>
-        ))}
+        {tools.map((tool, idx) => {
+          const isLocked = !isActive && tool.isPremium;
+
+          return (
+            <Card key={idx} className="group relative flex flex-col hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border-slate-200 overflow-hidden">
+              <div className="w-full relative overflow-hidden h-32 bg-slate-50">
+                {tool.illustration}
+              </div>
+              <CardHeader className="pb-4">
+                <CardTitle className={`text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r ${tool.color}`}>
+                  {tool.title}
+                </CardTitle>
+                <CardDescription className="text-slate-600 mt-2 line-clamp-2 min-h-[40px]">
+                  {tool.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex-1 pt-6 pb-2">
+                {isLocked && (
+                  <div className="flex items-center gap-2 text-sm text-slate-700 font-medium bg-slate-100 p-2 rounded-md mb-2 border border-slate-200">
+                    <Lock className="h-4 w-4 text-slate-500" />
+                    Premium Feature
+                  </div>
+                )}
+              </CardContent>
+              <CardFooter className="pt-2 pb-6">
+                {isLocked ? (
+                  <Button
+                    onClick={openUpgradeModal}
+                    variant="outline"
+                    className="w-full font-semibold flex items-center justify-between text-slate-700 hover:bg-slate-50"
+                  >
+                    Unlock Feature
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                ) : (
+                  <Link href={tool.href} className="w-full">
+                    <Button
+                      className="w-full font-semibold flex items-center justify-between bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200"
+                    >
+                      Open Tool
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
+              </CardFooter>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

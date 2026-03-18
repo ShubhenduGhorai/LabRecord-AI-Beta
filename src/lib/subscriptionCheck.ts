@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from './supabaseServer';
 
-export async function checkSubscription(redirectToPricing: boolean = true) {
+export async function checkSubscription(redirectToPricing: boolean = false) {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    if (redirectToPricing) redirect('/login');
+    if (redirectToPricing) redirect('/auth/login');
     return false;
   }
 
@@ -15,7 +15,7 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
     return true;
   }
 
-  // 1. Check the new subscriptions table
+  // 1. Check the subscriptions table
   const { data: subscription } = await supabase
     .from('subscriptions')
     .select('status, plan_name')
@@ -26,7 +26,7 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
     return true;
   }
 
-  // 2. Fallback check for legacy users who might have their status directly on users table
+  // 2. Fallback check for legacy users
   const { data: legacyUser } = await supabase
     .from('users')
     .select('subscription_status, plan')
@@ -37,13 +37,7 @@ export async function checkSubscription(redirectToPricing: boolean = true) {
     return true;
   }
 
-  // Note: if you still want to allow 'free' accounts an initial allowance,
-  // you might add logic here to check `legacyUser?.plan === 'free'` and usage count.
-  // But per strict gating requirements, we require an 'active' subscription explicitly.
-
-  if (redirectToPricing) {
-    redirect('/pricing');
-  }
-
+  // NOTE: Do NOT redirect to /pricing — let the calling component open the UpgradeModal
   return false;
 }
+
