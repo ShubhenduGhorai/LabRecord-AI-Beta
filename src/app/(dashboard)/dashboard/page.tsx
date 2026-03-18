@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/context/SubscriptionContext";
 
 export default function DashboardPage() {
-  const { isActive, isLoading, openUpgradeModal } = useSubscription();
+  const { isActive, isLoading, openUpgrade } = useSubscription();
 
   const tools = [
     {
@@ -218,7 +218,7 @@ export default function DashboardPage() {
               <CardFooter className="pt-2 pb-6">
                 {isLocked ? (
                   <Button
-                    onClick={openUpgradeModal}
+                    onClick={openUpgrade}
                     variant="outline"
                     className="w-full font-semibold flex items-center justify-between text-slate-700 hover:bg-slate-50"
                   >

@@ -8,7 +8,7 @@ import { createSupabaseClient } from "@/lib/supabaseClient";
 import { useSubscription } from "@/context/SubscriptionContext";
 
 export default function BillingPage() {
-  const { currentPlan, isActive, openUpgradeModal } = useSubscription();
+  const { currentPlan, isActive, openUpgrade } = useSubscription();
   const [planLabel, setPlanLabel] = useState("—");
   const [expiryDate, setExpiryDate] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
@@ -96,7 +96,7 @@ export default function BillingPage() {
           <div className="border-t border-slate-100 pt-5 flex flex-col sm:flex-row gap-3">
             {!isActive && (
               <Button
-                onClick={openUpgradeModal}
+                onClick={openUpgrade}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl h-12 px-6"
               >
                 <Zap className="h-4 w-4 mr-2" />

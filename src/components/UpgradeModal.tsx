@@ -128,7 +128,7 @@ const MODAL_PLANS = [
 // Main UpgradeModal
 // ---------------------------------------------------------------------------
 export function UpgradeModal() {
-  const { isUpgradeOpen, closeUpgradeModal, currentPlan, refreshSubscription } =
+  const { isUpgradeOpen, closeUpgrade, currentPlan, refreshSubscription } =
     useSubscription();
 
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -171,13 +171,13 @@ export function UpgradeModal() {
         setPaymentStep("success");
 
         // Auto-close after 2.5 s
-        setTimeout(closeUpgradeModal, 2500);
+        setTimeout(closeUpgrade, 2500);
       } catch (err: any) {
         setErrorMsg("Something went wrong. Please contact support.");
         setPaymentStep("error");
       }
     },
-    [refreshSubscription, closeUpgradeModal]
+    [refreshSubscription, closeUpgrade]
   );
 
   const handlePayPalError = useCallback((msg: string) => {
@@ -200,7 +200,7 @@ export function UpgradeModal() {
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-        onClick={closeUpgradeModal}
+        onClick={closeUpgrade}
         aria-hidden="true"
       />
 
@@ -215,7 +215,7 @@ export function UpgradeModal() {
         {/* Header */}
         <div className="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-violet-900 px-8 py-10 text-center text-white">
           <button
-            onClick={closeUpgradeModal}
+            onClick={closeUpgrade}
             className="absolute right-5 top-5 rounded-full p-1.5 text-white/60 hover:bg-white/10 hover:text-white transition"
             aria-label="Close"
           >

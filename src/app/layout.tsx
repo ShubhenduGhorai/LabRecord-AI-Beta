@@ -4,8 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
+import { ClientProviders } from "@/components/ClientProviders";
 import { Analytics } from "@vercel/analytics/next";
-import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,13 +59,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
-        <CookieConsent />
-        <Analytics />
+        {/* ClientProviders supplies SubscriptionContext + global UpgradeModal to all pages */}
+        <ClientProviders>
+          <Navbar />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <CookieConsent />
+          <Analytics />
+        </ClientProviders>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

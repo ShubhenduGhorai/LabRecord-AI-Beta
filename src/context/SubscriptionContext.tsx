@@ -10,8 +10,8 @@ interface SubscriptionState {
   isActive: boolean;
   isLoading: boolean;
   isUpgradeOpen: boolean;
-  openUpgradeModal: () => void;
-  closeUpgradeModal: () => void;
+  openUpgrade: () => void;
+  closeUpgrade: () => void;
   refreshSubscription: () => Promise<void>;
 }
 
@@ -71,8 +71,8 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     fetchSubscription();
   }, [fetchSubscription]);
 
-  const openUpgradeModal = useCallback(() => setIsUpgradeOpen(true), []);
-  const closeUpgradeModal = useCallback(() => setIsUpgradeOpen(false), []);
+  const openUpgrade = useCallback(() => setIsUpgradeOpen(true), []);
+  const closeUpgrade = useCallback(() => setIsUpgradeOpen(false), []);
   const refreshSubscription = useCallback(async () => {
     await fetchSubscription();
   }, [fetchSubscription]);
@@ -84,8 +84,8 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         isActive,
         isLoading,
         isUpgradeOpen,
-        openUpgradeModal,
-        closeUpgradeModal,
+        openUpgrade,
+        closeUpgrade,
         refreshSubscription,
       }}
     >

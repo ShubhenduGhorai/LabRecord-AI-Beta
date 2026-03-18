@@ -26,7 +26,7 @@ export function Sidebar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const supabase = createSupabaseClient();
-  const { currentPlan, isActive, openUpgradeModal } = useSubscription();
+  const { isActive, openUpgrade } = useSubscription();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -82,7 +82,7 @@ export function Sidebar() {
         {/* Upgrade button — only shown for free users */}
         {!isActive && (
           <Button
-            onClick={() => { openUpgradeModal(); setIsOpen(false); }}
+            onClick={() => { openUpgrade(); setIsOpen(false); }}
             className="w-full justify-start gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold py-6 shadow-md shadow-indigo-200"
           >
             <Zap className="h-5 w-5" />
