@@ -1,8 +1,34 @@
 {
-  "crons": [
+  "rewrites": [
     {
-      "path": "/api/cron/reset-usage",
-      "schedule": "0 0 1 * *"
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "tools.labrecord.cloud"
+        }
+      ],
+      "destination": "/tools/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ],
+      "destination": "/finance/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "labrecord.cloud"
+        }
+      ],
+      "destination": "/main/$1"
     }
   ]
 }
