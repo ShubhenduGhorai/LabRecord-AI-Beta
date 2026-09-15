@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://labrecord.cloud
+
+# Sitemaps
+Sitemap: https://labrecord.cloud/sitemap.xml
