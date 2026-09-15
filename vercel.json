@@ -5,6 +5,26 @@
       "has": [
         {
           "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ],
+      "destination": "/main/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "labrecord.cloud"
+        }
+      ],
+      "destination": "/main/$1"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
           "value": "tools.labrecord.cloud"
         }
       ],
@@ -19,16 +39,6 @@
         }
       ],
       "destination": "/finance/$1"
-    },
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "labrecord.cloud"
-        }
-      ],
-      "destination": "/main/$1"
     }
   ]
 }
