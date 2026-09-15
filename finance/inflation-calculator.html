@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Inflation Calculator Online | Calculate Future Value of Money</title>
+
+  <meta
+    name="description"
+    content="Calculate how inflation can affect the value and purchasing power of money over time with this free online inflation calculator."
+  >
+
+  <meta
+    name="keywords"
+    content="inflation calculator, inflation calculator India, future value inflation, purchasing power calculator, money inflation calculator"
+  >
+
+  <link
+    rel="canonical"
+    href="https://finance.labrecord.cloud/inflation-calculator.html"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    header {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px 20px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      color: #111827;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    nav a {
+      color: #374151;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: #2563eb;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      color: #111827;
+      font-size: clamp(28px, 5vw, 38px);
+      line-height: 1.2;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: #6b7280;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .calculator {
+      width: 100%;
+      padding: 28px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 25px;
+    }
+
+    .inputs,
+    .results {
+      min-width: 0;
+    }
+
+    .results {
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    .section-title {
+      margin: 0 0 20px;
+      color: #111827;
+      font-size: 20px;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      max-width: 100%;
+      padding: 12px;
+
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+
+      background: #ffffff;
+      color: #111827;
+
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      padding: 13px;
+
+      border: none;
+      border-radius: 8px;
+
+      background: #2563eb;
+      color: #ffffff;
+
+      font-size: 15px;
+      font-weight: 600;
+
+      cursor: pointer;
+    }
+
+    .calculate-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .result-card {
+      padding: 16px;
+      margin-bottom: 12px;
+
+      background: #ffffff;
+
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+    }
+
+    .result-card span {
+      display: block;
+      margin-bottom: 6px;
+
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .result-card strong {
+      display: block;
+
+      color: #111827;
+      font-size: 22px;
+    }
+
+    .highlight {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .schedule {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .schedule h2 {
+      margin-bottom: 15px;
+      color: #111827;
+      font-size: 22px;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+
+      background: #ffffff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 11px;
+      border-bottom: 1px solid #e5e7eb;
+
+      text-align: right;
+      font-size: 14px;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: center;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+      font-size: 13px;
+    }
+
+    .content {
+      width: 100%;
+      margin-top: 40px;
+      padding: 28px;
+
+      background: #ffffff;
+      border-radius: 16px;
+    }
+
+    .content h2 {
+      margin-top: 28px;
+      color: #111827;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    .content h2:first-child {
+      margin-top: 0;
+    }
+
+    .content p,
+    .content li {
+      color: #4b5563;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .content ol,
+    .content ul {
+      padding-left: 22px;
+    }
+
+    .formula {
+      margin: 15px 0;
+      padding: 15px;
+
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .disclaimer {
+      margin-top: 25px;
+      padding: 15px;
+
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+
+      color: #92400e;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .faq {
+      padding: 16px 0;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .faq strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #111827;
+    }
+
+    footer {
+      width: 100%;
+      margin-top: 50px;
+      padding: 25px 20px;
+
+      background: #111827;
+      color: #d1d5db;
+
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer a {
+      display: inline-block;
+      margin: 5px 8px;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+
+      .header-inner {
+        padding: 15px 16px;
+      }
+
+      main {
+        padding: 30px 16px;
+      }
+
+      .calculator,
+      .content {
+        padding: 22px;
+      }
+
+    }
+
+    @media (max-width: 600px) {
+
+      .header-inner {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      nav {
+        width: 100%;
+        gap: 10px 15px;
+      }
+
+      nav a {
+        font-size: 13px;
+      }
+
+      main {
+        padding: 25px 12px;
+      }
+
+      .hero {
+        margin-bottom: 22px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .calculator {
+        padding: 16px;
+        border-radius: 12px;
+      }
+
+      .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .results {
+        padding: 15px;
+      }
+
+      .result-card strong {
+        font-size: 20px;
+      }
+
+      .content {
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 12px;
+      }
+
+      .content h2 {
+        font-size: 21px;
+      }
+
+      .content p,
+      .content li {
+        font-size: 14px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+
+<header>
+
+  <div class="header-inner">
+
+    <a
+      href="https://finance.labrecord.cloud/"
+      class="logo"
+    >
+      LabRecord
+    </a>
+
+    <nav>
+
+      <a href="https://finance.labrecord.cloud/">
+        Finance
+      </a>
+
+      <a href="https://tools.labrecord.cloud/">
+        Tools
+      </a>
+
+      <a href="https://labrecord.cloud/">
+        Home
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+<main>
+
+
+  <section class="hero">
+
+    <h1>
+      Inflation Calculator
+    </h1>
+
+    <p>
+      Estimate how inflation may affect the future value
+      and purchasing power of your money over time.
+    </p>
+
+  </section>
+
+
+
+  <section class="calculator">
+
+
+    <div class="calculator-grid">
+
+
+      <div class="inputs">
+
+        <h2 class="section-title">
+          Inflation Details
+        </h2>
+
+
+        <div class="field">
+
+          <label for="amount">
+            Current Amount (₹)
+          </label>
+
+          <input
+            type="number"
+            id="amount"
+            min="0"
+            step="100"
+            value="100000"
+            placeholder="100000"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="inflationRate">
+            Annual Inflation Rate (%)
+          </label>
+
+          <input
+            type="number"
+            id="inflationRate"
+            min="0"
+            max="100"
+            step="0.1"
+            value="6"
+            placeholder="6"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="years">
+            Number of Years
+          </label>
+
+          <input
+            type="number"
+            id="years"
+            min="1"
+            max="100"
+            step="1"
+            value="10"
+            placeholder="10"
+          >
+
+        </div>
+
+
+        <button
+          type="button"
+          class="calculate-btn"
+          id="calculateBtn"
+        >
+          Calculate Inflation
+        </button>
+
+      </div>
+
+
+
+      <div class="results">
+
+        <h2 class="section-title">
+          Results
+        </h2>
+
+
+        <div class="result-card">
+
+          <span>
+            Current Amount
+          </span>
+
+          <strong id="currentAmount">
+            ₹0.00
+          </strong>
+
+        </div>
+
+
+        <div class="result-card highlight">
+
+          <span>
+            Future Cost Equivalent
+          </span>
+
+          <strong id="futureAmount">
+            ₹0.00
+          </strong>
+
+        </div>
+
+
+        <div class="result-card">
+
+          <span>
+            Inflation Increase
+          </span>
+
+          <strong id="increaseAmount">
+            ₹0.00
+          </strong>
+
+        </div>
+
+
+        <div class="result-card">
+
+          <span>
+            Today's Purchasing Power
+          </span>
+
+          <strong id="purchasingPower">
+            ₹0.00
+          </strong>
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <section
+      class="schedule"
+      id="schedule"
+    >
+
+      <h2>
+        Year-by-Year Inflation
+      </h2>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Year
+              </th>
+
+              <th>
+                Starting Cost
+              </th>
+
+              <th>
+                Inflation Increase
+              </th>
+
+              <th>
+                Future Cost
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="scheduleBody"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+  </section>
+
+
+
+  <section class="content">
+
+
+    <h2>
+      Free Inflation Calculator
+    </h2>
+
+    <p>
+      Inflation reduces the purchasing power of money over
+      time. This calculator estimates how much money may be
+      required in the future to purchase something that costs
+      a certain amount today.
+    </p>
+
+
+    <h2>
+      Inflation Formula
+    </h2>
+
+    <p>
+      The estimated future cost can be calculated using
+      compound inflation:
+    </p>
+
+
+    <div class="formula">
+      Future Cost = Current Cost × (1 + Inflation Rate)ⁿ
+    </div>
+
+
+    <p>
+      For example, if something costs ₹1,00,000 today and
+      inflation averages 6% per year, its estimated future
+      cost after 10 years would be higher.
+    </p>
+
+
+    <h2>
+      Why Inflation Matters
+    </h2>
+
+    <ul>
+
+      <li>
+        It reduces the purchasing power of money.
+      </li>
+
+      <li>
+        Future expenses can be higher than today's expenses.
+      </li>
+
+      <li>
+        Long-term financial planning should consider inflation.
+      </li>
+
+      <li>
+        Retirement planning often accounts for future inflation.
+      </li>
+
+      <li>
+        Education, healthcare and living costs can change over time.
+      </li>
+
+    </ul>
+
+
+    <h2>
+      Example
+
+    </h2>
+
+    <p>
+      Suppose an expense costs ₹1,00,000 today and inflation
+      averages 6% annually. After 10 years, the estimated
+      equivalent cost would be approximately ₹1,79,085.
+    </p>
+
+
+    <div class="disclaimer">
+
+      <strong>Disclaimer:</strong>
+      This calculator uses an assumed inflation rate to
+      provide a mathematical estimate. Actual inflation
+      varies over time and between products, services and
+      locations. This tool is for educational and planning
+      purposes and is not financial advice.
+
+    </div>
+
+
+    <h2>
+      Frequently Asked Questions
+    </h2>
+
+
+    <div class="faq">
+
+      <strong>
+        What does an inflation calculator show?
+      </strong>
+
+      <p>
+        It estimates how the cost of goods or services may
+        change over time if a specified annual inflation rate
+        continues.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        What inflation rate should I use?
+      </strong>
+
+      <p>
+        There is no single rate that applies to every future
+        expense. You can enter an assumption appropriate for
+        your own planning scenario.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        Does inflation reduce purchasing power?
+      </strong>
+
+      <p>
+        Yes. When prices rise, the same amount of money
+        generally buys fewer goods and services than before.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        Are inflation estimates guaranteed?
+      </strong>
+
+      <p>
+        No. Inflation can change from year to year, so the
+        result should be treated as an estimate rather than
+        a prediction.
+      </p>
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+
+
+<footer>
+
+  <div>
+    © 2026 LabRecord
+  </div>
+
+  <div>
+
+    <a href="https://labrecord.cloud/">
+      Home
+    </a>
+
+    <a href="https://tools.labrecord.cloud/">
+      Tools
+    </a>
+
+    <a href="https://finance.labrecord.cloud/">
+      Finance
+    </a>
+
+  </div>
+
+</footer>
+
+
+
+<script>
+
+  const amount =
+    document.getElementById("amount");
+
+  const inflationRate =
+    document.getElementById("inflationRate");
+
+  const years =
+    document.getElementById("years");
+
+  const calculateBtn =
+    document.getElementById("calculateBtn");
+
+  const currentAmount =
+    document.getElementById("currentAmount");
+
+  const futureAmount =
+    document.getElementById("futureAmount");
+
+  const increaseAmount =
+    document.getElementById("increaseAmount");
+
+  const purchasingPower =
+    document.getElementById("purchasingPower");
+
+  const schedule =
+    document.getElementById("schedule");
+
+  const scheduleBody =
+    document.getElementById("scheduleBody");
+
+
+  calculateBtn.addEventListener(
+    "click",
+    calculateInflation
+  );
+
+
+  function calculateInflation() {
+
+    const current =
+      Number(amount.value);
+
+    const annualInflation =
+      Number(inflationRate.value);
+
+    const totalYears =
+      Number(years.value);
+
+
+    if (
+      !current ||
+      current <= 0
+    ) {
+
+      alert(
+        "Please enter a valid amount."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      annualInflation < 0 ||
+      annualInflation > 100
+    ) {
+
+      alert(
+        "Please enter an inflation rate between 0% and 100%."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !totalYears ||
+      totalYears < 1 ||
+      totalYears > 100
+    ) {
+
+      alert(
+        "Please enter a period between 1 and 100 years."
+      );
+
+      return;
+
+    }
+
+
+    const rate =
+      annualInflation / 100;
+
+
+    const future =
+      current *
+      Math.pow(
+        1 + rate,
+        totalYears
+      );
+
+
+    const increase =
+      future - current;
+
+
+    const purchasing =
+      current /
+      Math.pow(
+        1 + rate,
+        totalYears
+      );
+
+
+    currentAmount.textContent =
+      formatCurrency(current);
+
+
+    futureAmount.textContent =
+      formatCurrency(future);
+
+
+    increaseAmount.textContent =
+      formatCurrency(increase);
+
+
+    purchasingPower.textContent =
+      formatCurrency(purchasing);
+
+
+    createSchedule(
+      current,
+      rate,
+      totalYears
+    );
+
+  }
+
+
+  function createSchedule(
+    startingAmount,
+    rate,
+    totalYears
+  ) {
+
+    scheduleBody.innerHTML = "";
+
+
+    let previous =
+      startingAmount;
+
+
+    for (
+      let year = 1;
+      year <= totalYears;
+      year++
+    ) {
+
+      const future =
+        previous *
+        (1 + rate);
+
+
+      const increase =
+        future - previous;
+
+
+      const row =
+        document.createElement("tr");
+
+
+      row.innerHTML = `
+
+        <td>
+          ${year}
+        </td>
+
+        <td>
+          ${formatCurrency(previous)}
+        </td>
+
+        <td>
+          ${formatCurrency(increase)}
+        </td>
+
+        <td>
+          ${formatCurrency(future)}
+        </td>
+
+      `;
+
+
+      scheduleBody.appendChild(row);
+
+
+      previous =
+        future;
+
+    }
+
+
+    schedule.style.display =
+      "block";
+
+  }
+
+
+  function formatCurrency(value) {
+
+    return "₹" +
+      value.toLocaleString(
+        "en-IN",
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }
+      );
+
+  }
+
+
+  calculateInflation();
+
+</script>
+
+
+</body>
+</html>

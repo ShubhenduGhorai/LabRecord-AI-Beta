@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Lumpsum Calculator – Investment Return Calculator | LabRecord</title>
+
+  <meta name="description"
+        content="Use the free Lumpsum Calculator to estimate the future value of a one-time investment, total returns and invested amount based on expected returns and investment period.">
+
+  <meta name="keywords"
+        content="lumpsum calculator, lump sum calculator, investment return calculator, mutual fund lumpsum calculator">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical"
+        href="https://finance.labrecord.cloud/lumpsum-calculator.html">
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      color: #2563eb;
+      font-size: 23px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #4b5563;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: #2563eb;
+    }
+
+    /* HERO */
+
+    .hero {
+      padding: 48px 0 30px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.15;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: #667085;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* CALCULATOR */
+
+    .calculator {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 30px;
+      margin: 20px auto 40px;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .calculator h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #667085;
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px 0 34px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+      background: #ffffff;
+    }
+
+    input[type="number"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .range-value {
+      min-width: 70px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #2563eb;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      height: 50px;
+      border: 0;
+      border-radius: 10px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .calculate-btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* RESULTS */
+
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .result-main {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .result-main small {
+      display: block;
+      margin-bottom: 7px;
+      color: #667085;
+    }
+
+    .result-main strong {
+      color: #2563eb;
+      font-size: clamp(28px, 5vw, 40px);
+    }
+
+    .result-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .result-item {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .result-item span {
+      display: block;
+      margin-bottom: 6px;
+      color: #667085;
+      font-size: 13px;
+    }
+
+    .result-item strong {
+      font-size: 18px;
+    }
+
+    .profit {
+      color: #16a34a;
+    }
+
+    /* BREAKDOWN */
+
+    .breakdown {
+      margin-top: 25px;
+    }
+
+    .breakdown h3 {
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+
+    .bar {
+      display: flex;
+      height: 18px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #e5e7eb;
+    }
+
+    .invested-bar {
+      width: 50%;
+      background: #94a3b8;
+    }
+
+    .returns-bar {
+      width: 50%;
+      background: #2563eb;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 10px;
+      color: #667085;
+      font-size: 12px;
+    }
+
+    /* CONTENT */
+
+    .content {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .content h2 {
+      margin-top: 0;
+      font-size: 25px;
+    }
+
+    .content h3 {
+      margin-top: 28px;
+      font-size: 19px;
+    }
+
+    .content p,
+    .content li {
+      color: #4b5563;
+      line-height: 1.75;
+    }
+
+    .content ul {
+      padding-left: 22px;
+    }
+
+    .formula {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: Georgia, serif;
+      font-size: 17px;
+    }
+
+    .disclaimer {
+      margin-top: 25px;
+      padding: 16px;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      background: #fff7ed;
+      color: #7c2d12;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+
+    footer {
+      padding: 30px 0;
+      background: #111827;
+      color: #d1d5db;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    footer a {
+      margin: 0 8px;
+      color: #ffffff;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 760px) {
+
+      .container {
+        width: min(100% - 22px, 1100px);
+      }
+
+      .nav {
+        min-height: 60px;
+      }
+
+      .nav-links {
+        gap: 12px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding: 34px 0 20px;
+      }
+
+      .hero h1 {
+        font-size: 31px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .calculator {
+        padding: 20px 16px;
+        border-radius: 14px;
+      }
+
+      .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+
+      .result-items {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 22px 17px;
+        border-radius: 14px;
+      }
+
+      .content h2 {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 420px) {
+
+      .logo {
+        font-size: 19px;
+      }
+
+      .nav-links {
+        gap: 8px;
+      }
+
+      .nav-links a:nth-child(2) {
+        display: none;
+      }
+
+      .range-row {
+        gap: 8px;
+      }
+
+      .range-value {
+        min-width: 60px;
+        font-size: 12px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="container nav">
+
+    <a href="index.html" class="logo">
+      LabRecord Finance
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Finance Home</a>
+      <a href="sip-calculator.html">SIP Calculator</a>
+      <a href="fd-calculator.html">FD Calculator</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+<main>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="container">
+
+      <h1>Lumpsum Calculator</h1>
+
+      <p>
+        Calculate the estimated future value and potential returns
+        from a one-time investment using compound growth.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- CALCULATOR -->
+
+  <section class="container">
+
+    <div class="calculator">
+
+      <div class="calculator-grid">
+
+        <!-- INPUTS -->
+
+        <div>
+
+          <h2>Investment Details</h2>
+
+          <div class="field">
+
+            <label for="investment">
+              Investment Amount
+            </label>
+
+            <div class="input-wrap">
+
+              <span>₹</span>
+
+              <input
+                type="number"
+                id="investment"
+                value="100000"
+                min="0"
+                step="100"
+              >
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="returnRate">
+              Expected Annual Return
+            </label>
+
+            <div class="range-row">
+
+              <input
+                type="range"
+                id="returnRate"
+                min="1"
+                max="30"
+                step="0.1"
+                value="12"
+              >
+
+              <div class="range-value">
+                <span id="returnRateValue">12%</span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="years">
+              Investment Period
+            </label>
+
+            <div class="range-row">
+
+              <input
+                type="range"
+                id="years"
+                min="1"
+                max="50"
+                step="1"
+                value="10"
+              >
+
+              <div class="range-value">
+                <span id="yearsValue">10 Yr</span>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="compounding">
+              Compounding Frequency
+            </label>
+
+            <select
+              id="compounding"
+              style="
+                width:100%;
+                height:48px;
+                padding:0 12px;
+                border:1px solid #d1d5db;
+                border-radius:10px;
+                background:#ffffff;
+                font-size:16px;
+                outline:none;
+              "
+            >
+
+              <option value="1">
+                Annually
+              </option>
+
+              <option value="2">
+                Half-Yearly
+              </option>
+
+              <option value="4" selected>
+                Quarterly
+              </option>
+
+              <option value="12">
+                Monthly
+              </option>
+
+              <option value="365">
+                Daily
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <button
+            class="calculate-btn"
+            onclick="calculateLumpsum()"
+          >
+            Calculate Lumpsum
+          </button>
+
+        </div>
+
+
+        <!-- RESULTS -->
+
+        <div>
+
+          <h2>Estimated Results</h2>
+
+          <div class="result-box">
+
+            <div class="result-main">
+
+              <small>
+                Estimated Future Value
+              </small>
+
+              <strong id="futureValue">
+                ₹3,30,387
+              </strong>
+
+            </div>
+
+
+            <div class="result-items">
+
+              <div class="result-item">
+
+                <span>
+                  Invested Amount
+                </span>
+
+                <strong id="investmentResult">
+                  ₹1,00,000
+                </strong>
+
+              </div>
+
+
+              <div class="result-item">
+
+                <span>
+                  Estimated Returns
+                </span>
+
+                <strong
+                  class="profit"
+                  id="estimatedReturns"
+                >
+                  ₹2,30,387
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="breakdown">
+
+              <h3>
+                Investment Breakdown
+              </h3>
+
+              <div class="bar">
+
+                <div
+                  class="invested-bar"
+                  id="investedBar"
+                ></div>
+
+                <div
+                  class="returns-bar"
+                  id="returnsBar"
+                ></div>
+
+              </div>
+
+
+              <div class="legend">
+
+                <span id="investedLegend">
+                  Invested: ₹1,00,000
+                </span>
+
+                <span id="returnsLegend">
+                  Returns: ₹2,30,387
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SEO CONTENT -->
+
+  <section class="container">
+
+    <article class="content">
+
+      <h2>
+        What is a Lumpsum Investment?
+      </h2>
+
+      <p>
+        A lumpsum investment means investing a larger amount of money
+        at one time rather than making regular investments. For example,
+        investing ₹1,00,000 into an investment product at once is a
+        lumpsum investment.
+      </p>
+
+
+      <h3>
+        How does a Lumpsum Calculator work?
+      </h3>
+
+      <p>
+        A lumpsum calculator estimates the potential future value of
+        a one-time investment using the initial investment amount,
+        assumed annual return, investment duration and compounding
+        frequency.
+      </p>
+
+      <p>
+        The calculation assumes that the specified rate of return
+        remains constant throughout the investment period. Actual
+        investment returns can vary.
+      </p>
+
+
+      <h3>
+        Lumpsum Calculator Formula
+      </h3>
+
+      <div class="formula">
+
+        A = P × (1 + r / n)<sup>nt</sup>
+
+      </div>
+
+      <p>
+        Where:
+      </p>
+
+      <ul>
+
+        <li>
+          <strong>A</strong> = Estimated future value
+        </li>
+
+        <li>
+          <strong>P</strong> = Initial investment
+        </li>
+
+        <li>
+          <strong>r</strong> = Annual rate of return in decimal form
+        </li>
+
+        <li>
+          <strong>n</strong> = Number of compounding periods per year
+        </li>
+
+        <li>
+          <strong>t</strong> = Investment period in years
+        </li>
+
+      </ul>
+
+
+      <h3>
+        Example of a Lumpsum Investment
+      </h3>
+
+      <p>
+        Suppose you invest ₹1,00,000 for 10 years and assume an annual
+        return of 12%. If the assumed return were compounded quarterly,
+        the estimated future value would be calculated using the
+        compound interest formula.
+      </p>
+
+
+      <h3>
+        Lumpsum vs SIP
+      </h3>
+
+      <p>
+        A lumpsum investment involves investing money at one time,
+        while a Systematic Investment Plan (SIP) involves investing
+        a fixed amount periodically. The two approaches have different
+        cash-flow and market-timing characteristics.
+      </p>
+
+      <p>
+        A lumpsum calculator is useful when you already have a specific
+        amount available for investment and want to understand how
+        different assumed returns and investment periods could affect
+        its potential future value.
+      </p>
+
+
+      <h3>
+        Factors that affect Lumpsum returns
+      </h3>
+
+      <ul>
+
+        <li>
+          Initial investment amount
+        </li>
+
+        <li>
+          Expected rate of return
+        </li>
+
+        <li>
+          Investment duration
+        </li>
+
+        <li>
+          Compounding frequency
+        </li>
+
+        <li>
+          Taxes, fees and other applicable costs
+        </li>
+
+        <li>
+          Actual market performance
+        </li>
+
+      </ul>
+
+
+      <div class="disclaimer">
+
+        <strong>Important:</strong>
+        This calculator provides estimates for educational and
+        financial-planning purposes only. It assumes a constant
+        rate of return and does not guarantee actual investment
+        performance. Market-linked investments can lose value,
+        and actual results may differ substantially from these
+        calculations. This calculator is not investment advice.
+
+      </div>
+
+    </article>
+
+  </section>
+
+</main>
+
+
+<footer>
+
+  <div class="container">
+
+    <p>
+      © 2026 LabRecord Finance. All rights reserved.
+    </p>
+
+    <p>
+      <a href="index.html">Finance</a>
+      <a href="../main/index.html">LabRecord</a>
+    </p>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+  const investmentInput =
+    document.getElementById("investment");
+
+  const returnRateInput =
+    document.getElementById("returnRate");
+
+  const yearsInput =
+    document.getElementById("years");
+
+  const compoundingInput =
+    document.getElementById("compounding");
+
+
+  const returnRateValue =
+    document.getElementById("returnRateValue");
+
+  const yearsValue =
+    document.getElementById("yearsValue");
+
+
+  returnRateInput.addEventListener(
+    "input",
+    function () {
+
+      returnRateValue.textContent =
+        this.value + "%";
+
+      calculateLumpsum();
+
+    }
+  );
+
+
+  yearsInput.addEventListener(
+    "input",
+    function () {
+
+      yearsValue.textContent =
+        this.value + " Yr";
+
+      calculateLumpsum();
+
+    }
+  );
+
+
+  investmentInput.addEventListener(
+    "input",
+    calculateLumpsum
+  );
+
+
+  compoundingInput.addEventListener(
+    "change",
+    calculateLumpsum
+  );
+
+
+  function formatIndianNumber(number) {
+
+    return new Intl.NumberFormat("en-IN", {
+      maximumFractionDigits: 0
+    }).format(Math.round(number));
+
+  }
+
+
+  function calculateLumpsum() {
+
+    let P =
+      Number(investmentInput.value);
+
+    const annualRate =
+      Number(returnRateInput.value);
+
+    const years =
+      Number(yearsInput.value);
+
+    const n =
+      Number(compoundingInput.value);
+
+
+    if (!P || P < 0) {
+      P = 0;
+    }
+
+
+    const r =
+      annualRate / 100;
+
+
+    const futureValue =
+      P * Math.pow(
+        1 + r / n,
+        n * years
+      );
+
+
+    const estimatedReturns =
+      futureValue - P;
+
+
+    document.getElementById(
+      "futureValue"
+    ).textContent =
+      "₹" + formatIndianNumber(futureValue);
+
+
+    document.getElementById(
+      "investmentResult"
+    ).textContent =
+      "₹" + formatIndianNumber(P);
+
+
+    document.getElementById(
+      "estimatedReturns"
+    ).textContent =
+      "₹" + formatIndianNumber(estimatedReturns);
+
+
+    document.getElementById(
+      "investedLegend"
+    ).textContent =
+      "Invested: ₹" + formatIndianNumber(P);
+
+
+    document.getElementById(
+      "returnsLegend"
+    ).textContent =
+      "Returns: ₹" + formatIndianNumber(estimatedReturns);
+
+
+    let investedPercentage = 100;
+
+    let returnsPercentage = 0;
+
+
+    if (futureValue > 0) {
+
+      investedPercentage =
+        (P / futureValue) * 100;
+
+      returnsPercentage =
+        (estimatedReturns / futureValue) * 100;
+
+    }
+
+
+    document.getElementById(
+      "investedBar"
+    ).style.width =
+      investedPercentage + "%";
+
+
+    document.getElementById(
+      "returnsBar"
+    ).style.width =
+      returnsPercentage + "%";
+
+  }
+
+
+  calculateLumpsum();
+
+</script>
+
+</body>
+</html>

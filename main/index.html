@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LabRecord – Free Online Tools & Financial Calculators</title>
+
+  <meta name="description"
+        content="LabRecord provides free online calculators, useful tools and financial calculators for everyday tasks, business and personal planning.">
+
+  <meta name="keywords"
+        content="online tools, free calculators, financial calculators, SIP calculator, EMI calculator, GST calculator, percentage calculator">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://labrecord.cloud/">
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      color: #2563eb;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 25px;
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .nav-links a:hover {
+      color: #2563eb;
+    }
+
+    /* HERO */
+
+    .hero {
+      padding: 75px 0 60px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      max-width: 800px;
+      margin: 0 auto 18px;
+      font-size: clamp(34px, 6vw, 56px);
+      line-height: 1.1;
+    }
+
+    .hero h1 span {
+      color: #2563eb;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: #667085;
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      color: #172033;
+    }
+
+    .btn-secondary:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    /* CATEGORIES */
+
+    .section {
+      padding: 25px 0 65px;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-title h2 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: #667085;
+      line-height: 1.6;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .category-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 30px;
+      transition: transform 0.2s ease,
+                  box-shadow 0.2s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .category-icon {
+      width: 54px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 13px;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+
+    .category-card h3 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .category-card p {
+      margin: 0 0 20px;
+      color: #667085;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .category-link {
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* FEATURES */
+
+    .features {
+      background: #ffffff;
+      padding: 60px 0;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .feature {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .feature-icon {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: #667085;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* ABOUT */
+
+    .about {
+      padding: 65px 0;
+    }
+
+    .about-box {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 35px;
+    }
+
+    .about-box h2 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    .about-box p {
+      color: #4b5563;
+      line-height: 1.8;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 35px 0;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    footer .footer-links {
+      margin-top: 12px;
+    }
+
+    footer a {
+      color: #ffffff;
+      margin: 0 8px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 760px) {
+
+      .container {
+        width: min(100% - 22px, 1120px);
+      }
+
+      .nav {
+        min-height: 60px;
+      }
+
+      .logo {
+        font-size: 21px;
+      }
+
+      .nav-links {
+        gap: 12px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding: 55px 0 45px;
+      }
+
+      .hero h1 {
+        font-size: 35px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .category-card {
+        padding: 24px;
+      }
+
+      .about-box {
+        padding: 24px 18px;
+      }
+
+    }
+
+    @media (max-width: 420px) {
+
+      .nav-links {
+        gap: 8px;
+      }
+
+      .nav-links a:nth-child(2) {
+        display: none;
+      }
+
+      .hero h1 {
+        font-size: 31px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <div class="container nav">
+
+    <a href="index.html" class="logo">
+      LabRecord
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="../tools/index.html">Tools</a>
+      <a href="../finance/index.html">Finance</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+<main>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="container">
+
+      <h1>
+        Useful Tools for
+        <span>Everyday Work</span>
+      </h1>
+
+      <p>
+        LabRecord brings together free online tools and financial
+        calculators designed to make everyday calculations,
+        business tasks and financial planning simpler.
+      </p>
+
+      <div class="hero-buttons">
+
+        <a
+          href="../tools/index.html"
+          class="btn btn-primary"
+        >
+          Explore Tools
+        </a>
+
+        <a
+          href="../finance/index.html"
+          class="btn btn-secondary"
+        >
+          Explore Finance
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CATEGORIES -->
+
+  <section class="section">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2>
+          Explore LabRecord
+        </h2>
+
+        <p>
+          Choose the section that matches what you need.
+        </p>
+
+      </div>
+
+
+      <div class="category-grid">
+
+        <!-- TOOLS -->
+
+        <a
+          href="../tools/index.html"
+          class="category-card"
+        >
+
+          <div class="category-icon">
+            🛠️
+          </div>
+
+          <h3>
+            Online Tools
+          </h3>
+
+          <p>
+            Free tools for calculations, image processing,
+            QR codes, invoices, passwords, text and other
+            everyday tasks.
+          </p>
+
+          <span class="category-link">
+            Explore Tools →
+          </span>
+
+        </a>
+
+
+        <!-- FINANCE -->
+
+        <a
+          href="../finance/index.html"
+          class="category-card"
+        >
+
+          <div class="category-icon">
+            ₹
+          </div>
+
+          <h3>
+            Finance Calculators
+          </h3>
+
+          <p>
+            Calculate SIP returns, fixed deposit maturity,
+            loan payments, compound interest and other
+            financial estimates.
+          </p>
+
+          <span class="category-link">
+            Explore Finance →
+          </span>
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FEATURES -->
+
+  <section class="features">
+
+    <div class="container">
+
+      <div class="section-title">
+
+        <h2>
+          Why Use LabRecord?
+        </h2>
+
+        <p>
+          Simple tools without unnecessary complexity.
+        </p>
+
+      </div>
+
+
+      <div class="feature-grid">
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            ⚡
+          </div>
+
+          <h3>
+            Fast
+          </h3>
+
+          <p>
+            Get results quickly without complicated
+            registration processes.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            📱
+          </div>
+
+          <h3>
+            Mobile Friendly
+          </h3>
+
+          <p>
+            Designed to work across phones, tablets
+            and desktop computers.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            🔒
+          </div>
+
+          <h3>
+            Simple & Private
+          </h3>
+
+          <p>
+            Many tools work directly in your browser,
+            making them convenient for everyday use.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ABOUT -->
+
+  <section class="about">
+
+    <div class="container">
+
+      <div class="about-box">
+
+        <h2>
+          About LabRecord
+        </h2>
+
+        <p>
+          LabRecord is a collection of practical online tools
+          and calculators built to help users complete common
+          tasks more easily.
+        </p>
+
+        <p>
+          The platform includes everyday utilities as well as
+          financial calculators for estimating investments,
+          loans and interest. Results from financial calculators
+          are estimates and should not be considered financial advice.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+
+  <div class="container">
+
+    <p>
+      © 2026 LabRecord. All rights reserved.
+    </p>
+
+    <div class="footer-links">
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="../tools/index.html">
+        Tools
+      </a>
+
+      <a href="../finance/index.html">
+        Finance
+      </a>
+
+    </div>
+
+  </div>
+
+</footer>
+
+</body>
+</html>

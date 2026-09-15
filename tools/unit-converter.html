@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Unit Converter - Length, Weight, Temperature & More | LabRecord</title>
+
+  <meta name="description" content="Free online unit converter for length, weight, temperature, area, volume and digital storage units. Convert units quickly and easily.">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://tools.labrecord.cloud/unit-converter.html">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fc;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .logo span {
+      color: #4f46e5;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      color: #475467;
+      font-size: 15px;
+    }
+
+    nav a:hover {
+      color: #4f46e5;
+    }
+
+    /* PAGE HEADER */
+
+    .page-header {
+      text-align: center;
+      padding: 55px 0 35px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.15;
+      margin-bottom: 15px;
+    }
+
+    .page-header p {
+      max-width: 720px;
+      margin: auto;
+      color: #667085;
+      font-size: 17px;
+    }
+
+    /* CALCULATOR */
+
+    .calculator-card {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 8px 25px rgba(20, 30, 60, 0.04);
+      margin-bottom: 25px;
+    }
+
+    .calculator-card h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    /* CATEGORY BUTTONS */
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-bottom: 25px;
+    }
+
+    .category-button {
+      margin: 0;
+      padding: 10px 15px;
+      background: #f1f3f8;
+      color: #475467;
+      border: 1px solid #e1e4eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .category-button.active {
+      background: #4f46e5;
+      border-color: #4f46e5;
+      color: white;
+    }
+
+    /* INPUTS */
+
+    .conversion-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 15px;
+      align-items: end;
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d5d9e2;
+      border-radius: 9px;
+      font-size: 16px;
+      outline: none;
+      background: white;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #4f46e5;
+    }
+
+    .swap-button {
+      margin: 0;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #dfe3ff;
+      font-size: 20px;
+    }
+
+    .swap-button:hover {
+      background: #e0e7ff;
+    }
+
+    .calculate-button {
+      margin-top: 22px;
+      border: none;
+      background: #4f46e5;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .calculate-button:hover {
+      background: #4338ca;
+    }
+
+    /* RESULT */
+
+    .result-box {
+      display: none;
+      margin-top: 30px;
+      background: #eef2ff;
+      border: 1px solid #dfe3ff;
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+    }
+
+    .result-label {
+      color: #4338ca;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .result-value {
+      color: #312e81;
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .result-explanation {
+      color: #667085;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .error {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 9px;
+      color: #be123c;
+      font-size: 14px;
+    }
+
+    /* CONTENT */
+
+    .content {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 35px;
+      margin: 45px 0 60px;
+    }
+
+    .content h2 {
+      font-size: 27px;
+      margin-bottom: 15px;
+    }
+
+    .content h3 {
+      font-size: 20px;
+      margin-top: 28px;
+      margin-bottom: 9px;
+    }
+
+    .content p {
+      color: #526071;
+      margin-bottom: 14px;
+    }
+
+    .formula {
+      background: #f7f8fc;
+      border-left: 4px solid #4f46e5;
+      padding: 15px;
+      margin: 15px 0;
+      font-weight: 700;
+    }
+
+    /* FAQ */
+
+    .faq-item {
+      border-top: 1px solid #e5e7eb;
+      padding: 18px 0;
+    }
+
+    .faq-item h3 {
+      margin-top: 0;
+      margin-bottom: 7px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 40px 0 25px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 35px;
+    }
+
+    footer h3 {
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    footer p,
+    footer a {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    footer a {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    .copyright {
+      border-top: 1px solid #374151;
+      margin-top: 30px;
+      padding-top: 20px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+
+      .conversion-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .swap-button {
+        justify-self: center;
+        transform: rotate(90deg);
+      }
+
+      .calculator-card {
+        padding: 22px;
+      }
+
+      .content {
+        padding: 25px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .nav {
+        min-height: 60px;
+      }
+
+      nav {
+        gap: 12px;
+        font-size: 13px;
+      }
+
+      .page-header {
+        padding: 40px 0 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <div class="container nav">
+
+      <a href="index.html" class="logo">
+        Lab<span>Record</span>
+      </a>
+
+      <nav>
+        <a href="index.html">Tools</a>
+        <a href="https://finance.labrecord.cloud/">Finance</a>
+        <a href="https://labrecord.cloud/">LabRecord</a>
+      </nav>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+      <div class="container">
+
+        <h1>Unit Converter</h1>
+
+        <p>
+          Convert length, weight, temperature, area, volume
+          and digital storage units quickly and accurately.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- CALCULATOR -->
+
+    <section>
+
+      <div class="container">
+
+        <div class="calculator-card">
+
+          <h2>Convert Units Online</h2>
+
+          <p class="description">
+            Choose a category, select your units and enter
+            a value to instantly convert it.
+          </p>
+
+
+          <!-- CATEGORIES -->
+
+          <div class="categories">
+
+            <button
+              class="category-button active"
+              id="lengthButton"
+              onclick="changeCategory('length')"
+            >
+              Length
+            </button>
+
+            <button
+              class="category-button"
+              id="weightButton"
+              onclick="changeCategory('weight')"
+            >
+              Weight
+            </button>
+
+            <button
+              class="category-button"
+              id="temperatureButton"
+              onclick="changeCategory('temperature')"
+            >
+              Temperature
+            </button>
+
+            <button
+              class="category-button"
+              id="areaButton"
+              onclick="changeCategory('area')"
+            >
+              Area
+            </button>
+
+            <button
+              class="category-button"
+              id="volumeButton"
+              onclick="changeCategory('volume')"
+            >
+              Volume
+            </button>
+
+            <button
+              class="category-button"
+              id="digitalButton"
+              onclick="changeCategory('digital')"
+            >
+              Digital Storage
+            </button>
+
+          </div>
+
+
+          <!-- CONVERTER -->
+
+          <div class="conversion-grid">
+
+            <div class="field">
+
+              <label for="fromValue">
+                From
+              </label>
+
+              <input
+                type="number"
+                id="fromValue"
+                value="1"
+                step="any"
+                oninput="convert()"
+              >
+
+              <select id="fromUnit" onchange="convert()">
+              </select>
+
+            </div>
+
+
+            <button
+              class="swap-button"
+              onclick="swapUnits()"
+              title="Swap units"
+            >
+              ⇄
+            </button>
+
+
+            <div class="field">
+
+              <label for="toUnit">
+                To
+              </label>
+
+              <select id="toUnit" onchange="convert()">
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="calculate-button"
+            onclick="convert()"
+          >
+            Convert
+          </button>
+
+
+          <div class="error" id="errorMessage"></div>
+
+
+          <!-- RESULT -->
+
+          <div class="result-box" id="resultBox">
+
+            <div class="result-label">
+              Converted Result
+            </div>
+
+            <div
+              class="result-value"
+              id="resultValue"
+            >
+              1
+            </div>
+
+            <div
+              class="result-explanation"
+              id="resultExplanation"
+            >
+              1 meter = 100 centimeters
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SEO CONTENT -->
+
+    <section>
+
+      <div class="container">
+
+        <article class="content">
+
+          <h2>What Is a Unit Converter?</h2>
+
+          <p>
+            A unit converter is an online tool that converts
+            measurements from one unit to another. It can be
+            useful when working with different measurement
+            systems in everyday life, education, business,
+            engineering and other activities.
+          </p>
+
+
+          <h3>Length Conversion</h3>
+
+          <p>
+            Length conversions are useful for converting
+            measurements such as millimeters, centimeters,
+            meters, kilometers, inches, feet, yards and miles.
+          </p>
+
+          <div class="formula">
+            1 meter = 100 centimeters
+          </div>
+
+
+          <h3>Weight Conversion</h3>
+
+          <p>
+            Weight and mass conversions can be used to convert
+            between kilograms, grams, milligrams, pounds and
+            ounces.
+          </p>
+
+          <div class="formula">
+            1 kilogram = 1000 grams
+          </div>
+
+
+          <h3>Temperature Conversion</h3>
+
+          <p>
+            Temperature can be expressed using Celsius,
+            Fahrenheit and Kelvin scales.
+          </p>
+
+          <div class="formula">
+            Fahrenheit = (Celsius × 9/5) + 32
+          </div>
+
+
+          <h3>Area Conversion</h3>
+
+          <p>
+            Area conversion is useful when working with
+            measurements such as square meters, square
+            kilometers, square feet and acres.
+          </p>
+
+
+          <h3>Volume Conversion</h3>
+
+          <p>
+            Volume units can be used to measure liquids and
+            three-dimensional quantities. Common units include
+            liters, milliliters, cubic meters and gallons.
+          </p>
+
+
+          <h3>Digital Storage Conversion</h3>
+
+          <p>
+            Digital storage can be expressed using units such
+            as bytes, kilobytes, megabytes, gigabytes and
+            terabytes.
+          </p>
+
+
+          <h3>Why Use an Online Unit Converter?</h3>
+
+          <p>
+            An online converter can save time and reduce manual
+            calculation when you need to work with unfamiliar
+            measurement units. The result can be calculated
+            directly in your browser without installing software.
+          </p>
+
+
+          <h2 style="margin-top: 35px;">
+            Frequently Asked Questions
+          </h2>
+
+
+          <div class="faq-item">
+
+            <h3>How do I convert meters to feet?</h3>
+
+            <p>
+              Select Length, choose meters as the source unit
+              and feet as the destination unit. Enter the value
+              you want to convert and the result will be calculated.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>How many centimeters are in one meter?</h3>
+
+            <p>
+              One meter contains 100 centimeters.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>How do I convert Celsius to Fahrenheit?</h3>
+
+            <p>
+              Multiply the Celsius temperature by 9/5 and add 32.
+              The calculator performs this conversion automatically.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>How many grams are in one kilogram?</h3>
+
+            <p>
+              One kilogram equals 1,000 grams.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Can I convert digital storage units?</h3>
+
+            <p>
+              Yes. This calculator supports bytes, kilobytes,
+              megabytes, gigabytes and terabytes.
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div>
+
+          <h3>LabRecord Tools</h3>
+
+          <p>
+            Free online tools and calculators for everyday
+            calculations and useful tasks.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>Tools</h3>
+
+          <a href="index.html">
+            All Tools
+          </a>
+
+          <a href="percentage-calculator.html">
+            Percentage Calculator
+          </a>
+
+          <a href="age-calculator.html">
+            Age Calculator
+          </a>
+
+          <a href="emi-calculator.html">
+            EMI Calculator
+          </a>
+
+          <a href="gst-calculator.html">
+            GST Calculator
+          </a>
+
+        </div>
+
+
+        <div>
+
+          <h3>Explore</h3>
+
+          <a href="https://finance.labrecord.cloud/">
+            Finance
+          </a>
+
+          <a href="https://labrecord.cloud/">
+            LabRecord
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="copyright">
+        © 2026 LabRecord. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    /*
+      Current category.
+    */
+
+    let currentCategory = "length";
+
+
+    /*
+      Conversion data.
+
+      For normal categories, values are converted
+      through a base unit.
+
+      Length base = meter
+      Weight base = kilogram
+      Area base = square meter
+      Volume base = liter
+      Digital base = byte
+    */
+
+    const units = {
+
+      length: {
+
+        meter: {
+          name: "Meter",
+          factor: 1
+        },
+
+        kilometer: {
+          name: "Kilometer",
+          factor: 1000
+        },
+
+        centimeter: {
+          name: "Centimeter",
+          factor: 0.01
+        },
+
+        millimeter: {
+          name: "Millimeter",
+          factor: 0.001
+        },
+
+        mile: {
+          name: "Mile",
+          factor: 1609.344
+        },
+
+        yard: {
+          name: "Yard",
+          factor: 0.9144
+        },
+
+        foot: {
+          name: "Foot",
+          factor: 0.3048
+        },
+
+        inch: {
+          name: "Inch",
+          factor: 0.0254
+        }
+
+      },
+
+
+      weight: {
+
+        kilogram: {
+          name: "Kilogram",
+          factor: 1
+        },
+
+        gram: {
+          name: "Gram",
+          factor: 0.001
+        },
+
+        milligram: {
+          name: "Milligram",
+          factor: 0.000001
+        },
+
+        tonne: {
+          name: "Metric Ton",
+          factor: 1000
+        },
+
+        pound: {
+          name: "Pound",
+          factor: 0.45359237
+        },
+
+        ounce: {
+          name: "Ounce",
+          factor: 0.028349523125
+        }
+
+      },
+
+
+      area: {
+
+        squareMeter: {
+          name: "Square Meter",
+          factor: 1
+        },
+
+        squareKilometer: {
+          name: "Square Kilometer",
+          factor: 1000000
+        },
+
+        squareCentimeter: {
+          name: "Square Centimeter",
+          factor: 0.0001
+        },
+
+        squareFoot: {
+          name: "Square Foot",
+          factor: 0.09290304
+        },
+
+        squareYard: {
+          name: "Square Yard",
+          factor: 0.83612736
+        },
+
+        acre: {
+          name: "Acre",
+          factor: 4046.8564224
+        },
+
+        hectare: {
+          name: "Hectare",
+          factor: 10000
+        }
+
+      },
+
+
+      volume: {
+
+        liter: {
+          name: "Liter",
+          factor: 1
+        },
+
+        milliliter: {
+          name: "Milliliter",
+          factor: 0.001
+        },
+
+        cubicMeter: {
+          name: "Cubic Meter",
+          factor: 1000
+        },
+
+        cubicCentimeter: {
+          name: "Cubic Centimeter",
+          factor: 0.001
+        },
+
+        gallon: {
+          name: "US Gallon",
+          factor: 3.785411784
+        },
+
+        quart: {
+          name: "US Quart",
+          factor: 0.946352946
+        },
+
+        pint: {
+          name: "US Pint",
+          factor: 0.473176473
+        }
+
+      },
+
+
+      digital: {
+
+        byte: {
+          name: "Byte",
+          factor: 1
+        },
+
+        kilobyte: {
+          name: "Kilobyte",
+          factor: 1024
+        },
+
+        megabyte: {
+          name: "Megabyte",
+          factor: 1024 * 1024
+        },
+
+        gigabyte: {
+          name: "Gigabyte",
+          factor: 1024 * 1024 * 1024
+        },
+
+        terabyte: {
+          name: "Terabyte",
+          factor: 1024 * 1024 * 1024 * 1024
+        }
+
+      },
+
+
+      temperature: {
+
+        celsius: {
+          name: "Celsius"
+        },
+
+        fahrenheit: {
+          name: "Fahrenheit"
+        },
+
+        kelvin: {
+          name: "Kelvin"
+        }
+
+      }
+
+    };
+
+
+    /*
+      Change category.
+    */
+
+    function changeCategory(category) {
+
+      currentCategory = category;
+
+
+      /*
+        Remove active state.
+      */
+
+      document
+        .querySelectorAll(".category-button")
+        .forEach(button => {
+          button.classList.remove("active");
+        });
+
+
+      /*
+        Activate selected button.
+      */
+
+      document
+        .getElementById(category + "Button")
+        .classList.add("active");
+
+
+      /*
+        Load units.
+      */
+
+      loadUnits();
+
+
+      /*
+        Calculate initial result.
+      */
+
+      convert();
+
+    }
+
+
+    /*
+      Load units into dropdowns.
+    */
+
+    function loadUnits() {
+
+      const fromSelect =
+        document.getElementById("fromUnit");
+
+      const toSelect =
+        document.getElementById("toUnit");
+
+
+      fromSelect.innerHTML = "";
+
+      toSelect.innerHTML = "";
+
+
+      const categoryUnits =
+        units[currentCategory];
+
+
+      Object.keys(categoryUnits).forEach(
+        (key, index) => {
+
+          const option1 =
+            document.createElement("option");
+
+          option1.value = key;
+
+          option1.textContent =
+            categoryUnits[key].name;
+
+
+          const option2 =
+            document.createElement("option");
+
+          option2.value = key;
+
+          option2.textContent =
+            categoryUnits[key].name;
+
+
+          fromSelect.appendChild(option1);
+
+          toSelect.appendChild(option2);
+
+        }
+      );
+
+
+      /*
+        Choose useful default pairs.
+      */
+
+      if (currentCategory === "length") {
+
+        fromSelect.value = "meter";
+
+        toSelect.value = "kilometer";
+
+      }
+
+      else if (currentCategory === "weight") {
+
+        fromSelect.value = "kilogram";
+
+        toSelect.value = "gram";
+
+      }
+
+      else if (currentCategory === "temperature") {
+
+        fromSelect.value = "celsius";
+
+        toSelect.value = "fahrenheit";
+
+      }
+
+      else if (currentCategory === "area") {
+
+        fromSelect.value = "squareMeter";
+
+        toSelect.value = "squareFoot";
+
+      }
+
+      else if (currentCategory === "volume") {
+
+        fromSelect.value = "liter";
+
+        toSelect.value = "milliliter";
+
+      }
+
+      else if (currentCategory === "digital") {
+
+        fromSelect.value = "megabyte";
+
+        toSelect.value = "gigabyte";
+
+      }
+
+    }
+
+
+    /*
+      Temperature conversion.
+    */
+
+    function convertTemperature(
+      value,
+      from,
+      to
+    ) {
+
+      let celsius;
+
+
+      /*
+        Convert source to Celsius.
+      */
+
+      if (from === "celsius") {
+
+        celsius = value;
+
+      }
+
+      else if (from === "fahrenheit") {
+
+        celsius =
+          (value - 32) * 5 / 9;
+
+      }
+
+      else if (from === "kelvin") {
+
+        celsius =
+          value - 273.15;
+
+      }
+
+
+      /*
+        Convert Celsius to destination.
+      */
+
+      if (to === "celsius") {
+
+        return celsius;
+
+      }
+
+      else if (to === "fahrenheit") {
+
+        return (
+          celsius * 9 / 5
+        ) + 32;
+
+      }
+
+      else if (to === "kelvin") {
+
+        return celsius + 273.15;
+
+      }
+
+    }
+
+
+    /*
+      Main conversion function.
+    */
+
+    function convert() {
+
+      const input =
+        parseFloat(
+          document.getElementById("fromValue").value
+        );
+
+
+      const from =
+        document.getElementById("fromUnit").value;
+
+
+      const to =
+        document.getElementById("toUnit").value;
+
+
+      const resultBox =
+        document.getElementById("resultBox");
+
+
+      const errorMessage =
+        document.getElementById("errorMessage");
+
+
+      resultBox.style.display = "none";
+
+      errorMessage.style.display = "none";
+
+
+      if (isNaN(input)) {
+
+        errorMessage.textContent =
+          "Please enter a valid number.";
+
+        errorMessage.style.display = "block";
+
+        return;
+
+      }
+
+
+      let result;
+
+
+      /*
+        Temperature uses special formulas.
+      */
+
+      if (currentCategory === "temperature") {
+
+        result =
+          convertTemperature(
+            input,
+            from,
+            to
+          );
+
+      }
+
+      /*
+        All other categories use
+        base-unit conversion.
+      */
+
+      else {
+
+        const fromFactor =
+          units[currentCategory][from].factor;
+
+        const toFactor =
+          units[currentCategory][to].factor;
+
+
+        const baseValue =
+          input * fromFactor;
+
+
+        result =
+          baseValue / toFactor;
+
+      }
+
+
+      /*
+        Format result.
+      */
+
+      const formattedResult =
+        formatNumber(result);
+
+
+      const fromName =
+        units[currentCategory][from].name;
+
+
+      const toName =
+        units[currentCategory][to].name;
+
+
+      document.getElementById(
+        "resultValue"
+      ).textContent =
+        formattedResult +
+        " " +
+        toName;
+
+
+      document.getElementById(
+        "resultExplanation"
+      ).textContent =
+        input +
+        " " +
+        fromName +
+        " = " +
+        formattedResult +
+        " " +
+        toName;
+
+
+      resultBox.style.display = "block";
+
+    }
+
+
+    /*
+      Format numbers without unnecessary
+      trailing zeros.
+    */
+
+    function formatNumber(value) {
+
+      if (!isFinite(value)) {
+        return "Invalid";
+      }
+
+
+      const absolute =
+        Math.abs(value);
+
+
+      if (
+        absolute !== 0 &&
+        (absolute < 0.000001 ||
+         absolute >= 1000000000000)
+      ) {
+
+        return value.toExponential(6);
+
+      }
+
+
+      return Number(
+        value.toFixed(10)
+      ).toLocaleString(
+        "en-IN"
+      );
+
+    }
+
+
+    /*
+      Swap source and destination units.
+    */
+
+    function swapUnits() {
+
+      const fromSelect =
+        document.getElementById("fromUnit");
+
+      const toSelect =
+        document.getElementById("toUnit");
+
+
+      const oldFrom =
+        fromSelect.value;
+
+      const oldTo =
+        toSelect.value;
+
+
+      fromSelect.value = oldTo;
+
+      toSelect.value = oldFrom;
+
+
+      convert();
+
+    }
+
+
+    /*
+      Initialize.
+    */
+
+    loadUnits();
+
+    convert();
+
+  </script>
+
+</body>
+</html>

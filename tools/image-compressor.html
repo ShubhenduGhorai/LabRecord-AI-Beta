@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Image Compressor Online Free | LabRecord Tools</title>
+
+  <meta name="description"
+        content="Compress JPG, PNG and WebP images online for free. Reduce image file size directly in your browser without uploading your images.">
+
+  <link rel="canonical" href="https://tools.labrecord.cloud/image-compressor.html">
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      width: 100%;
+      overflow-x: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      color: #111827;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #374151;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: #2563eb;
+    }
+
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    main {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 5vw, 38px);
+      line-height: 1.2;
+      color: #111827;
+    }
+
+    .hero p {
+      max-width: 680px;
+      margin: 0 auto;
+      color: #6b7280;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+
+    /* =========================
+       TOOL CARD
+    ========================= */
+
+    .tool-card {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    }
+
+
+    /* =========================
+       UPLOAD
+    ========================= */
+
+    .upload-area {
+      width: 100%;
+      min-height: 180px;
+
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+
+      padding: 30px 20px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .upload-area:hover {
+      border-color: #2563eb;
+      background: #f8fbff;
+    }
+
+    .upload-area strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .upload-area span {
+      max-width: 100%;
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #imageInput {
+      display: none;
+    }
+
+
+    /* =========================
+       CONTROLS
+    ========================= */
+
+    .controls {
+      width: 100%;
+      margin-top: 25px;
+
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .control-group {
+      width: 100%;
+      min-width: 0;
+
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    select {
+      width: 100%;
+      max-width: 100%;
+
+      padding: 11px;
+
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+
+      background: #ffffff;
+      color: #111827;
+
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      max-width: 100%;
+      cursor: pointer;
+    }
+
+    .quality-value {
+      color: #2563eb;
+      font-weight: 600;
+    }
+
+
+    /* =========================
+       PREVIEW
+    ========================= */
+
+    .preview-section {
+      width: 100%;
+      display: none;
+      margin-top: 30px;
+    }
+
+    .preview-grid {
+      width: 100%;
+
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .preview-box {
+      width: 100%;
+      min-width: 0;
+
+      padding: 15px;
+
+      background: #fafafa;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+    }
+
+    .preview-box h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      color: #111827;
+    }
+
+    .preview-box img {
+      display: block;
+
+      width: 100%;
+      max-width: 100%;
+      height: 260px;
+
+      object-fit: contain;
+
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+
+    /* =========================
+       FILE INFO
+    ========================= */
+
+    .file-info {
+      width: 100%;
+      margin-top: 12px;
+
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.7;
+
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+
+    /* =========================
+       RESULT
+    ========================= */
+
+    .result {
+      width: 100%;
+      margin-top: 25px;
+      padding: 18px;
+
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+
+      display: none;
+    }
+
+    .result strong {
+      color: #166534;
+      line-height: 1.5;
+    }
+
+    .download-btn {
+      width: auto;
+      max-width: 100%;
+
+      margin-top: 15px;
+      padding: 12px 20px;
+
+      background: #2563eb;
+      color: #ffffff;
+
+      border: none;
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .download-btn:hover {
+      background: #1d4ed8;
+    }
+
+
+    /* =========================
+       CONTENT
+    ========================= */
+
+    .content {
+      width: 100%;
+      margin-top: 40px;
+
+      padding: 28px;
+
+      background: #ffffff;
+      border-radius: 16px;
+    }
+
+    .content h2 {
+      margin-top: 28px;
+      margin-bottom: 12px;
+
+      color: #111827;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    .content h2:first-child {
+      margin-top: 0;
+    }
+
+    .content p,
+    .content li {
+      color: #4b5563;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .content ol,
+    .content ul {
+      padding-left: 22px;
+    }
+
+
+    /* =========================
+       FAQ
+    ========================= */
+
+    .faq {
+      width: 100%;
+
+      padding: 16px 0;
+
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .faq strong {
+      display: block;
+      margin-bottom: 7px;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .faq p {
+      margin: 0;
+    }
+
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    footer {
+      width: 100%;
+
+      margin-top: 50px;
+      padding: 25px 20px;
+
+      background: #111827;
+      color: #d1d5db;
+
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer a {
+      display: inline-block;
+
+      margin: 5px 8px;
+
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+
+    /* =========================
+       TABLET
+    ========================= */
+
+    @media (max-width: 768px) {
+
+      .header-inner {
+        padding: 15px 16px;
+      }
+
+      main {
+        padding: 30px 16px;
+      }
+
+      .tool-card {
+        padding: 22px;
+      }
+
+      .content {
+        padding: 22px;
+      }
+
+      .preview-box img {
+        height: 220px;
+      }
+
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+
+      .header-inner {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      nav {
+        width: 100%;
+        gap: 10px 15px;
+      }
+
+      nav a {
+        font-size: 13px;
+      }
+
+      main {
+        padding: 25px 12px;
+      }
+
+      .hero {
+        margin-bottom: 22px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .tool-card {
+        padding: 16px;
+        border-radius: 12px;
+      }
+
+      .upload-area {
+        min-height: 150px;
+        padding: 25px 15px;
+      }
+
+      .upload-area strong {
+        font-size: 17px;
+      }
+
+      .upload-area span {
+        font-size: 13px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .preview-box {
+        padding: 12px;
+      }
+
+      .preview-box img {
+        height: 220px;
+      }
+
+      .result {
+        padding: 15px;
+      }
+
+      .download-btn {
+        width: 100%;
+      }
+
+      .content {
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 12px;
+      }
+
+      .content h2 {
+        font-size: 21px;
+      }
+
+      .content p,
+      .content li {
+        font-size: 14px;
+      }
+
+      footer {
+        margin-top: 30px;
+        padding: 22px 12px;
+      }
+
+    }
+
+
+    /* =========================
+       VERY SMALL PHONES
+    ========================= */
+
+    @media (max-width: 360px) {
+
+      main {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .tool-card,
+      .content {
+        padding: 14px;
+      }
+
+      .hero h1 {
+        font-size: 25px;
+      }
+
+      .preview-box img {
+        height: 190px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+
+<header>
+
+  <div class="header-inner">
+
+    <a
+      href="https://tools.labrecord.cloud/"
+      class="logo"
+    >
+      LabRecord
+    </a>
+
+    <nav>
+
+      <a href="https://tools.labrecord.cloud/">
+        Tools
+      </a>
+
+      <a href="https://finance.labrecord.cloud/">
+        Finance
+      </a>
+
+      <a href="https://labrecord.cloud/">
+        Home
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+<main>
+
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <h1>
+      Image Compressor Online
+    </h1>
+
+    <p>
+      Compress JPG, PNG and WebP images online for free.
+      Reduce image file size directly in your browser.
+    </p>
+
+  </section>
+
+
+
+  <!-- TOOL -->
+
+  <section class="tool-card">
+
+
+    <label
+      for="imageInput"
+      class="upload-area"
+    >
+
+      <strong>
+        Choose an Image
+      </strong>
+
+      <span>
+        Click here to select JPG, PNG or WebP
+      </span>
+
+    </label>
+
+
+    <input
+      type="file"
+      id="imageInput"
+      accept="image/jpeg,image/png,image/webp"
+    >
+
+
+
+    <!-- CONTROLS -->
+
+    <div class="controls">
+
+
+      <div class="control-group">
+
+        <label for="format">
+          Output Format
+        </label>
+
+        <select id="format">
+
+          <option value="image/jpeg">
+            JPG
+          </option>
+
+          <option value="image/webp">
+            WebP
+          </option>
+
+          <option value="image/png">
+            PNG
+          </option>
+
+        </select>
+
+      </div>
+
+
+
+      <div class="control-group">
+
+        <label for="quality">
+
+          Compression Quality:
+
+          <span
+            class="quality-value"
+            id="qualityValue"
+          >
+            80%
+          </span>
+
+        </label>
+
+
+        <input
+          type="range"
+          id="quality"
+          min="10"
+          max="100"
+          value="80"
+        >
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- PREVIEW -->
+
+    <section
+      class="preview-section"
+      id="previewSection"
+    >
+
+
+      <div class="preview-grid">
+
+
+        <div class="preview-box">
+
+          <h3>
+            Original Image
+          </h3>
+
+          <img
+            id="originalPreview"
+            alt="Original image preview"
+          >
+
+          <div
+            class="file-info"
+            id="originalInfo"
+          ></div>
+
+        </div>
+
+
+
+        <div class="preview-box">
+
+          <h3>
+            Compressed Image
+          </h3>
+
+          <img
+            id="compressedPreview"
+            alt="Compressed image preview"
+          >
+
+          <div
+            class="file-info"
+            id="compressedInfo"
+          ></div>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- RESULT -->
+
+      <div
+        class="result"
+        id="result"
+      >
+
+        <strong id="resultText"></strong>
+
+        <br>
+
+        <button
+          class="download-btn"
+          id="downloadBtn"
+        >
+          Download Compressed Image
+        </button>
+
+      </div>
+
+
+    </section>
+
+
+  </section>
+
+
+
+  <!-- SEO CONTENT -->
+
+  <section class="content">
+
+
+    <h2>
+      Free Online Image Compressor
+    </h2>
+
+    <p>
+      LabRecord Image Compressor lets you reduce image
+      file size without installing software. Select an
+      image, choose the output format and adjust the
+      compression quality.
+    </p>
+
+    <p>
+      The image is processed directly inside your browser.
+      Your selected image does not need to be uploaded
+      to a server.
+    </p>
+
+
+
+    <h2>
+      How to Compress an Image
+    </h2>
+
+    <ol>
+
+      <li>
+        Click "Choose an Image".
+      </li>
+
+      <li>
+        Select a JPG, PNG or WebP image.
+      </li>
+
+      <li>
+        Choose the output format.
+      </li>
+
+      <li>
+        Adjust the compression quality.
+      </li>
+
+      <li>
+        Preview the compressed image.
+      </li>
+
+      <li>
+        Download the compressed image.
+      </li>
+
+    </ol>
+
+
+
+    <h2>
+      JPG vs WebP vs PNG
+    </h2>
+
+    <p>
+      <strong>JPG:</strong>
+      Good for photographs and images where a smaller
+      file size is important.
+    </p>
+
+    <p>
+      <strong>WebP:</strong>
+      A modern image format that can provide smaller
+      files while maintaining good visual quality.
+    </p>
+
+    <p>
+      <strong>PNG:</strong>
+      Useful when transparency or sharper graphics
+      are important.
+    </p>
+
+
+
+    <h2>
+      Why Compress Images?
+    </h2>
+
+    <ul>
+
+      <li>
+        Reduce website image file sizes.
+      </li>
+
+      <li>
+        Improve page loading performance.
+      </li>
+
+      <li>
+        Save storage space.
+      </li>
+
+      <li>
+        Make images easier to share online.
+      </li>
+
+      <li>
+        Reduce unnecessary bandwidth usage.
+      </li>
+
+    </ul>
+
+
+
+    <h2>
+      Frequently Asked Questions
+    </h2>
+
+
+    <div class="faq">
+
+      <strong>
+        Is this image compressor free?
+      </strong>
+
+      <p>
+        Yes. You can use the tool without paying
+        for image compression.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        Are my images uploaded?
+      </strong>
+
+      <p>
+        No. Image processing is performed locally
+        in your browser.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        Which image formats are supported?
+      </strong>
+
+      <p>
+        The tool accepts JPG, PNG and WebP images.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        Does lower quality mean a smaller file?
+      </strong>
+
+      <p>
+        Lower quality generally produces a smaller
+        file for JPG and WebP, but the final size
+        depends on the image.
+      </p>
+
+    </div>
+
+
+    <div class="faq">
+
+      <strong>
+        Is image quality reduced?
+      </strong>
+
+      <p>
+        Compression can reduce image quality.
+        Use a higher quality setting when you want
+        to preserve more detail.
+      </p>
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+
+
+<footer>
+
+  <div>
+    © 2026 LabRecord
+  </div>
+
+  <div>
+
+    <a href="https://labrecord.cloud/">
+      Home
+    </a>
+
+    <a href="https://tools.labrecord.cloud/">
+      Tools
+    </a>
+
+    <a href="https://finance.labrecord.cloud/">
+      Finance
+    </a>
+
+  </div>
+
+</footer>
+
+
+
+<script>
+
+  const imageInput =
+    document.getElementById("imageInput");
+
+  const quality =
+    document.getElementById("quality");
+
+  const qualityValue =
+    document.getElementById("qualityValue");
+
+  const format =
+    document.getElementById("format");
+
+  const previewSection =
+    document.getElementById("previewSection");
+
+  const originalPreview =
+    document.getElementById("originalPreview");
+
+  const compressedPreview =
+    document.getElementById("compressedPreview");
+
+  const originalInfo =
+    document.getElementById("originalInfo");
+
+  const compressedInfo =
+    document.getElementById("compressedInfo");
+
+  const result =
+    document.getElementById("result");
+
+  const resultText =
+    document.getElementById("resultText");
+
+  const downloadBtn =
+    document.getElementById("downloadBtn");
+
+
+  let originalFile = null;
+
+  let compressedBlob = null;
+
+  let originalObjectUrl = null;
+
+  let compressedObjectUrl = null;
+
+
+
+  /* QUALITY */
+
+  quality.addEventListener(
+    "input",
+    function () {
+
+      qualityValue.textContent =
+        quality.value + "%";
+
+      if (originalFile) {
+        compressImage();
+      }
+
+    }
+  );
+
+
+
+  /* FORMAT */
+
+  format.addEventListener(
+    "change",
+    function () {
+
+      if (originalFile) {
+        compressImage();
+      }
+
+    }
+  );
+
+
+
+  /* IMAGE SELECT */
+
+  imageInput.addEventListener(
+    "change",
+    function () {
+
+      const file =
+        imageInput.files[0];
+
+      if (!file) {
+        return;
+      }
+
+
+      if (!file.type.startsWith("image/")) {
+
+        alert(
+          "Please select a valid image file."
+        );
+
+        imageInput.value = "";
+
+        return;
+      }
+
+
+      originalFile = file;
+
+
+      if (originalObjectUrl) {
+        URL.revokeObjectURL(
+          originalObjectUrl
+        );
+      }
+
+
+      originalObjectUrl =
+        URL.createObjectURL(file);
+
+
+      originalPreview.src =
+        originalObjectUrl;
+
+
+      originalInfo.innerHTML =
+        "<strong>File:</strong> " +
+        escapeHtml(file.name) +
+        "<br>" +
+        "<strong>Size:</strong> " +
+        formatBytes(file.size) +
+        "<br>" +
+        "<strong>Type:</strong> " +
+        escapeHtml(file.type);
+
+
+      previewSection.style.display =
+        "block";
+
+
+      compressImage();
+
+    }
+  );
+
+
+
+  /* COMPRESS */
+
+  function compressImage() {
+
+    if (!originalFile) {
+      return;
+    }
+
+
+    const img =
+      new Image();
+
+
+    img.onload =
+      function () {
+
+        const canvas =
+          document.createElement("canvas");
+
+
+        canvas.width =
+          img.naturalWidth;
+
+        canvas.height =
+          img.naturalHeight;
+
+
+        const ctx =
+          canvas.getContext("2d");
+
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+
+        const selectedFormat =
+          format.value;
+
+
+        const selectedQuality =
+          Number(quality.value) / 100;
+
+
+        canvas.toBlob(
+
+          function (blob) {
+
+            if (!blob) {
+
+              alert(
+                "Your browser could not create this image format."
+              );
+
+              return;
+            }
+
+
+            compressedBlob =
+              blob;
+
+
+            if (compressedObjectUrl) {
+
+              URL.revokeObjectURL(
+                compressedObjectUrl
+              );
+
+            }
+
+
+            compressedObjectUrl =
+              URL.createObjectURL(blob);
+
+
+            compressedPreview.src =
+              compressedObjectUrl;
+
+
+            const reduction =
+              originalFile.size > 0
+                ? (
+                    (
+                      originalFile.size -
+                      blob.size
+                    ) /
+                    originalFile.size
+                  ) * 100
+                : 0;
+
+
+            compressedInfo.innerHTML =
+              "<strong>Size:</strong> " +
+              formatBytes(blob.size) +
+              "<br>" +
+              "<strong>Dimensions:</strong> " +
+              canvas.width +
+              " × " +
+              canvas.height +
+              "<br>" +
+              "<strong>Format:</strong> " +
+              escapeHtml(blob.type);
+
+
+            result.style.display =
+              "block";
+
+
+            if (reduction >= 0) {
+
+              resultText.textContent =
+                "Image compressed by " +
+                reduction.toFixed(1) +
+                "%";
+
+            } else {
+
+              resultText.textContent =
+                "The compressed file is larger than the original.";
+
+            }
+
+          },
+
+          selectedFormat,
+
+          selectedQuality
+
+        );
+
+      };
+
+
+    img.src =
+      originalObjectUrl;
+
+  }
+
+
+
+  /* DOWNLOAD */
+
+  downloadBtn.addEventListener(
+    "click",
+    function () {
+
+      if (!compressedBlob) {
+        return;
+      }
+
+
+      let extension = "jpg";
+
+
+      if (
+        compressedBlob.type ===
+        "image/webp"
+      ) {
+
+        extension = "webp";
+
+      }
+
+
+      if (
+        compressedBlob.type ===
+        "image/png"
+      ) {
+
+        extension = "png";
+
+      }
+
+
+      const url =
+        URL.createObjectURL(
+          compressedBlob
+        );
+
+
+      const link =
+        document.createElement("a");
+
+
+      link.href = url;
+
+
+      link.download =
+        "labrecord-compressed-image." +
+        extension;
+
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+
+      setTimeout(
+        function () {
+
+          URL.revokeObjectURL(url);
+
+        },
+        1000
+      );
+
+    }
+  );
+
+
+
+  /* FILE SIZE */
+
+  function formatBytes(bytes) {
+
+    if (bytes === 0) {
+      return "0 Bytes";
+    }
+
+
+    const units = [
+      "Bytes",
+      "KB",
+      "MB",
+      "GB"
+    ];
+
+
+    const i =
+      Math.floor(
+        Math.log(bytes) /
+        Math.log(1024)
+      );
+
+
+    return (
+      parseFloat(
+        (
+          bytes /
+          Math.pow(1024, i)
+        ).toFixed(2)
+      ) +
+      " " +
+      units[i]
+    );
+
+  }
+
+
+
+  /* SECURITY */
+
+  function escapeHtml(text) {
+
+    const div =
+      document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+
+  }
+
+</script>
+
+
+</body>
+</html>

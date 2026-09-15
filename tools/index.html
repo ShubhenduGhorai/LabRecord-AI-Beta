@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Free Online Tools & Calculators | LabRecord Tools</title>
+
+  <meta name="description" content="Use free online calculators and useful tools from LabRecord. Calculate percentages, age, EMI, GST and more. Fast, simple and no sign-up required.">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://tools.labrecord.cloud/">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fc;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e8eaf0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .logo span {
+      color: #4f46e5;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      font-size: 15px;
+      color: #4b5563;
+    }
+
+    nav a:hover {
+      color: #4f46e5;
+    }
+
+    /* HERO */
+
+    .hero {
+      padding: 75px 0 55px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4338ca;
+      padding: 7px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.1;
+      max-width: 800px;
+      margin: auto;
+      letter-spacing: -1.5px;
+    }
+
+    .hero h1 span {
+      color: #4f46e5;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: 20px auto 30px;
+      color: #667085;
+      font-size: 18px;
+    }
+
+    /* SEARCH */
+
+    .search-box {
+      max-width: 620px;
+      margin: auto;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 17px 20px;
+      border: 1px solid #d9dce5;
+      border-radius: 12px;
+      background: white;
+      font-size: 16px;
+      outline: none;
+      box-shadow: 0 8px 25px rgba(20, 30, 60, 0.06);
+    }
+
+    .search-box input:focus {
+      border-color: #4f46e5;
+    }
+
+    /* SECTION */
+
+    section {
+      padding: 30px 0 70px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 20px;
+    }
+
+    .section-title h2 {
+      font-size: 28px;
+    }
+
+    .section-title p {
+      color: #667085;
+      font-size: 14px;
+    }
+
+    /* CARDS */
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .tool-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 25px;
+      transition: 0.2s ease;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(20, 30, 60, 0.09);
+      border-color: #c7c9ff;
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef2ff;
+      border-radius: 12px;
+      font-size: 23px;
+      margin-bottom: 17px;
+    }
+
+    .tool-card h3 {
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .tool-card p {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 17px;
+    }
+
+    .use-tool {
+      color: #4f46e5;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* INFO */
+
+    .info {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 35px;
+      margin-top: 15px;
+    }
+
+    .info h2 {
+      margin-bottom: 12px;
+      font-size: 25px;
+    }
+
+    .info p {
+      color: #667085;
+      margin-bottom: 12px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 45px 0 25px;
+      margin-top: 20px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+    }
+
+    footer h3 {
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    footer p {
+      font-size: 14px;
+      color: #9ca3af;
+      max-width: 450px;
+    }
+
+    footer a {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #9ca3af;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    .copyright {
+      border-top: 1px solid #374151;
+      margin-top: 35px;
+      padding-top: 20px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 800px) {
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .nav {
+        min-height: 60px;
+      }
+
+      nav {
+        gap: 12px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding: 55px 0 40px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .info {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="container nav">
+
+      <a href="index.html" class="logo">
+        Lab<span>Record</span>
+      </a>
+
+      <nav>
+        <a href="index.html">Tools</a>
+        <a href="https://finance.labrecord.cloud/">Finance</a>
+        <a href="https://labrecord.cloud/">LabRecord</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+
+  <main>
+
+    <section class="hero">
+
+      <div class="container">
+
+        <div class="hero-badge">
+          FREE • FAST • NO SIGN UP
+        </div>
+
+        <h1>
+          Free Online
+          <span>Tools & Calculators</span>
+        </h1>
+
+        <p>
+          Simple, fast and useful online tools for calculations,
+          conversions, documents and everyday tasks.
+        </p>
+
+        <div class="search-box">
+          <input
+            type="search"
+            id="toolSearch"
+            placeholder="Search for a tool..."
+            aria-label="Search tools"
+          >
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TOOLS -->
+
+    <section>
+
+      <div class="container">
+
+        <div class="section-title">
+          <div>
+            <h2>Popular Tools</h2>
+            <p>Quickly access our most useful tools.</p>
+          </div>
+        </div>
+
+
+        <div class="tools-grid" id="toolsGrid">
+
+
+          <!-- Percentage -->
+
+          <a
+            href="percentage-calculator.html"
+            class="tool-card"
+            data-name="percentage calculator percentage"
+          >
+
+            <div class="icon">%</div>
+
+            <h3>Percentage Calculator</h3>
+
+            <p>
+              Calculate percentages, percentage changes
+              and percentage differences easily.
+            </p>
+
+            <div class="use-tool">
+              Use Calculator →
+            </div>
+
+          </a>
+
+
+          <!-- Age -->
+
+          <a
+            href="age-calculator.html"
+            class="tool-card"
+            data-name="age calculator age"
+          >
+
+            <div class="icon">🎂</div>
+
+            <h3>Age Calculator</h3>
+
+            <p>
+              Calculate your exact age in years, months,
+              days and more.
+            </p>
+
+            <div class="use-tool">
+              Calculate Age →
+            </div>
+
+          </a>
+
+
+          <!-- EMI -->
+
+          <a
+            href="emi-calculator.html"
+            class="tool-card"
+            data-name="emi calculator loan emi"
+          >
+
+            <div class="icon">₹</div>
+
+            <h3>EMI Calculator</h3>
+
+            <p>
+              Calculate monthly loan EMI, total interest
+              and total repayment.
+            </p>
+
+            <div class="use-tool">
+              Calculate EMI →
+            </div>
+
+          </a>
+
+
+          <!-- GST -->
+
+          <a
+            href="gst-calculator.html"
+            class="tool-card"
+            data-name="gst calculator tax gst"
+          >
+
+            <div class="icon">税</div>
+
+            <h3>GST Calculator</h3>
+
+            <p>
+              Calculate GST amount, inclusive price
+              and exclusive price.
+            </p>
+
+            <div class="use-tool">
+              Calculate GST →
+            </div>
+
+          </a>
+
+
+          <!-- Unit -->
+
+          <a
+            href="unit-converter.html"
+            class="tool-card"
+            data-name="unit converter conversion"
+          >
+
+            <div class="icon">↔</div>
+
+            <h3>Unit Converter</h3>
+
+            <p>
+              Convert length, weight, temperature
+              and other common units.
+            </p>
+
+            <div class="use-tool">
+              Convert Units →
+            </div>
+
+          </a>
+
+
+          <!-- QR -->
+
+          <a
+            href="qr-generator.html"
+            class="tool-card"
+            data-name="qr code generator qr"
+          >
+
+            <div class="icon">▦</div>
+
+            <h3>QR Code Generator</h3>
+
+            <p>
+              Create a QR code quickly from text,
+              links or other information.
+            </p>
+
+            <div class="use-tool">
+              Generate QR →
+            </div>
+
+          </a>
+
+
+          <!-- Image -->
+
+          <a
+            href="image-compressor.html"
+            class="tool-card"
+            data-name="image compressor compress image"
+          >
+
+            <div class="icon">🖼</div>
+
+            <h3>Image Compressor</h3>
+
+            <p>
+              Reduce image file size while keeping
+              good image quality.
+            </p>
+
+            <div class="use-tool">
+              Compress Image →
+            </div>
+
+          </a>
+
+
+          <!-- Invoice -->
+
+          <a
+            href="invoice-generator.html"
+            class="tool-card"
+            data-name="invoice generator invoice"
+          >
+
+            <div class="icon">▤</div>
+
+            <h3>Invoice Generator</h3>
+
+            <p>
+              Create a simple professional invoice
+              for your business.
+            </p>
+
+            <div class="use-tool">
+              Create Invoice →
+            </div>
+
+          </a>
+
+
+          <!-- SIP -->
+
+          <a
+            href="sip-calculator.html"
+            class="tool-card"
+            data-name="sip calculator investment"
+          >
+
+            <div class="icon">📈</div>
+
+            <h3>SIP Calculator</h3>
+
+            <p>
+              Estimate SIP investment growth and
+              potential returns.
+            </p>
+
+            <div class="use-tool">
+              Calculate SIP →
+            </div>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+
+    <section>
+
+      <div class="container">
+
+        <div class="info">
+
+          <h2>Free Tools for Everyday Tasks</h2>
+
+          <p>
+            LabRecord Tools provides simple online calculators
+            and utilities designed to make everyday tasks easier.
+          </p>
+
+          <p>
+            Our tools are designed to work directly in your browser
+            without requiring an account or complicated setup.
+          </p>
+
+          <p>
+            New calculators and useful tools will be added regularly.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div>
+
+          <h3>LabRecord Tools</h3>
+
+          <p>
+            Free online tools and calculators for everyday
+            calculations and useful tasks.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>Tools</h3>
+
+          <a href="percentage-calculator.html">
+            Percentage Calculator
+          </a>
+
+          <a href="age-calculator.html">
+            Age Calculator
+          </a>
+
+          <a href="emi-calculator.html">
+            EMI Calculator
+          </a>
+
+          <a href="gst-calculator.html">
+            GST Calculator
+          </a>
+
+        </div>
+
+
+        <div>
+
+          <h3>Company</h3>
+
+          <a href="https://labrecord.cloud/">
+            LabRecord
+          </a>
+
+          <a href="https://finance.labrecord.cloud/">
+            Finance
+          </a>
+
+          <a href="#">
+            Privacy Policy
+          </a>
+
+          <a href="#">
+            Contact
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="copyright">
+        © 2026 LabRecord. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- SEARCH SCRIPT -->
+
+  <script>
+
+    const searchInput = document.getElementById("toolSearch");
+    const toolCards = document.querySelectorAll(".tool-card");
+
+    searchInput.addEventListener("input", function () {
+
+      const search = this.value.toLowerCase().trim();
+
+      toolCards.forEach(function (card) {
+
+        const name = card.dataset.name.toLowerCase();
+
+        if (name.includes(search)) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+
+      });
+
+    });
+
+  </script>
+
+</body>
+</html>

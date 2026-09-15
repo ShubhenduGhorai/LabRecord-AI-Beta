@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LabRecord Finance | Free Financial Calculators</title>
+
+  <meta
+    name="description"
+    content="Free online financial calculators including SIP, FD, loan, compound interest and lumpsum calculators. Simple tools for financial planning and estimation."
+  >
+
+  <meta
+    name="keywords"
+    content="financial calculator, SIP calculator, FD calculator, loan calculator, compound interest calculator, lumpsum calculator"
+  >
+
+  <link
+    rel="canonical"
+    href="https://finance.labrecord.cloud/"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    /* HEADER */
+
+    header {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px 20px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo {
+      color: #111827;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+    }
+
+    nav a {
+      color: #374151;
+      text-decoration: none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    nav a:hover {
+      color: #2563eb;
+    }
+
+    /* MAIN */
+
+    main {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 45px 20px;
+    }
+
+    /* HERO */
+
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      margin: 0 0 14px;
+
+      color: #111827;
+
+      font-size: clamp(30px, 5vw, 42px);
+      line-height: 1.2;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+
+      color: #6b7280;
+
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* SEARCH */
+
+    .search-box {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 35px;
+    }
+
+    .search-box input {
+      width: 100%;
+
+      padding: 14px 16px;
+
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+
+      background: #ffffff;
+
+      color: #111827;
+
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    /* SECTION */
+
+    .section-title {
+      margin: 0 0 20px;
+
+      color: #111827;
+
+      font-size: 25px;
+    }
+
+    /* CARDS */
+
+    .calculator-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+      gap: 20px;
+    }
+
+    .calculator-card {
+      min-width: 0;
+
+      padding: 24px;
+
+      background: #ffffff;
+
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+
+      text-decoration: none;
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .calculator-card:hover {
+      transform: translateY(-3px);
+
+      box-shadow:
+        0 8px 22px rgba(0,0,0,0.08);
+    }
+
+    .calculator-icon {
+      width: 48px;
+      height: 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 16px;
+
+      border-radius: 10px;
+
+      background: #eff6ff;
+
+      color: #2563eb;
+
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .calculator-card h3 {
+      margin: 0 0 9px;
+
+      color: #111827;
+
+      font-size: 19px;
+      line-height: 1.3;
+    }
+
+    .calculator-card p {
+      margin: 0;
+
+      color: #6b7280;
+
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* INFO */
+
+    .info-section {
+      margin-top: 45px;
+
+      padding: 28px;
+
+      background: #ffffff;
+
+      border-radius: 14px;
+    }
+
+    .info-section h2 {
+      margin-top: 0;
+
+      color: #111827;
+
+      font-size: 25px;
+    }
+
+    .info-section h3 {
+      margin-top: 25px;
+
+      color: #111827;
+
+      font-size: 19px;
+    }
+
+    .info-section p,
+    .info-section li {
+      color: #4b5563;
+
+      font-size: 15px;
+
+      line-height: 1.7;
+    }
+
+    .info-section ul {
+      padding-left: 22px;
+    }
+
+    /* DISCLAIMER */
+
+    .disclaimer {
+      margin-top: 25px;
+
+      padding: 15px;
+
+      background: #fffbeb;
+
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+
+      color: #92400e;
+
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+
+    footer {
+      width: 100%;
+
+      margin-top: 50px;
+      padding: 28px 20px;
+
+      background: #111827;
+
+      color: #d1d5db;
+
+      text-align: center;
+
+      font-size: 14px;
+    }
+
+    footer a {
+      display: inline-block;
+
+      margin: 5px 8px;
+
+      color: #ffffff;
+
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* TABLET */
+
+    @media (max-width: 900px) {
+
+      .calculator-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      .header-inner {
+        flex-direction: column;
+        gap: 12px;
+
+        padding: 15px 16px;
+      }
+
+      nav {
+        width: 100%;
+        gap: 10px 15px;
+      }
+
+      nav a {
+        font-size: 13px;
+      }
+
+      main {
+        padding: 30px 12px;
+      }
+
+      .hero {
+        margin-bottom: 28px;
+      }
+
+      .hero h1 {
+        font-size: 29px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .search-box {
+        margin-bottom: 28px;
+      }
+
+      .calculator-grid {
+        grid-template-columns: 1fr;
+
+        gap: 14px;
+      }
+
+      .calculator-card {
+        padding: 20px;
+      }
+
+      .info-section {
+        margin-top: 30px;
+        padding: 20px;
+      }
+
+      .info-section h2 {
+        font-size: 22px;
+      }
+
+      .info-section h3 {
+        font-size: 18px;
+      }
+
+      .info-section p,
+      .info-section li {
+        font-size: 14px;
+      }
+
+    }
+
+    /* SMALL PHONE */
+
+    @media (max-width: 360px) {
+
+      main {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+
+      .calculator-card {
+        padding: 17px;
+      }
+
+      .info-section {
+        padding: 17px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+
+<header>
+
+  <div class="header-inner">
+
+    <a
+      href="https://finance.labrecord.cloud/"
+      class="logo"
+    >
+      LabRecord
+    </a>
+
+
+    <nav>
+
+      <a href="https://finance.labrecord.cloud/">
+        Finance
+      </a>
+
+      <a href="https://tools.labrecord.cloud/">
+        Tools
+      </a>
+
+      <a href="https://labrecord.cloud/">
+        Home
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+
+<main>
+
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <h1>
+      Free Financial Calculators
+    </h1>
+
+    <p>
+      Simple online calculators to help estimate investments,
+      loans, fixed deposits, compound growth and other
+      financial scenarios.
+    </p>
+
+  </section>
+
+
+
+  <!-- SEARCH -->
+
+  <div class="search-box">
+
+    <input
+      type="search"
+      id="searchInput"
+      placeholder="Search financial calculators..."
+      aria-label="Search financial calculators"
+    >
+
+  </div>
+
+
+
+  <!-- CALCULATORS -->
+
+  <section>
+
+    <h2 class="section-title">
+      Financial Calculators
+    </h2>
+
+
+    <div
+      class="calculator-grid"
+      id="calculatorGrid"
+    >
+
+
+      <!-- SIP -->
+
+      <a
+        class="calculator-card"
+        href="sip-calculator.html"
+        data-name="sip systematic investment plan calculator"
+      >
+
+        <div class="calculator-icon">
+          ₹
+        </div>
+
+        <h3>
+          SIP Calculator
+        </h3>
+
+        <p>
+          Estimate the potential future value of regular
+          monthly SIP investments.
+        </p>
+
+      </a>
+
+
+
+      <!-- FD -->
+
+      <a
+        class="calculator-card"
+        href="fd-calculator.html"
+        data-name="fd fixed deposit calculator"
+      >
+
+        <div class="calculator-icon">
+          FD
+        </div>
+
+        <h3>
+          FD Calculator
+        </h3>
+
+        <p>
+          Calculate estimated maturity amount and interest
+          earned on a fixed deposit.
+        </p>
+
+      </a>
+
+
+
+      <!-- LOAN -->
+
+      <a
+        class="calculator-card"
+        href="loan-calculator.html"
+        data-name="loan calculator"
+      >
+
+        <div class="calculator-icon">
+          EM
+        </div>
+
+        <h3>
+          Loan Calculator
+        </h3>
+
+        <p>
+          Estimate loan EMI, total interest and total
+          repayment for a loan.
+        </p>
+
+      </a>
+
+
+
+      <!-- COMPOUND -->
+
+      <a
+        class="calculator-card"
+        href="compound-interest.html"
+        data-name="compound interest calculator"
+      >
+
+        <div class="calculator-icon">
+          %
+        </div>
+
+        <h3>
+          Compound Interest Calculator
+        </h3>
+
+        <p>
+          Calculate how an investment can grow through
+          compound interest over time.
+        </p>
+
+      </a>
+
+
+
+      <!-- LUMPSUM -->
+
+      <a
+        class="calculator-card"
+        href="lumpsum-calculator.html"
+        data-name="lumpsum lump sum one time investment calculator"
+      >
+
+        <div class="calculator-icon">
+          LS
+        </div>
+
+        <h3>
+          Lumpsum Calculator
+        </h3>
+
+        <p>
+          Estimate the future value of a one-time investment
+          using compound growth.
+        </p>
+
+      </a>
+
+
+
+      <!-- INFLATION -->
+
+      <a
+        class="calculator-card"
+        href="inflation-calculator.html"
+        data-name="inflation calculator"
+      >
+
+        <div class="calculator-icon">
+          ↗
+        </div>
+
+        <h3>
+          Inflation Calculator
+        </h3>
+
+        <p>
+          Estimate how inflation can affect the future cost
+          and purchasing power of money.
+        </p>
+
+      </a>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- INFORMATION -->
+
+  <section class="info-section">
+
+
+    <h2>
+      Online Financial Calculators
+    </h2>
+
+    <p>
+      LabRecord provides simple financial calculators for
+      estimating common investment and borrowing scenarios.
+      Enter your own assumptions to see how different values
+      can affect the calculated result.
+    </p>
+
+
+    <h3>
+      Investment Calculators
+    </h3>
+
+    <p>
+      Use the SIP, lumpsum and compound interest calculators
+      to explore hypothetical investment growth based on an
+      assumed return rate and investment period.
+    </p>
+
+
+    <h3>
+      Fixed Deposit Calculator
+    </h3>
+
+    <p>
+      The FD calculator can be used to estimate the maturity
+      value and interest earned from a fixed deposit based on
+      the entered principal, interest rate and tenure.
+    </p>
+
+
+    <h3>
+      Loan Calculator
+    </h3>
+
+    <p>
+      The loan calculator helps estimate monthly EMI,
+      total interest and total repayment based on the
+      loan amount, interest rate and tenure.
+    </p>
+
+
+    <h3>
+      Why Use Financial Calculators?
+    </h3>
+
+    <ul>
+
+      <li>
+        Compare different hypothetical scenarios.
+      </li>
+
+      <li>
+        Understand the effect of interest and time.
+      </li>
+
+      <li>
+        Estimate future values and repayment amounts.
+      </li>
+
+      <li>
+        Support basic financial planning.
+      </li>
+
+    </ul>
+
+
+    <div class="disclaimer">
+
+      <strong>Disclaimer:</strong>
+      The calculators on this website provide mathematical
+      estimates for educational and planning purposes only.
+      Results are based on the assumptions entered by the user
+      and may differ from actual financial outcomes. They do
+      not constitute financial, investment, tax or legal advice.
+
+    </div>
+
+
+  </section>
+
+
+</main>
+
+
+
+<footer>
+
+  <div>
+    © 2026 LabRecord
+  </div>
+
+
+  <div>
+
+    <a href="https://labrecord.cloud/">
+      Home
+    </a>
+
+    <a href="https://tools.labrecord.cloud/">
+      Tools
+    </a>
+
+    <a href="https://finance.labrecord.cloud/">
+      Finance
+    </a>
+
+  </div>
+
+</footer>
+
+
+
+<script>
+
+  const searchInput =
+    document.getElementById("searchInput");
+
+  const cards =
+    document.querySelectorAll(
+      ".calculator-card"
+    );
+
+
+  searchInput.addEventListener(
+    "input",
+    function() {
+
+      const searchTerm =
+        searchInput.value
+          .toLowerCase()
+          .trim();
+
+
+      cards.forEach(
+        function(card) {
+
+          const name =
+            card
+              .getAttribute("data-name")
+              .toLowerCase();
+
+
+          const title =
+            card
+              .querySelector("h3")
+              .textContent
+              .toLowerCase();
+
+
+          const description =
+            card
+              .querySelector("p")
+              .textContent
+              .toLowerCase();
+
+
+          const matches =
+            name.includes(searchTerm) ||
+            title.includes(searchTerm) ||
+            description.includes(searchTerm);
+
+
+          card.style.display =
+            matches ? "" : "none";
+
+        }
+      );
+
+    }
+  );
+
+</script>
+
+
+</body>
+</html>

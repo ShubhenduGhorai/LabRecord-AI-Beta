@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>QR Code Generator - Create Free QR Codes Online | LabRecord</title>
+
+  <meta name="description" content="Create free QR codes online from URLs, text, phone numbers, email addresses and more. Generate and download your QR code instantly with LabRecord.">
+
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="https://tools.labrecord.cloud/qr-generator.html">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fc;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .logo span {
+      color: #4f46e5;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      color: #475467;
+      font-size: 15px;
+    }
+
+    nav a:hover {
+      color: #4f46e5;
+    }
+
+    /* PAGE HEADER */
+
+    .page-header {
+      text-align: center;
+      padding: 55px 0 35px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.15;
+      margin-bottom: 15px;
+    }
+
+    .page-header p {
+      max-width: 720px;
+      margin: auto;
+      color: #667085;
+      font-size: 17px;
+    }
+
+    /* GENERATOR */
+
+    .generator-card {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 8px 25px rgba(20, 30, 60, 0.04);
+      margin-bottom: 25px;
+    }
+
+    .generator-card h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .generator-layout {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 35px;
+      align-items: start;
+    }
+
+    /* FORM */
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .field textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      padding: 14px;
+      border: 1px solid #d5d9e2;
+      border-radius: 9px;
+      font-size: 16px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .field textarea:focus {
+      border-color: #4f46e5;
+    }
+
+    .field-note {
+      display: block;
+      color: #667085;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .options select,
+    .options input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d5d9e2;
+      border-radius: 9px;
+      font-size: 15px;
+      background: white;
+      outline: none;
+    }
+
+    .options select:focus,
+    .options input:focus {
+      border-color: #4f46e5;
+    }
+
+    .generate-button {
+      width: 100%;
+      border: none;
+      background: #4f46e5;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .generate-button:hover {
+      background: #4338ca;
+    }
+
+    /* QR RESULT */
+
+    .qr-result {
+      display: none;
+      text-align: center;
+    }
+
+    .qr-preview {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+    }
+
+    #qrCanvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .download-button {
+      width: 100%;
+      margin-top: 15px;
+      border: none;
+      background: #111827;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .download-button:hover {
+      background: #1f2937;
+    }
+
+    .empty-preview {
+      color: #98a2b3;
+      font-size: 14px;
+    }
+
+    .error {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 9px;
+      color: #be123c;
+      font-size: 14px;
+    }
+
+    /* CONTENT */
+
+    .content {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 35px;
+      margin: 45px 0 60px;
+    }
+
+    .content h2 {
+      font-size: 27px;
+      margin-bottom: 15px;
+    }
+
+    .content h3 {
+      font-size: 20px;
+      margin-top: 28px;
+      margin-bottom: 9px;
+    }
+
+    .content p {
+      color: #526071;
+      margin-bottom: 14px;
+    }
+
+    /* FAQ */
+
+    .faq-item {
+      border-top: 1px solid #e5e7eb;
+      padding: 18px 0;
+    }
+
+    .faq-item h3 {
+      margin-top: 0;
+      margin-bottom: 7px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 40px 0 25px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 35px;
+    }
+
+    footer h3 {
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    footer p,
+    footer a {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    footer a {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    .copyright {
+      border-top: 1px solid #374151;
+      margin-top: 30px;
+      padding-top: 20px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 800px) {
+
+      .generator-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-result {
+        max-width: 400px;
+        margin: auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .nav {
+        min-height: 60px;
+      }
+
+      nav {
+        gap: 12px;
+        font-size: 13px;
+      }
+
+      .page-header {
+        padding: 40px 0 25px;
+      }
+
+      .generator-card {
+        padding: 22px;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 25px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <div class="container nav">
+
+      <a href="index.html" class="logo">
+        Lab<span>Record</span>
+      </a>
+
+      <nav>
+        <a href="index.html">Tools</a>
+        <a href="https://finance.labrecord.cloud/">Finance</a>
+        <a href="https://labrecord.cloud/">LabRecord</a>
+      </nav>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+      <div class="container">
+
+        <h1>QR Code Generator</h1>
+
+        <p>
+          Create a free QR code from a website URL, text,
+          phone number, email address or other information.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- GENERATOR -->
+
+    <section>
+
+      <div class="container">
+
+        <div class="generator-card">
+
+          <h2>Create Your QR Code</h2>
+
+          <p class="description">
+            Enter your content, choose the QR code size
+            and generate your QR code instantly.
+          </p>
+
+
+          <div class="generator-layout">
+
+            <!-- FORM -->
+
+            <div>
+
+              <div class="field">
+
+                <label for="qrText">
+                  Text or URL
+                </label>
+
+                <textarea
+                  id="qrText"
+                  placeholder="Example: https://example.com"
+                ></textarea>
+
+                <span class="field-note">
+                  Enter a website URL, text, phone number,
+                  email address or other information.
+                </span>
+
+              </div>
+
+
+              <div class="options">
+
+                <div class="field">
+
+                  <label for="qrSize">
+                    QR Code Size
+                  </label>
+
+                  <select id="qrSize">
+
+                    <option value="200">
+                      200 × 200
+                    </option>
+
+                    <option value="300" selected>
+                      300 × 300
+                    </option>
+
+                    <option value="400">
+                      400 × 400
+                    </option>
+
+                    <option value="500">
+                      500 × 500
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="errorLevel">
+                    Error Correction
+                  </label>
+
+                  <select id="errorLevel">
+
+                    <option value="L">
+                      Low
+                    </option>
+
+                    <option value="M" selected>
+                      Medium
+                    </option>
+
+                    <option value="Q">
+                      High
+                    </option>
+
+                    <option value="H">
+                      Highest
+                    </option>
+
+                  </select>
+
+                </div>
+
+              </div>
+
+
+              <button
+                class="generate-button"
+                onclick="generateQR()"
+              >
+                Generate QR Code
+              </button>
+
+
+              <div
+                class="error"
+                id="errorMessage"
+              ></div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div class="qr-result" id="qrResult">
+
+              <div class="qr-preview">
+
+                <canvas
+                  id="qrCanvas"
+                  width="300"
+                  height="300"
+                ></canvas>
+
+              </div>
+
+
+              <button
+                class="download-button"
+                onclick="downloadQR()"
+              >
+                Download QR Code
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SEO CONTENT -->
+
+    <section>
+
+      <div class="container">
+
+        <article class="content">
+
+          <h2>What Is a QR Code?</h2>
+
+          <p>
+            A QR code, or Quick Response code, is a two-dimensional
+            barcode that can store information such as website
+            addresses, text, contact information and other data.
+          </p>
+
+
+          <h3>How Does a QR Code Work?</h3>
+
+          <p>
+            A QR code represents information using a pattern of
+            dark and light modules. A compatible camera or QR
+            scanner can read the pattern and decode the stored
+            information.
+          </p>
+
+
+          <h3>What Can You Put in a QR Code?</h3>
+
+          <p>
+            You can use QR codes for website URLs, plain text,
+            contact details, phone numbers, email addresses,
+            Wi-Fi information and many other types of data.
+          </p>
+
+
+          <h3>Where Are QR Codes Used?</h3>
+
+          <p>
+            QR codes are commonly used on restaurant menus,
+            product packaging, posters, business cards,
+            advertisements, event tickets and payment-related
+            applications.
+          </p>
+
+
+          <h3>Are QR Codes Free to Create?</h3>
+
+          <p>
+            Static QR codes can be generated without paying a
+            recurring fee. This tool creates a QR code directly
+            in your browser.
+          </p>
+
+
+          <h3>Static vs Dynamic QR Codes</h3>
+
+          <p>
+            A static QR code contains the destination information
+            directly in the code. A dynamic QR code typically uses
+            a redirecting service, allowing the destination to be
+            changed later and often providing analytics.
+          </p>
+
+
+          <h3>QR Code Safety</h3>
+
+          <p>
+            A QR code itself does not guarantee that the destination
+            is safe. Before opening a QR code link, check the
+            destination address and avoid entering sensitive
+            information on unfamiliar websites.
+          </p>
+
+
+          <h2 style="margin-top: 35px;">
+            Frequently Asked Questions
+          </h2>
+
+
+          <div class="faq-item">
+
+            <h3>Can I create a QR code for a website?</h3>
+
+            <p>
+              Yes. Enter the complete website address into the
+              text box and generate the QR code.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Can I download the QR code?</h3>
+
+            <p>
+              Yes. After generating the QR code, use the download
+              button to save it as a PNG image.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Can a QR code contain plain text?</h3>
+
+            <p>
+              Yes. You can encode ordinary text as well as URLs
+              and other supported information.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Does a QR code expire?</h3>
+
+            <p>
+              A static QR code generally does not have an expiration
+              date. However, a URL encoded inside it may stop working
+              if the destination website is removed or changed.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Can I use the QR code commercially?</h3>
+
+            <p>
+              You can use generated QR images for many purposes,
+              but make sure that the content or destination you
+              encode complies with the applicable terms and laws.
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div>
+
+          <h3>LabRecord Tools</h3>
+
+          <p>
+            Free online tools and calculators for everyday
+            calculations and useful tasks.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>Tools</h3>
+
+          <a href="index.html">
+            All Tools
+          </a>
+
+          <a href="percentage-calculator.html">
+            Percentage Calculator
+          </a>
+
+          <a href="age-calculator.html">
+            Age Calculator
+          </a>
+
+          <a href="emi-calculator.html">
+            EMI Calculator
+          </a>
+
+          <a href="gst-calculator.html">
+            GST Calculator
+          </a>
+
+        </div>
+
+
+        <div>
+
+          <h3>Explore</h3>
+
+          <a href="https://finance.labrecord.cloud/">
+            Finance
+          </a>
+
+          <a href="https://labrecord.cloud/">
+            LabRecord
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="copyright">
+        © 2026 LabRecord. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- QR CODE LIBRARY -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    let qrCode = null;
+
+
+    function generateQR() {
+
+      const text =
+        document.getElementById("qrText").value.trim();
+
+
+      const size =
+        parseInt(
+          document.getElementById("qrSize").value
+        );
+
+
+      const level =
+        document.getElementById("errorLevel").value;
+
+
+      const errorMessage =
+        document.getElementById("errorMessage");
+
+
+      const qrResult =
+        document.getElementById("qrResult");
+
+
+      errorMessage.style.display = "none";
+
+
+      if (!text) {
+
+        errorMessage.textContent =
+          "Please enter some text or a URL.";
+
+        errorMessage.style.display = "block";
+
+        qrResult.style.display = "none";
+
+        return;
+
+      }
+
+
+      /*
+        Create QR code.
+
+        QRious uses the errorCorrectionLevel
+        values L, M, Q and H.
+      */
+
+      qrCode = new QRious({
+
+        element:
+          document.getElementById("qrCanvas"),
+
+        value: text,
+
+        size: size,
+
+        level: level,
+
+        background: "white",
+
+        foreground: "black",
+
+        padding: 10
+
+      });
+
+
+      /*
+        Show generated QR code.
+      */
+
+      qrResult.style.display = "block";
+
+    }
+
+
+    function downloadQR() {
+
+      if (!qrCode) {
+
+        return;
+
+      }
+
+
+      const canvas =
+        document.getElementById("qrCanvas");
+
+
+      const link =
+        document.createElement("a");
+
+
+      link.download =
+        "labrecord-qr-code.png";
+
+
+      link.href =
+        canvas.toDataURL("image/png");
+
+
+      link.click();
+
+    }
+
+  </script>
+
+</body>
+</html>
