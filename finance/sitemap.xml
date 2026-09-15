@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://finance.labrecord.cloud/</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/sip-calculator.html</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/fd-calculator.html</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/compound-interest.html</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/lumpsum-calculator.html</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/loan-calculator.html</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/inflation-calculator.html</loc>
+  </url>
+
+  <url>
+    <loc>https://finance.labrecord.cloud/retirement-calculator.html</loc>
+  </url>
+
+</urlset>
