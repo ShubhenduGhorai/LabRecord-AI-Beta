@@ -1,7 +1,32 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
 
+  "redirects": [
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    }
+  ],
+
   "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/main/about.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+
     {
       "source": "/(.*)",
       "has": [
@@ -12,6 +37,7 @@
       ],
       "destination": "/main/$1"
     },
+
     {
       "source": "/(.*)",
       "has": [
@@ -22,6 +48,7 @@
       ],
       "destination": "/main/$1"
     },
+
     {
       "source": "/(.*)",
       "has": [
@@ -32,6 +59,7 @@
       ],
       "destination": "/tools/$1"
     },
+
     {
       "source": "/(.*)",
       "has": [
