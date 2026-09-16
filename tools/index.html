@@ -326,31 +326,116 @@
         padding: 25px;
       }
     }
+  
+.site-header {
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+.site-header .nav {
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+.logo, .footer-logo {
+  text-decoration:none;
+  font-weight:800;
+  white-space:nowrap;
+}
+.logo { font-size:24px; color:#111827; }
+.logo span, .footer-logo span { color:#4f46e5; }
+.nav-links {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px 20px;
+}
+.nav-links a {
+  color:#374151;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:600;
+  padding:8px 4px;
+}
+.nav-links a:hover { color:#4f46e5; }
+
+.site-footer {
+  margin-top:50px;
+  background:#111827;
+  color:#d1d5db;
+  padding:42px 0 20px;
+}
+.footer-grid {
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:40px;
+}
+.footer-logo { display:inline-block; font-size:22px; color:#fff; margin-bottom:12px; }
+.site-footer h3 { margin:0 0 13px; color:#fff; font-size:16px; }
+.site-footer p { margin:0; max-width:430px; color:#9ca3af; font-size:14px; line-height:1.7; }
+.site-footer a:not(.footer-logo) {
+  display:block;
+  width:max-content;
+  max-width:100%;
+  margin:0 0 9px;
+  color:#9ca3af;
+  text-decoration:none;
+  font-size:14px;
+}
+.site-footer a:hover { color:#fff; }
+.copyright {
+  border-top:1px solid #374151;
+  margin-top:32px;
+  padding-top:18px;
+  color:#9ca3af;
+  font-size:13px;
+  text-align:center;
+}
+
+@media (max-width:760px) {
+  .site-header .nav {
+    flex-direction:column;
+    justify-content:center;
+    padding:12px 0;
+  }
+  .nav-links {
+    justify-content:center;
+    gap:5px 13px;
+  }
+  .nav-links a { font-size:13px; padding:5px 2px; }
+  .footer-grid { grid-template-columns:1fr 1fr; gap:28px; }
+}
+@media (max-width:480px) {
+  .footer-grid { grid-template-columns:1fr; }
+  .site-footer a:not(.footer-logo) { width:auto; }
+}
+
   </style>
 </head>
 
 <body>
 
+<header class="site-header">
+  <div class="container nav">
+    <a href="https://www.labrecord.cloud/" class="logo">Lab<span>Record</span></a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="https://www.labrecord.cloud/">Home</a>
+      <a href="https://tools.labrecord.cloud/">Tools</a>
+      <a href="https://finance.labrecord.cloud/">Finance</a>
+      <a href="https://www.labrecord.cloud/about.html">About</a>
+      <a href="https://www.labrecord.cloud/contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+
   <!-- HEADER -->
-
-  <header>
-    <div class="container nav">
-
-      <a href="index.html" class="logo">
-        Lab<span>Record</span>
-      </a>
-
-      <nav>
-        <a href="index.html">Tools</a>
-        <a href="https://finance.labrecord.cloud/">Finance</a>
-        <a href="https://labrecord.cloud/">LabRecord</a>
-      </nav>
-
-    </div>
-  </header>
-
-
-  <!-- HERO -->
+<!-- HERO -->
 
   <main>
 
@@ -725,83 +810,7 @@
 
 
   <!-- FOOTER -->
-
-  <footer>
-
-    <div class="container">
-
-      <div class="footer-grid">
-
-        <div>
-
-          <h3>LabRecord Tools</h3>
-
-          <p>
-            Free online tools and calculators for everyday
-            calculations and useful tasks.
-          </p>
-
-        </div>
-
-
-        <div>
-
-          <h3>Tools</h3>
-
-          <a href="percentage-calculator.html">
-            Percentage Calculator
-          </a>
-
-          <a href="age-calculator.html">
-            Age Calculator
-          </a>
-
-          <a href="emi-calculator.html">
-            EMI Calculator
-          </a>
-
-          <a href="gst-calculator.html">
-            GST Calculator
-          </a>
-
-        </div>
-
-
-        <div>
-
-          <h3>Company</h3>
-
-          <a href="https://labrecord.cloud/">
-            LabRecord
-          </a>
-
-          <a href="https://finance.labrecord.cloud/">
-            Finance
-          </a>
-
-          <a href="#">
-            Privacy Policy
-          </a>
-
-          <a href="#">
-            Contact
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <div class="copyright">
-        © 2026 LabRecord. All rights reserved.
-      </div>
-
-    </div>
-
-  </footer>
-
-
-  <!-- SEARCH SCRIPT -->
+<!-- SEARCH SCRIPT -->
 
   <script>
 
@@ -827,6 +836,36 @@
     });
 
   </script>
+
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="https://www.labrecord.cloud/" class="footer-logo">Lab<span>Record</span></a>
+      <p>Free online tools and financial calculators for everyday tasks, calculations and planning.</p>
+    </div>
+
+    <div>
+      <h3>Explore</h3>
+      <a href="https://www.labrecord.cloud/">Home</a>
+      <a href="https://tools.labrecord.cloud/">Tools</a>
+      <a href="https://finance.labrecord.cloud/">Finance</a>
+    </div>
+
+    <div>
+      <h3>Company</h3>
+      <a href="https://www.labrecord.cloud/about.html">About</a>
+      <a href="https://www.labrecord.cloud/contact.html">Contact</a>
+      <a href="https://www.labrecord.cloud/privacy-policy.html">Privacy Policy</a>
+      <a href="https://www.labrecord.cloud/terms.html">Terms &amp; Conditions</a>
+      <a href="https://www.labrecord.cloud/disclaimer.html">Disclaimer</a>
+    </div>
+  </div>
+
+  <div class="container copyright">
+    © 2026 LabRecord. All rights reserved.
+  </div>
+</footer>
 
 </body>
 </html>
