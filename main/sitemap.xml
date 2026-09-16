@@ -5,4 +5,24 @@
     <loc>https://www.labrecord.cloud/</loc>
   </url>
 
+  <url>
+    <loc>https://www.labrecord.cloud/about.html</loc>
+  </url>
+
+  <url>
+    <loc>https://www.labrecord.cloud/terms.html</loc>
+  </url>
+
+  <url>
+    <loc>https://www.labrecord.cloud/disclaimer.html</loc>
+  </url>
+
+  <url>
+    <loc>https://www.labrecord.cloud/privacy-policy.html</loc>
+  </url>
+
+  <url>
+    <loc>https://www.labrecord.cloud/contact.html</loc>
+  </url>
+
 </urlset>
