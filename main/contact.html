@@ -445,7 +445,19 @@
             publishing it as a working submission form.
           -->
 
-          <form id="contactForm">
+          <form action="https://api.web3forms.com/submit" method="POST">
+
+            <input type="hidden" name="access_key"
+                   value="2bc601ae-28dc-4f8e-92ee-3242470840ee">
+
+            <input type="hidden" name="subject"
+                   value="New LabRecord Contact Form Message">
+
+            <input type="hidden" name="from_name"
+                   value="LabRecord Contact Form">
+
+            <input type="hidden" name="botcheck"
+                   value="">
 
             <div class="form-group">
               <label for="name">Name</label>
@@ -470,12 +482,12 @@
             </div>
 
             <div class="form-group">
-              <label for="subject">Subject</label>
-              <select id="subject" name="subject" required>
+              <label for="topic">Subject</label>
+              <select id="topic" name="topic" required>
                 <option value="">Select a subject</option>
                 <option value="General Enquiry">General Enquiry</option>
-                <option value="Feedback">Feedback / Suggestion</option>
-                <option value="Report Issue">Report an Issue</option>
+                <option value="Feedback / Suggestion">Feedback / Suggestion</option>
+                <option value="Report an Issue">Report an Issue</option>
                 <option value="Business Enquiry">Business Enquiry</option>
                 <option value="Other">Other</option>
               </select>
@@ -545,17 +557,6 @@
       © 2026 LabRecord. All rights reserved.
     </div>
   </footer>
-
-  <script>
-    document.getElementById("contactForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      alert(
-        "The contact form is ready, but message delivery has not been connected yet. " +
-        "Connect a form service before publishing this as a working contact form."
-      );
-    });
-  </script>
 
 </body>
 </html>
