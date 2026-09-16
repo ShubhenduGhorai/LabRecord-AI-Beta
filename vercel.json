@@ -56,6 +56,84 @@
           "value": "www.labrecord.cloud"
         }
       ]
+    },
+
+    {
+      "source": "/compound-interest.html",
+      "destination": "/compound-interest",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/fd-calculator.html",
+      "destination": "/fd-calculator",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/inflation-calculator.html",
+      "destination": "/inflation-calculator",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/loan-calculator.html",
+      "destination": "/loan-calculator",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/lumpsum-calculator.html",
+      "destination": "/lumpsum-calculator",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/retirement-calculator.html",
+      "destination": "/retirement-calculator",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/sip-calculator.html",
+      "destination": "/sip-calculator",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
     }
   ],
 
@@ -107,6 +185,77 @@
         {
           "type": "host",
           "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+
+    {
+      "source": "/compound-interest",
+      "destination": "/finance/compound-interest.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/fd-calculator",
+      "destination": "/finance/fd-calculator.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/inflation-calculator",
+      "destination": "/finance/inflation-calculator.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/loan-calculator",
+      "destination": "/finance/loan-calculator.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/lumpsum-calculator",
+      "destination": "/finance/lumpsum-calculator.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/retirement-calculator",
+      "destination": "/finance/retirement-calculator.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/sip-calculator",
+      "destination": "/finance/sip-calculator.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
         }
       ]
     },
