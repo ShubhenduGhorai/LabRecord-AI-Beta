@@ -12,6 +12,50 @@
           "value": "www.labrecord.cloud"
         }
       ]
+    },
+    {
+      "source": "/contact.html",
+      "destination": "/contact",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/privacy-policy.html",
+      "destination": "/privacy-policy",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/terms",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/disclaimer.html",
+      "destination": "/disclaimer",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
     }
   ],
 
@@ -19,6 +63,46 @@
     {
       "source": "/about",
       "destination": "/main/about.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/contact",
+      "destination": "/main/contact.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/main/privacy-policy.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/terms",
+      "destination": "/main/terms.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.labrecord.cloud"
+        }
+      ]
+    },
+    {
+      "source": "/disclaimer",
+      "destination": "/main/disclaimer.html",
       "has": [
         {
           "type": "host",
