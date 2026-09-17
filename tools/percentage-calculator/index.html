@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+ <title>Percentage Calculator - Calculate Percentages Online | LabRecord</title>
+
+<meta name="description" content="Free online percentage calculator to calculate percentages, percentage increase and decrease, discounts and percentage differences quickly and accurately.">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="https://tools.labrecord.cloud/percentage-calculator.html">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Percentage Calculator - Calculate Percentages Online">
+<meta property="og:description" content="Calculate percentages, percentage increase, decrease and differences quickly with LabRecord's free percentage calculator.">
+<meta property="og:url" content="https://tools.labrecord.cloud/percentage-calculator.html">
+<meta property="og:site_name" content="LabRecord">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Percentage Calculator - Calculate Percentages Online">
+<meta name="twitter:description" content="Free online percentage calculator for quick and accurate percentage calculations.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fc;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .logo span {
+      color: #4f46e5;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      color: #475467;
+      font-size: 15px;
+    }
+
+    nav a:hover {
+      color: #4f46e5;
+    }
+
+    /* PAGE HEADER */
+
+    .page-header {
+      text-align: center;
+      padding: 55px 0 35px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.15;
+      margin-bottom: 15px;
+    }
+
+    .page-header p {
+      max-width: 650px;
+      margin: auto;
+      color: #667085;
+      font-size: 17px;
+    }
+
+    /* CALCULATOR */
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 22px;
+      margin-bottom: 55px;
+    }
+
+    .calculator-card {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 8px 25px rgba(20, 30, 60, 0.04);
+    }
+
+    .calculator-card h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .calculator-card .description {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #d5d9e2;
+      border-radius: 9px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: #4f46e5;
+    }
+
+    button {
+      margin-top: 18px;
+      border: none;
+      background: #4f46e5;
+      color: white;
+      padding: 13px 20px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+
+    .result {
+      display: none;
+      margin-top: 20px;
+      padding: 17px;
+      border-radius: 10px;
+      background: #eef2ff;
+      color: #312e81;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    /* CONTENT */
+
+    .content {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 35px;
+      margin-bottom: 60px;
+    }
+
+    .content h2 {
+      font-size: 27px;
+      margin-bottom: 15px;
+    }
+
+    .content h3 {
+      font-size: 20px;
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+
+    .content p {
+      color: #526071;
+      margin-bottom: 14px;
+    }
+
+    .formula {
+      background: #f7f8fc;
+      border-left: 4px solid #4f46e5;
+      padding: 15px;
+      margin: 15px 0;
+      font-weight: 700;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 40px 0 25px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 35px;
+    }
+
+    footer h3 {
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    footer p,
+    footer a {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    footer a {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    .copyright {
+      border-top: 1px solid #374151;
+      margin-top: 30px;
+      padding-top: 20px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      .nav {
+        min-height: 60px;
+      }
+
+      nav {
+        gap: 12px;
+        font-size: 13px;
+      }
+
+      .page-header {
+        padding: 40px 0 25px;
+      }
+
+      .calculator-card {
+        padding: 22px;
+      }
+
+      .inputs {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 25px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Percentage Calculator",
+  "url": "https://tools.labrecord.cloud/percentage-calculator.html",
+  "description": "Free online percentage calculator for calculating percentages, percentage increase, decrease and differences.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+}
+</script>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+
+    <a href="index.html" class="logo">
+      Lab<span>Record</span>
+    </a>
+
+    <nav>
+      <a href="index.html">Tools</a>
+      <a href="https://finance.labrecord.cloud/">Finance</a>
+      <a href="https://labrecord.cloud/">LabRecord</a>
+    </nav>
+
+  </div>
+</header>
+
+
+<main>
+
+  <section class="page-header">
+
+    <div class="container">
+
+      <h1>Percentage Calculator</h1>
+
+      <p>
+        Calculate percentages, percentage of a number,
+        percentage differences and percentage changes quickly.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <section>
+
+    <div class="container calculator-grid">
+
+
+      <!-- CALCULATOR 1 -->
+
+      <div class="calculator-card">
+
+        <h2>What is X% of Y?</h2>
+
+        <p class="description">
+          Find a percentage of any number.
+        </p>
+
+        <div class="inputs">
+
+          <div class="field">
+            <label>Percentage (%)</label>
+            <input type="number" id="percent1" placeholder="Example: 20">
+          </div>
+
+          <div class="field">
+            <label>Number</label>
+            <input type="number" id="number1" placeholder="Example: 500">
+          </div>
+
+        </div>
+
+        <button onclick="calculatePercentage()">
+          Calculate
+        </button>
+
+        <div class="result" id="result1"></div>
+
+      </div>
+
+
+      <!-- CALCULATOR 2 -->
+
+      <div class="calculator-card">
+
+        <h2>X is what percentage of Y?</h2>
+
+        <p class="description">
+          Find what percentage one number represents of another.
+        </p>
+
+        <div class="inputs">
+
+          <div class="field">
+            <label>First Number</label>
+            <input type="number" id="number2" placeholder="Example: 100">
+          </div>
+
+          <div class="field">
+            <label>Second Number</label>
+            <input type="number" id="number3" placeholder="Example: 500">
+          </div>
+
+        </div>
+
+        <button onclick="calculateWhatPercent()">
+          Calculate
+        </button>
+
+        <div class="result" id="result2"></div>
+
+      </div>
+
+
+      <!-- CALCULATOR 3 -->
+
+      <div class="calculator-card">
+
+        <h2>Percentage Change</h2>
+
+        <p class="description">
+          Calculate the percentage increase or decrease between two values.
+        </p>
+
+        <div class="inputs">
+
+          <div class="field">
+            <label>Original Value</label>
+            <input type="number" id="oldValue" placeholder="Example: 500">
+          </div>
+
+          <div class="field">
+            <label>New Value</label>
+            <input type="number" id="newValue" placeholder="Example: 600">
+          </div>
+
+        </div>
+
+        <button onclick="calculateChange()">
+          Calculate Change
+        </button>
+
+        <div class="result" id="result3"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SEO CONTENT -->
+
+  <section>
+
+    <div class="container">
+
+      <article class="content">
+
+        <h2>How to Calculate a Percentage</h2>
+
+        <p>
+          A percentage is a way of expressing a number as a fraction
+          of 100. Percentages are commonly used in mathematics,
+          shopping discounts, finance, business and everyday calculations.
+        </p>
+
+
+        <h3>Percentage Formula</h3>
+
+        <div class="formula">
+          Percentage = (Part ÷ Whole) × 100
+        </div>
+
+
+        <h3>How to Calculate X% of a Number</h3>
+
+        <p>
+          To calculate a percentage of a number, multiply the number
+          by the percentage and divide by 100.
+        </p>
+
+        <div class="formula">
+          X% of Y = (X ÷ 100) × Y
+        </div>
+
+        <p>
+          For example, 20% of 500 is 100.
+        </p>
+
+
+        <h3>How to Calculate Percentage Change</h3>
+
+        <p>
+          Percentage change measures how much a value has increased
+          or decreased compared with its original value.
+        </p>
+
+        <div class="formula">
+          Percentage Change =
+          ((New Value − Original Value) ÷ Original Value) × 100
+        </div>
+
+        <p>
+          If a price increases from ₹500 to ₹600,
+          the percentage increase is 20%.
+        </p>
+
+
+        <h3>Frequently Asked Questions</h3>
+
+        <h3>What is 10% of 100?</h3>
+
+        <p>
+          10% of 100 is 10.
+        </p>
+
+        <h3>What is 20% of 500?</h3>
+
+        <p>
+          20% of 500 is 100.
+        </p>
+
+        <h3>How do I calculate a percentage increase?</h3>
+
+        <p>
+          Subtract the original value from the new value,
+          divide the result by the original value and multiply by 100.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+
+  <div class="container">
+
+    <div class="footer-grid">
+
+      <div>
+
+        <h3>LabRecord Tools</h3>
+
+        <p>
+          Free online tools and calculators for everyday
+          calculations and useful tasks.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <h3>Tools</h3>
+
+        <a href="index.html">
+          All Tools
+        </a>
+
+        <a href="percentage-calculator.html">
+          Percentage Calculator
+        </a>
+
+        <a href="age-calculator.html">
+          Age Calculator
+        </a>
+
+        <a href="emi-calculator.html">
+          EMI Calculator
+        </a>
+
+      </div>
+
+
+      <div>
+
+        <h3>Explore</h3>
+
+        <a href="https://finance.labrecord.cloud/">
+          Finance
+        </a>
+
+        <a href="https://labrecord.cloud/">
+          LabRecord
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="copyright">
+      © 2026 LabRecord. All rights reserved.
+    </div>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+function calculatePercentage() {
+
+  const percentage = parseFloat(
+    document.getElementById("percent1").value
+  );
+
+  const number = parseFloat(
+    document.getElementById("number1").value
+  );
+
+  const result = document.getElementById("result1");
+
+  if (isNaN(percentage) || isNaN(number)) {
+    result.style.display = "block";
+    result.textContent = "Please enter both values.";
+    return;
+  }
+
+  const answer = (percentage / 100) * number;
+
+  result.style.display = "block";
+  result.textContent =
+    percentage + "% of " + number + " = " +
+    answer.toLocaleString();
+}
+
+
+function calculateWhatPercent() {
+
+  const first = parseFloat(
+    document.getElementById("number2").value
+  );
+
+  const second = parseFloat(
+    document.getElementById("number3").value
+  );
+
+  const result = document.getElementById("result2");
+
+  if (isNaN(first) || isNaN(second)) {
+    result.style.display = "block";
+    result.textContent = "Please enter both values.";
+    return;
+  }
+
+  if (second === 0) {
+    result.style.display = "block";
+    result.textContent = "The second number cannot be zero.";
+    return;
+  }
+
+  const answer = (first / second) * 100;
+
+  result.style.display = "block";
+  result.textContent =
+    first + " is " +
+    answer.toFixed(2) +
+    "% of " +
+    second;
+}
+
+
+function calculateChange() {
+
+  const oldValue = parseFloat(
+    document.getElementById("oldValue").value
+  );
+
+  const newValue = parseFloat(
+    document.getElementById("newValue").value
+  );
+
+  const result = document.getElementById("result3");
+
+  if (isNaN(oldValue) || isNaN(newValue)) {
+    result.style.display = "block";
+    result.textContent = "Please enter both values.";
+    return;
+  }
+
+  if (oldValue === 0) {
+    result.style.display = "block";
+    result.textContent = "Original value cannot be zero.";
+    return;
+  }
+
+  const change =
+    ((newValue - oldValue) / Math.abs(oldValue)) * 100;
+
+  result.style.display = "block";
+
+  if (change > 0) {
+
+    result.textContent =
+      "Percentage increase: " +
+      change.toFixed(2) +
+      "%";
+
+  } else if (change < 0) {
+
+    result.textContent =
+      "Percentage decrease: " +
+      Math.abs(change).toFixed(2) +
+      "%";
+
+  } else {
+
+    result.textContent =
+      "There is no percentage change.";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+ <title>Age Calculator - Calculate Your Age Online | LabRecord</title>
+
+<meta name="description" content="Free online age calculator to calculate your exact age in years, months and days. Enter your date of birth and calculate your age instantly.">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="https://tools.labrecord.cloud/age-calculator.html">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Age Calculator - Calculate Your Exact Age">
+<meta property="og:description" content="Calculate your exact age in years, months and days with LabRecord's free online age calculator.">
+<meta property="og:url" content="https://tools.labrecord.cloud/age-calculator.html">
+<meta property="og:site_name" content="LabRecord">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Age Calculator - Calculate Your Exact Age">
+<meta name="twitter:description" content="Free online age calculator to calculate your exact age in years, months and days.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f7f8fc;
+      color: #172033;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+    }
+
+    /* HEADER */
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .logo span {
+      color: #4f46e5;
+    }
+
+    nav {
+      display: flex;
+      gap: 25px;
+      color: #475467;
+      font-size: 15px;
+    }
+
+    nav a:hover {
+      color: #4f46e5;
+    }
+
+    /* PAGE HEADER */
+
+    .page-header {
+      text-align: center;
+      padding: 55px 0 35px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      line-height: 1.15;
+      margin-bottom: 15px;
+    }
+
+    .page-header p {
+      max-width: 700px;
+      margin: auto;
+      color: #667085;
+      font-size: 17px;
+    }
+
+    /* CALCULATOR */
+
+    .calculator-card {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 8px 25px rgba(20, 30, 60, 0.04);
+      margin-bottom: 25px;
+    }
+
+    .calculator-card h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .calculator-description {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 25px;
+    }
+
+    .date-field {
+      max-width: 500px;
+    }
+
+    .date-field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .date-field input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d5d9e2;
+      border-radius: 9px;
+      font-size: 16px;
+      outline: none;
+      background: white;
+    }
+
+    .date-field input:focus {
+      border-color: #4f46e5;
+    }
+
+    button {
+      margin-top: 18px;
+      border: none;
+      background: #4f46e5;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+
+    /* RESULT */
+
+    .result-box {
+      display: none;
+      margin-top: 28px;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .main-age {
+      background: #eef2ff;
+      border: 1px solid #dfe3ff;
+      border-radius: 14px;
+      padding: 25px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .main-age-label {
+      color: #4338ca;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .main-age-value {
+      color: #312e81;
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 800;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .result-item {
+      background: #f8f9fc;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .result-item-label {
+      color: #667085;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .result-item-value {
+      font-size: 19px;
+      font-weight: 700;
+      color: #172033;
+    }
+
+    .error {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 9px;
+      color: #be123c;
+      font-size: 14px;
+    }
+
+    /* CONTENT */
+
+    .content {
+      background: white;
+      border: 1px solid #e3e6ed;
+      border-radius: 18px;
+      padding: 35px;
+      margin: 45px 0 60px;
+    }
+
+    .content h2 {
+      font-size: 27px;
+      margin-bottom: 15px;
+    }
+
+    .content h3 {
+      font-size: 20px;
+      margin-top: 28px;
+      margin-bottom: 9px;
+    }
+
+    .content p {
+      color: #526071;
+      margin-bottom: 14px;
+    }
+
+    .formula {
+      background: #f7f8fc;
+      border-left: 4px solid #4f46e5;
+      padding: 15px;
+      margin: 15px 0;
+      font-weight: 700;
+    }
+
+    /* FAQ */
+
+    .faq-item {
+      border-top: 1px solid #e5e7eb;
+      padding: 18px 0;
+    }
+
+    .faq-item h3 {
+      margin-top: 0;
+      margin-bottom: 7px;
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #111827;
+      color: #d1d5db;
+      padding: 40px 0 25px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 35px;
+    }
+
+    footer h3 {
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    footer p,
+    footer a {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    footer a {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    .copyright {
+      border-top: 1px solid #374151;
+      margin-top: 30px;
+      padding-top: 20px;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      .nav {
+        min-height: 60px;
+      }
+
+      nav {
+        gap: 12px;
+        font-size: 13px;
+      }
+
+      .page-header {
+        padding: 40px 0 25px;
+      }
+
+      .calculator-card {
+        padding: 22px;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 25px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Age Calculator",
+  "url": "https://tools.labrecord.cloud/age-calculator.html",
+  "description": "Free online age calculator to calculate exact age in years, months and days.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+}
+</script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+    <div class="container nav">
+
+      <a href="index.html" class="logo">
+        Lab<span>Record</span>
+      </a>
+
+      <nav>
+        <a href="index.html">Tools</a>
+        <a href="https://finance.labrecord.cloud/">Finance</a>
+        <a href="https://labrecord.cloud/">LabRecord</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main>
+
+    <!-- PAGE INTRO -->
+
+    <section class="page-header">
+
+      <div class="container">
+
+        <h1>Age Calculator</h1>
+
+        <p>
+          Calculate your exact age in years, months and days.
+          You can also find your total months, weeks, days and
+          the number of days until your next birthday.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- CALCULATOR -->
+
+    <section>
+
+      <div class="container">
+
+        <div class="calculator-card">
+
+          <h2>Calculate Your Exact Age</h2>
+
+          <p class="calculator-description">
+            Enter your date of birth to calculate your current age.
+          </p>
+
+          <div class="date-field">
+
+            <label for="birthDate">
+              Date of Birth
+            </label>
+
+            <input
+              type="date"
+              id="birthDate"
+              aria-label="Date of Birth"
+            >
+
+          </div>
+
+          <button onclick="calculateAge()">
+            Calculate Age
+          </button>
+
+          <div class="error" id="errorMessage"></div>
+
+
+          <!-- RESULTS -->
+
+          <div class="result-box" id="resultBox">
+
+            <div class="result-title">
+              Your Age
+            </div>
+
+            <div class="main-age">
+
+              <div class="main-age-label">
+                Exact Age
+              </div>
+
+              <div class="main-age-value" id="exactAge">
+                —
+              </div>
+
+            </div>
+
+
+            <div class="result-grid">
+
+              <div class="result-item">
+
+                <div class="result-item-label">
+                  Total Months
+                </div>
+
+                <div class="result-item-value" id="totalMonths">
+                  —
+                </div>
+
+              </div>
+
+
+              <div class="result-item">
+
+                <div class="result-item-label">
+                  Total Weeks
+                </div>
+
+                <div class="result-item-value" id="totalWeeks">
+                  —
+                </div>
+
+              </div>
+
+
+              <div class="result-item">
+
+                <div class="result-item-label">
+                  Total Days
+                </div>
+
+                <div class="result-item-value" id="totalDays">
+                  —
+                </div>
+
+              </div>
+
+
+              <div class="result-item">
+
+                <div class="result-item-label">
+                  Next Birthday
+                </div>
+
+                <div class="result-item-value" id="nextBirthday">
+                  —
+                </div>
+
+              </div>
+
+
+              <div class="result-item">
+
+                <div class="result-item-label">
+                  Days Until Next Birthday
+                </div>
+
+                <div class="result-item-value" id="daysUntilBirthday">
+                  —
+                </div>
+
+              </div>
+
+
+              <div class="result-item">
+
+                <div class="result-item-label">
+                  Day of Birth
+                </div>
+
+                <div class="result-item-value" id="birthDay">
+                  —
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- SEO CONTENT -->
+
+    <section>
+
+      <div class="container">
+
+        <article class="content">
+
+          <h2>How Does an Age Calculator Work?</h2>
+
+          <p>
+            An age calculator determines the amount of time that
+            has passed between your date of birth and today's date.
+            It calculates the result using years, months and days
+            rather than simply dividing the number of days by 365.
+          </p>
+
+
+          <h3>How to Calculate Age</h3>
+
+          <p>
+            To calculate someone's age, start with their date of birth
+            and compare it with the current date.
+          </p>
+
+          <div class="formula">
+            Age = Current Date − Date of Birth
+          </div>
+
+          <p>
+            The calculation takes into account the different number
+            of days in each month and leap years.
+          </p>
+
+
+          <h3>How Many Days Old Am I?</h3>
+
+          <p>
+            Your total age in days is calculated by finding the
+            number of complete days between your date of birth
+            and the current date.
+          </p>
+
+          <p>
+            Because calendar years can contain 365 or 366 days,
+            the exact number of days depends on the dates involved.
+          </p>
+
+
+          <h3>How Many Months Old Am I?</h3>
+
+          <p>
+            Your total months can be estimated from the number of
+            complete years and months that have passed since your
+            date of birth.
+          </p>
+
+          <p>
+            For example, someone who is 25 years and 6 months old
+            has completed approximately 306 months of age.
+          </p>
+
+
+          <h3>What Is My Next Birthday?</h3>
+
+          <p>
+            Your next birthday is the next occurrence of your
+            birth date after today's date. The calculator also
+            tells you how many days remain until that birthday.
+          </p>
+
+
+          <h3>Why Are Leap Years Important?</h3>
+
+          <p>
+            A normal calendar year has 365 days, while a leap year
+            has 366 days. Leap years can therefore affect calculations
+            involving total days and dates.
+          </p>
+
+
+          <h2 style="margin-top: 35px;">
+            Frequently Asked Questions
+          </h2>
+
+
+          <div class="faq-item">
+
+            <h3>How accurate is this age calculator?</h3>
+
+            <p>
+              The calculator uses calendar dates to calculate your
+              age in complete years, months and days.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Can I calculate my age in days?</h3>
+
+            <p>
+              Yes. Enter your date of birth and the calculator will
+              display the total number of days that have passed.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Can I calculate my age in months?</h3>
+
+            <p>
+              Yes. The calculator displays the approximate number
+              of completed months based on your calendar age.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>How many days are left until my next birthday?</h3>
+
+            <p>
+              After entering your date of birth, the calculator
+              calculates the number of days between today and
+              your next birthday.
+            </p>
+
+          </div>
+
+
+          <div class="faq-item">
+
+            <h3>Does the calculator account for leap years?</h3>
+
+            <p>
+              Yes. The calculation uses actual calendar dates,
+              including leap years.
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <div class="container">
+
+      <div class="footer-grid">
+
+        <div>
+
+          <h3>LabRecord Tools</h3>
+
+          <p>
+            Free online tools and calculators for everyday
+            calculations and useful tasks.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3>Tools</h3>
+
+          <a href="index.html">
+            All Tools
+          </a>
+
+          <a href="percentage-calculator.html">
+            Percentage Calculator
+          </a>
+
+          <a href="age-calculator.html">
+            Age Calculator
+          </a>
+
+          <a href="emi-calculator.html">
+            EMI Calculator
+          </a>
+
+        </div>
+
+
+        <div>
+
+          <h3>Explore</h3>
+
+          <a href="https://finance.labrecord.cloud/">
+            Finance
+          </a>
+
+          <a href="https://labrecord.cloud/">
+            LabRecord
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="copyright">
+        © 2026 LabRecord. All rights reserved.
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    function parseLocalDate(dateString) {
+
+      const parts = dateString.split("-");
+
+      return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+      );
+
+    }
+
+
+    function startOfDay(date) {
+
+      return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+
+    }
+
+
+    function daysBetween(date1, date2) {
+
+      const oneDay = 24 * 60 * 60 * 1000;
+
+      return Math.round(
+        (startOfDay(date2) - startOfDay(date1)) / oneDay
+      );
+
+    }
+
+
+    function formatNumber(number) {
+
+      return number.toLocaleString("en-IN");
+
+    }
+
+
+    function getDaysInMonth(year, month) {
+
+      return new Date(year, month + 1, 0).getDate();
+
+    }
+
+
+    function calculateAge() {
+
+      const input = document.getElementById("birthDate");
+
+      const resultBox = document.getElementById("resultBox");
+
+      const errorMessage =
+        document.getElementById("errorMessage");
+
+
+      resultBox.style.display = "none";
+
+      errorMessage.style.display = "none";
+
+
+      if (!input.value) {
+
+        errorMessage.textContent =
+          "Please enter your date of birth.";
+
+        errorMessage.style.display = "block";
+
+        return;
+
+      }
+
+
+      const birthDate = parseLocalDate(input.value);
+
+      const today = startOfDay(new Date());
+
+
+      if (birthDate > today) {
+
+        errorMessage.textContent =
+          "Date of birth cannot be in the future.";
+
+        errorMessage.style.display = "block";
+
+        return;
+
+      }
+
+
+      let years =
+        today.getFullYear() -
+        birthDate.getFullYear();
+
+      let months =
+        today.getMonth() -
+        birthDate.getMonth();
+
+      let days =
+        today.getDate() -
+        birthDate.getDate();
+
+
+      if (days < 0) {
+
+        months--;
+
+        const previousMonth =
+          today.getMonth() === 0
+            ? 11
+            : today.getMonth() - 1;
+
+        const previousMonthYear =
+          today.getMonth() === 0
+            ? today.getFullYear() - 1
+            : today.getFullYear();
+
+        days += getDaysInMonth(
+          previousMonthYear,
+          previousMonth
+        );
+
+      }
+
+
+      if (months < 0) {
+
+        years--;
+
+        months += 12;
+
+      }
+
+
+      /*
+        Calculate total days.
+      */
+
+      const totalDays =
+        daysBetween(birthDate, today);
+
+
+      const totalWeeks =
+        Math.floor(totalDays / 7);
+
+
+      /*
+        Calculate total completed months.
+      */
+
+      const totalMonths =
+        years * 12 + months;
+
+
+      /*
+        Calculate next birthday.
+      */
+
+      let birthdayYear =
+        today.getFullYear();
+
+      let birthdayMonth =
+        birthDate.getMonth();
+
+      let birthdayDay =
+        birthDate.getDate();
+
+
+      /*
+        Handle February 29 birthdays
+        in non-leap years by using February 28.
+      */
+
+      if (
+        birthdayMonth === 1 &&
+        birthdayDay === 29 &&
+        !isLeapYear(birthdayYear)
+      ) {
+
+        birthdayDay = 28;
+
+      }
+
+
+      let nextBirthday =
+        new Date(
+          birthdayYear,
+          birthdayMonth,
+          birthdayDay
+        );
+
+
+      /*
+        If birthday has already happened this year,
+        move to next year.
+      */
+
+      if (nextBirthday < today) {
+
+        birthdayYear++;
+
+        birthdayDay =
+          birthDate.getDate();
+
+        if (
+          birthdayMonth === 1 &&
+          birthdayDay === 29 &&
+          !isLeapYear(birthdayYear)
+        ) {
+
+          birthdayDay = 28;
+
+        }
+
+        nextBirthday =
+          new Date(
+            birthdayYear,
+            birthdayMonth,
+            birthdayDay
+          );
+
+      }
+
+
+      const daysUntilBirthday =
+        daysBetween(today, nextBirthday);
+
+
+      /*
+        Format next birthday.
+      */
+
+      const birthdayText =
+        nextBirthday.toLocaleDateString(
+          "en-IN",
+          {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          }
+        );
+
+
+      /*
+        Format birth day.
+      */
+
+      const birthDayText =
+        birthDate.toLocaleDateString(
+          "en-IN",
+          {
+            weekday: "long"
+          }
+        );
+
+
+      /*
+        Display results.
+      */
+
+      document.getElementById("exactAge").textContent =
+        years +
+        " Years, " +
+        months +
+        " Months, " +
+        days +
+        " Days";
+
+
+      document.getElementById("totalMonths").textContent =
+        formatNumber(totalMonths) +
+        " months";
+
+
+      document.getElementById("totalWeeks").textContent =
+        formatNumber(totalWeeks) +
+        " weeks";
+
+
+      document.getElementById("totalDays").textContent =
+        formatNumber(totalDays) +
+        " days";
+
+
+      document.getElementById("nextBirthday").textContent =
+        birthdayText;
+
+
+      document.getElementById("daysUntilBirthday").textContent =
+        formatNumber(daysUntilBirthday) +
+        " days";
+
+
+      document.getElementById("birthDay").textContent =
+        birthDayText;
+
+
+      resultBox.style.display = "block";
+
+    }
+
+
+    function isLeapYear(year) {
+
+      return (
+        year % 4 === 0 &&
+        (
+          year % 100 !== 0 ||
+          year % 400 === 0
+        )
+      );
+
+    }
+
+
+    /*
+      Set the maximum date to today so the browser
+      does not allow a future date to be selected.
+    */
+
+    const birthDateInput =
+      document.getElementById("birthDate");
+
+
+    const today =
+      new Date();
+
+
+    const year =
+      today.getFullYear();
+
+
+    const month =
+      String(today.getMonth() + 1)
+        .padStart(2, "0");
+
+
+    const day =
+      String(today.getDate())
+        .padStart(2, "0");
+
+
+    birthDateInput.max =
+      year + "-" + month + "-" + day;
+
+
+  </script>
+
+</body>
+</html>
