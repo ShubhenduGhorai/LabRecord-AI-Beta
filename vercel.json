@@ -201,6 +201,28 @@
     },
 
     {
+      "source": "/sitemap.xml",
+      "destination": "/finance/sitemap.xml",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+
+    {
+      "source": "/robots.txt",
+      "destination": "/finance/robots.txt",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+
+    {
       "source": "/compound-interest",
       "destination": "/finance/compound-interest/index.html",
       "has": [
