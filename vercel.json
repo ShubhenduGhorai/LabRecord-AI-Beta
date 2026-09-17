@@ -190,8 +190,19 @@
     },
 
     {
+      "source": "/",
+      "destination": "/finance/index.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "finance.labrecord.cloud"
+        }
+      ]
+    },
+
+    {
       "source": "/compound-interest",
-      "destination": "/finance/compound-interest.html",
+      "destination": "/finance/compound-interest/index.html",
       "has": [
         {
           "type": "host",
@@ -201,7 +212,7 @@
     },
     {
       "source": "/fd-calculator",
-      "destination": "/finance/fd-calculator.html",
+      "destination": "/finance/fd-calculator/index.html",
       "has": [
         {
           "type": "host",
@@ -211,7 +222,7 @@
     },
     {
       "source": "/inflation-calculator",
-      "destination": "/finance/inflation-calculator.html",
+      "destination": "/finance/inflation-calculator/index.html",
       "has": [
         {
           "type": "host",
@@ -221,7 +232,7 @@
     },
     {
       "source": "/loan-calculator",
-      "destination": "/finance/loan-calculator.html",
+      "destination": "/finance/loan-calculator/index.html",
       "has": [
         {
           "type": "host",
@@ -231,7 +242,7 @@
     },
     {
       "source": "/lumpsum-calculator",
-      "destination": "/finance/lumpsum-calculator.html",
+      "destination": "/finance/lumpsum-calculator/index.html",
       "has": [
         {
           "type": "host",
@@ -241,7 +252,7 @@
     },
     {
       "source": "/retirement-calculator",
-      "destination": "/finance/retirement-calculator.html",
+      "destination": "/finance/retirement-calculator/index.html",
       "has": [
         {
           "type": "host",
@@ -251,7 +262,7 @@
     },
     {
       "source": "/sip-calculator",
-      "destination": "/finance/sip-calculator.html",
+      "destination": "/finance/sip-calculator/index.html",
       "has": [
         {
           "type": "host",
@@ -291,17 +302,6 @@
         }
       ],
       "destination": "/tools/$1"
-    },
-
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "finance.labrecord.cloud"
-        }
-      ],
-      "destination": "/finance/$1"
     }
   ]
 }
