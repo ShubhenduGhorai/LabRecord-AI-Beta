@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>FD Calculator - Calculate Fixed Deposit Maturity & Interest | LabRecord</title>
+
+<meta name="description" content="Free FD calculator for India. Calculate fixed deposit maturity amount, interest earned and total investment using principal, interest rate and tenure.">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="https://finance.labrecord.cloud/fd-calculator">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="FD Calculator - Calculate Fixed Deposit Maturity & Interest">
+<meta property="og:description" content="Calculate fixed deposit maturity amount and interest earned with LabRecord's free FD calculator.">
+<meta property="og:url" content="https://finance.labrecord.cloud/fd-calculator">
+<meta property="og:site_name" content="LabRecord">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FD Calculator - Calculate Fixed Deposit Maturity & Interest">
+<meta name="twitter:description" content="Free FD calculator to estimate maturity amount and interest earned on a fixed deposit.">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    /* HEADER */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      color: #2563eb;
+      font-size: 23px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: #4b5563;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: #2563eb;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 48px 0 30px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.15;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: auto;
+      color: #667085;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* CALCULATOR */
+    .calculator {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 30px;
+      margin: 20px auto 40px;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #667085;
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px 0 34px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .range-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .range-value {
+      min-width: 70px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #2563eb;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .calculate-btn {
+      width: 100%;
+      height: 50px;
+      border: 0;
+      border-radius: 10px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .calculate-btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* RESULTS */
+    .result-box {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    .result-main {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .result-main small {
+      display: block;
+      margin-bottom: 7px;
+      color: #667085;
+    }
+
+    .result-main strong {
+      color: #2563eb;
+      font-size: clamp(28px, 5vw, 40px);
+    }
+
+    .result-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .result-item {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .result-item span {
+      display: block;
+      color: #667085;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .result-item strong {
+      font-size: 18px;
+    }
+
+    .interest {
+      color: #16a34a;
+    }
+
+    /* BREAKDOWN */
+    .breakdown {
+      margin-top: 25px;
+    }
+
+    .breakdown h3 {
+      margin-bottom: 12px;
+      font-size: 17px;
+    }
+
+    .bar {
+      display: flex;
+      height: 18px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #e5e7eb;
+    }
+
+    .deposit-bar {
+      width: 50%;
+      background: #94a3b8;
+    }
+
+    .interest-bar {
+      width: 50%;
+      background: #2563eb;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 10px;
+      color: #667085;
+      font-size: 12px;
+    }
+
+    /* CONTENT */
+    .content {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .content h2 {
+      font-size: 25px;
+    }
+
+    .content h3 {
+      margin-top: 28px;
+      font-size: 19px;
+    }
+
+    .content p,
+    .content li {
+      color: #4b5563;
+      line-height: 1.75;
+    }
+
+    .content ul {
+      padding-left: 22px;
+    }
+
+    .formula {
+      background: #f8fafc;
+      border-left: 4px solid #2563eb;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: Georgia, serif;
+      font-size: 16px;
+    }
+
+    .disclaimer {
+      margin-top: 25px;
+      padding: 16px;
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+      background: #fff7ed;
+      color: #7c2d12;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 30px 0;
+      background: #111827;
+      color: #d1d5db;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    footer a {
+      margin: 0 8px;
+      color: #ffffff;
+    }
+
+    /* MOBILE */
+    @media (max-width: 760px) {
+      .container {
+        width: min(100% - 22px, 1100px);
+      }
+
+      .nav {
+        min-height: 60px;
+      }
+
+      .nav-links {
+        gap: 12px;
+        font-size: 12px;
+      }
+
+      .hero {
+        padding: 34px 0 20px;
+      }
+
+      .hero h1 {
+        font-size: 31px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .calculator {
+        padding: 20px 16px;
+        border-radius: 14px;
+      }
+
+      .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+
+      .result-items {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 22px 17px;
+        border-radius: 14px;
+      }
+
+      .content h2 {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .logo {
+        font-size: 19px;
+      }
+
+      .nav-links {
+        gap: 8px;
+      }
+
+      .nav-links a:nth-child(2) {
+        display: none;
+      }
+
+      .range-row {
+        gap: 8px;
+      }
+
+      .range-value {
+        min-width: 60px;
+        font-size: 12px;
+      }
+    }
+  </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FD Calculator",
+  "url": "https://finance.labrecord.cloud/fd-calculator.html",
+  "description": "Free online fixed deposit calculator for estimating maturity amount and interest earned.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+}
+</script>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+
+    <a href="index.html" class="logo">
+      LabRecord Finance
+    </a>
+
+    <nav class="nav-links">
+      <a href="index.html">Finance Home</a>
+      <a href="sip-calculator.html">SIP Calculator</a>
+      <a href="loan-calculator.html">Loan Calculator</a>
+    </nav>
+
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="container">
+
+      <h1>FD Calculator</h1>
+
+      <p>
+        Calculate the estimated maturity amount and interest earned
+        on a Fixed Deposit using your deposit amount, interest rate
+        and investment period.
+      </p>
+
+    </div>
+  </section>
+
+  <section class="container">
+
+    <div class="calculator">
+
+      <div class="calculator-grid">
+
+        <!-- INPUT SECTION -->
+        <div>
+
+          <h2>Deposit Details</h2>
+
+          <div class="field">
+
+            <label for="principal">
+              Deposit Amount
+            </label>
+
+            <div class="input-wrap">
+              <span>₹</span>
+
+              <input
+                type="number"
+                id="principal"
+                value="100000"
+                min="100"
+                step="100"
+              >
+            </div>
+
+          </div>
+
+          <div class="field">
+
+            <label for="interestRate">
+              Annual Interest Rate
+            </label>
+
+            <div class="range-row">
+
+              <input
+                type="range"
+                id="interestRate"
+                min="1"
+                max="15"
+                step="0.1"
+                value="7"
+              >
+
+              <div class="range-value">
+                <span id="interestRateValue">7%</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="field">
+
+            <label for="tenure">
+              Investment Period
+            </label>
+
+            <div class="range-row">
+
+              <input
+                type="range"
+                id="tenure"
+                min="1"
+                max="20"
+                step="1"
+                value="5"
+              >
+
+              <div class="range-value">
+                <span id="tenureValue">5 Yr</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="field">
+
+            <label for="compounding">
+              Compounding Frequency
+            </label>
+
+            <select id="compounding" style="
+              width:100%;
+              height:48px;
+              border:1px solid #d1d5db;
+              border-radius:10px;
+              padding:0 12px;
+              font-size:16px;
+              background:#fff;
+              outline:none;
+            ">
+              <option value="4">Quarterly</option>
+              <option value="12">Monthly</option>
+              <option value="2">Half-Yearly</option>
+              <option value="1">Yearly</option>
+            </select>
+
+          </div>
+
+          <button
+            class="calculate-btn"
+            onclick="calculateFD()"
+          >
+            Calculate FD
+          </button>
+
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div>
+
+          <h2>Estimated Results</h2>
+
+          <div class="result-box">
+
+            <div class="result-main">
+
+              <small>
+                Estimated Maturity Amount
+              </small>
+
+              <strong id="maturityAmount">
+                ₹1,41,000
+              </strong>
+
+            </div>
+
+            <div class="result-items">
+
+              <div class="result-item">
+
+                <span>
+                  Principal Amount
+                </span>
+
+                <strong id="principalResult">
+                  ₹1,00,000
+                </strong>
+
+              </div>
+
+              <div class="result-item">
+
+                <span>
+                  Interest Earned
+                </span>
+
+                <strong
+                  class="interest"
+                  id="interestEarned"
+                >
+                  ₹41,000
+                </strong>
+
+              </div>
+
+            </div>
+
+            <div class="breakdown">
+
+              <h3>
+                Deposit Breakdown
+              </h3>
+
+              <div class="bar">
+
+                <div
+                  class="deposit-bar"
+                  id="depositBar"
+                ></div>
+
+                <div
+                  class="interest-bar"
+                  id="interestBar"
+                ></div>
+
+              </div>
+
+              <div class="legend">
+
+                <span id="depositLegend">
+                  Deposit: ₹1,00,000
+                </span>
+
+                <span id="interestLegend">
+                  Interest: ₹41,000
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SEO CONTENT -->
+  <section class="container">
+
+    <article class="content">
+
+      <h2>What is a Fixed Deposit?</h2>
+
+      <p>
+        A Fixed Deposit (FD) is a financial product where you deposit
+        a specific amount with a bank or financial institution for
+        a predetermined period at an agreed interest rate.
+      </p>
+
+      <p>
+        Unlike market-linked investments, the interest rate for a
+        conventional fixed deposit is generally fixed for the selected
+        tenure, subject to the terms and conditions of the institution.
+      </p>
+
+      <h3>How does an FD Calculator work?</h3>
+
+      <p>
+        An FD calculator estimates the maturity value of your deposit
+        using the principal amount, annual interest rate, investment
+        period and compounding frequency.
+      </p>
+
+      <p>
+        The calculator uses compound interest calculations. The actual
+        maturity amount may differ depending on the bank's specific
+        calculation method, deposit terms, taxes, premature withdrawal
+        rules and other applicable conditions.
+      </p>
+
+      <h3>FD Calculator Formula</h3>
+
+      <div class="formula">
+        A = P × (1 + r / n)<sup>nt</sup>
+      </div>
+
+      <p>Where:</p>
+
+      <ul>
+        <li>
+          <strong>A</strong> = Maturity amount
+        </li>
+
+        <li>
+          <strong>P</strong> = Principal deposit
+        </li>
+
+        <li>
+          <strong>r</strong> = Annual interest rate in decimal form
+        </li>
+
+        <li>
+          <strong>n</strong> = Number of compounding periods per year
+        </li>
+
+        <li>
+          <strong>t</strong> = Investment period in years
+        </li>
+      </ul>
+
+      <h3>Example of a Fixed Deposit</h3>
+
+      <p>
+        Suppose you deposit ₹1,00,000 for 5 years at an assumed annual
+        interest rate of 7%, with quarterly compounding. The calculator
+        estimates the maturity amount by applying compound interest
+        throughout the selected period.
+      </p>
+
+      <h3>Factors that affect FD returns</h3>
+
+      <ul>
+
+        <li>
+          Deposit amount
+        </li>
+
+        <li>
+          Interest rate
+        </li>
+
+        <li>
+          Investment tenure
+        </li>
+
+        <li>
+          Compounding frequency
+        </li>
+
+        <li>
+          Applicable taxes and rules
+        </li>
+
+        <li>
+          Premature withdrawal conditions
+        </li>
+
+      </ul>
+
+      <h3>FD vs Savings Account</h3>
+
+      <p>
+        A savings account is generally designed for frequent access
+        to money, while a fixed deposit is designed to keep a specific
+        amount invested for a predetermined period. An FD may offer
+        a different interest rate from a savings account, depending
+        on the institution and prevailing rates.
+      </p>
+
+      <h3>Is an FD completely risk-free?</h3>
+
+      <p>
+        Fixed deposits are generally considered lower-risk products
+        compared with market-linked investments, but they are not
+        completely free from risk. Investors should consider the
+        financial institution, applicable deposit-insurance limits,
+        withdrawal conditions and other terms before investing.
+      </p>
+
+      <div class="disclaimer">
+
+        <strong>Important:</strong>
+        This calculator provides estimates for educational and
+        financial-planning purposes only. Actual FD maturity values
+        can differ according to the bank or financial institution's
+        interest calculation method, applicable taxes, compounding
+        conventions and product terms. Please verify the final amount
+        with the relevant institution before making financial decisions.
+
+      </div>
+
+    </article>
+
+  </section>
+
+</main>
+
+<footer>
+
+  <div class="container">
+
+    <p>
+      © 2026 LabRecord Finance. All rights reserved.
+    </p>
+
+    <p>
+      <a href="index.html">Finance</a>
+      <a href="../main/index.html">LabRecord</a>
+    </p>
+
+  </div>
+
+</footer>
+
+<script>
+
+  const principalInput =
+    document.getElementById("principal");
+
+  const interestRateInput =
+    document.getElementById("interestRate");
+
+  const tenureInput =
+    document.getElementById("tenure");
+
+  const compoundingInput =
+    document.getElementById("compounding");
+
+  const interestRateValue =
+    document.getElementById("interestRateValue");
+
+  const tenureValue =
+    document.getElementById("tenureValue");
+
+
+  interestRateInput.addEventListener(
+    "input",
+    function () {
+
+      interestRateValue.textContent =
+        this.value + "%";
+
+      calculateFD();
+
+    }
+  );
+
+
+  tenureInput.addEventListener(
+    "input",
+    function () {
+
+      tenureValue.textContent =
+        this.value + " Yr";
+
+      calculateFD();
+
+    }
+  );
+
+
+  principalInput.addEventListener(
+    "input",
+    calculateFD
+  );
+
+
+  compoundingInput.addEventListener(
+    "change",
+    calculateFD
+  );
+
+
+  function formatIndianNumber(number) {
+
+    return new Intl.NumberFormat("en-IN", {
+      maximumFractionDigits: 0
+    }).format(Math.round(number));
+
+  }
+
+
+  function calculateFD() {
+
+    let P = Number(principalInput.value);
+
+    const annualRate =
+      Number(interestRateInput.value);
+
+    const years =
+      Number(tenureInput.value);
+
+    const n =
+      Number(compoundingInput.value);
+
+
+    if (!P || P < 0) {
+      P = 0;
+    }
+
+
+    const r =
+      annualRate / 100;
+
+
+    const maturityAmount =
+      P * Math.pow(
+        1 + r / n,
+        n * years
+      );
+
+
+    const interestEarned =
+      maturityAmount - P;
+
+
+    document.getElementById(
+      "maturityAmount"
+    ).textContent =
+      "₹" + formatIndianNumber(maturityAmount);
+
+
+    document.getElementById(
+      "principalResult"
+    ).textContent =
+      "₹" + formatIndianNumber(P);
+
+
+    document.getElementById(
+      "interestEarned"
+    ).textContent =
+      "₹" + formatIndianNumber(interestEarned);
+
+
+    document.getElementById(
+      "depositLegend"
+    ).textContent =
+      "Deposit: ₹" + formatIndianNumber(P);
+
+
+    document.getElementById(
+      "interestLegend"
+    ).textContent =
+      "Interest: ₹" + formatIndianNumber(interestEarned);
+
+
+    let depositPercentage = 100;
+
+    let interestPercentage = 0;
+
+
+    if (maturityAmount > 0) {
+
+      depositPercentage =
+        (P / maturityAmount) * 100;
+
+      interestPercentage =
+        (interestEarned / maturityAmount) * 100;
+
+    }
+
+
+    document.getElementById(
+      "depositBar"
+    ).style.width =
+      depositPercentage + "%";
+
+
+    document.getElementById(
+      "interestBar"
+    ).style.width =
+      interestPercentage + "%";
+
+  }
+
+
+  calculateFD();
+
+</script>
+
+</body>
+</html>
