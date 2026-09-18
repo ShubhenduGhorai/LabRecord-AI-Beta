@@ -1435,6 +1435,661 @@
     })();
   </script>
 </body>
+</html>          <option value="SLOW">Maximum quality</option>
+          </select>
+        </div>
+
+        <div class="setting">
+          <label class="setting-label" for="filename">PDF filename</label>
+          <input class="filename-input" id="filename" type="text" value="labrecord-pdf" maxlength="80" autocomplete="off">
+        </div>
+
+        <button class="generate-btn" id="generateBtn" type="button" disabled>
+          Convert to PDF
+        </button>
+
+        <div class="progress" id="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="status" id="status" role="status" aria-live="polite"></div>
+
+        <div class="result-card" id="resultCard" hidden>
+          <div class="result-icon" aria-hidden="true">✓</div>
+          <div class="result-copy">
+            <strong>PDF ready</strong>
+            <span id="resultDetails">Your PDF has been created successfully.</span>
+          </div>
+          <button class="download-btn" id="downloadBtn" type="button">
+            Download PDF
+          </button>
+          <button class="new-pdf-btn" id="newPdfBtn" type="button">
+            Create another PDF
+          </button>
+        </div>
+      </aside>
+    </section>
+
+    <section class="container info">
+      <div class="card info-card">
+        <h2>Free Image to PDF Converter</h2>
+        <p>
+          LabRecord's image to PDF converter lets you combine images into a PDF
+          directly in your browser. No account or file upload is required.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature">
+            <strong>Multiple images</strong>
+            <span>Combine several images into one PDF.</span>
+          </div>
+          <div class="feature">
+            <strong>Page controls</strong>
+            <span>Choose size, orientation and margins.</span>
+          </div>
+          <div class="feature">
+            <strong>Local processing</strong>
+            <span>Images are processed on your device.</span>
+          </div>
+        </div>
+
+        <h3>How to convert images to PDF</h3>
+        <ul>
+          <li>Select or drag JPG, PNG or WEBP images.</li>
+          <li>Drag the selected images to change their order.</li>
+          <li>Choose your page size, orientation and margins.</li>
+          <li>Adjust image fitting, quality and compression.</li>
+          <li>Enter a filename and click “Convert to PDF”.</li>
+        </ul>
+
+        <h3>Is this PDF converter private?</h3>
+        <p>
+          The selected images are processed in your browser. This page does not
+          upload the selected image files to LabRecord's server.
+        </p>
+
+        <h3>Supported formats</h3>
+        <p>JPG, JPEG, PNG and WEBP images are supported.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <p>© 2026 LabRecord. Free online tools.</p>
+      <div class="footer-links">
+        <a href="https://www.labrecord.cloud/privacy-policy">Privacy</a>
+        <a href="https://www.labrecord.cloud/terms">Terms</a>
+        <a href="https://www.labrecord.cloud/disclaimer">Disclaimer</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const fileInput = document.getElementById("fileInput");
+      const browseBtn = document.getElementById("browseBtn");
+      const dropZone = document.getElementById("dropZone");
+      const fileSection = document.getElementById("fileSection");
+      const fileList = document.getElementById("fileList");
+      const fileCount = document.getElementById("fileCount");
+      const clearBtn = document.getElementById("clearBtn");
+      const generateBtn = document.getElementById("generateBtn");
+      const pageSize = document.getElementById("pageSize");
+      const margin = document.getElementById("margin");
+      const fitMode = document.getElementById("fitMode");
+      const quality = document.getElementById("quality");
+      const qualityValue = document.getElementById("qualityValue");
+      const compression = document.getElementById("compression");
+      const filename = document.getElementById("filename");
+      const status = document.getElementById("status");
+      const resultCard = document.getElementById("resultCard");
+      const resultDetails = document.getElementById("resultDetails");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const newPdfBtn = document.getElementById("newPdfBtn");
+      const progress = document.getElementById("progress");
+      const progressBar = document.getElementById("progressBar");
+
+      let selectedFiles = [];
+      let draggedIndex = null;
+      let jsPDF = null;
+      let generatedPdfBlob = null;
+      let generatedPdfName = "labrecord-pdf.pdf";
+
+      function setStatus(message, type = "success") {
+        status.textContent = message;
+        status.className = "status" + (type === "error" ? " error" : type === "warning" ? " warning" : "");
+        status.style.display = "block";
+      }
+
+      function setProgress(percent) {
+        progress.style.display = "block";
+        progressBar.style.width = Math.max(0, Math.min(100, percent)) + "%";
+      }
+
+      function hideProgress() {
+        progress.style.display = "none";
+        progressBar.style.width = "0%";
+      }
+
+      function formatBytes(bytes) {
+        if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+        const units = ["B", "KB", "MB", "GB"];
+        const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+        return `${(bytes / Math.pow(1024, index)).toFixed(index ? 1 : 0)} ${units[index]}`;
+      }
+
+      let pdfLoadPromise = null;
+
+      function loadJsPDF() {
+        if (window.jspdf?.jsPDF) {
+          jsPDF = window.jspdf.jsPDF;
+          return Promise.resolve(jsPDF);
+        }
+
+        if (pdfLoadPromise) return pdfLoadPromise;
+
+        pdfLoadPromise = new Promise((resolve, reject) => {
+          const existing = document.querySelector(
+            'script[data-jspdf-loader="true"]'
+          );
+
+          if (existing) {
+            existing.addEventListener("load", () => {
+              jsPDF = window.jspdf?.jsPDF || null;
+              jsPDF ? resolve(jsPDF) : reject(new Error("PDF engine unavailable"));
+            }, { once: true });
+
+            existing.addEventListener("error", () => {
+              reject(new Error("Unable to load PDF engine"));
+            }, { once: true });
+
+            return;
+          }
+
+          const script = document.createElement("script");
+          script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+          script.async = true;
+          script.crossOrigin = "anonymous";
+          script.dataset.jspdfLoader = "true";
+
+          script.onload = () => {
+            jsPDF = window.jspdf?.jsPDF || null;
+            if (jsPDF) resolve(jsPDF);
+            else reject(new Error("jsPDF loaded without constructor"));
+          };
+
+          script.onerror = () => reject(new Error("Unable to load PDF engine"));
+          document.head.appendChild(script);
+        }).catch(error => {
+          pdfLoadPromise = null;
+          throw error;
+        });
+
+        return pdfLoadPromise;
+      }
+
+      function addFiles(incoming) {
+        const valid = incoming.filter(file =>
+          ["image/jpeg", "image/png", "image/webp"].includes(file.type)
+        );
+
+        const invalidCount = incoming.length - valid.length;
+
+        if (invalidCount) {
+          setStatus("Only JPG, PNG and WEBP image files are supported.", "warning");
+        }
+
+        selectedFiles.push(...valid);
+
+        // Keep the page responsive and prevent accidental duplicate selection.
+        const unique = [];
+        const seen = new Set();
+
+        for (const file of selectedFiles) {
+          const key = `${file.name}|${file.size}|${file.lastModified}|${file.type}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            unique.push(file);
+          }
+        }
+
+        selectedFiles = unique;
+        generatedPdfBlob = null;
+        resultCard.hidden = true;
+        renderFiles();
+      }
+
+      function renderFiles() {
+        fileList.innerHTML = "";
+        fileCount.textContent = selectedFiles.length;
+        fileSection.style.display = selectedFiles.length ? "block" : "none";
+        generateBtn.disabled = selectedFiles.length === 0;
+
+        selectedFiles.forEach((file, index) => {
+          const item = document.createElement("div");
+          item.className = "file-item";
+          item.draggable = true;
+          item.dataset.index = index;
+
+          const thumbnail = document.createElement("img");
+          thumbnail.className = "thumbnail";
+          thumbnail.alt = "";
+          thumbnail.loading = "lazy";
+
+          const reader = new FileReader();
+          reader.onload = event => {
+            thumbnail.src = event.target.result;
+          };
+          reader.readAsDataURL(file);
+
+          const info = document.createElement("div");
+          info.className = "file-info";
+
+          const name = document.createElement("div");
+          name.className = "file-name";
+          name.textContent = file.name;
+
+          const meta = document.createElement("div");
+          meta.className = "file-meta";
+          const type = file.type.split("/")[1]?.toUpperCase() || "IMAGE";
+          meta.textContent = `${formatBytes(file.size)} · ${type} · Page ${index + 1}`;
+
+          info.append(name, meta);
+
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "remove-btn";
+          remove.textContent = "×";
+          remove.title = `Remove ${file.name}`;
+          remove.setAttribute("aria-label", `Remove ${file.name}`);
+
+          remove.addEventListener("click", event => {
+            event.stopPropagation();
+            selectedFiles.splice(index, 1);
+            renderFiles();
+            if (!selectedFiles.length) hideProgress();
+          });
+
+          item.append(thumbnail, info, remove);
+
+          item.addEventListener("dragstart", () => {
+            draggedIndex = index;
+            item.classList.add("dragging");
+          });
+
+          item.addEventListener("dragend", () => {
+            item.classList.remove("dragging");
+            draggedIndex = null;
+          });
+
+          item.addEventListener("dragover", event => event.preventDefault());
+
+          item.addEventListener("drop", event => {
+            event.preventDefault();
+
+            if (draggedIndex === null || draggedIndex === index) return;
+
+            const moved = selectedFiles.splice(draggedIndex, 1)[0];
+            selectedFiles.splice(index, 0, moved);
+            draggedIndex = null;
+            renderFiles();
+          });
+
+          fileList.appendChild(item);
+        });
+      }
+
+      function readImage(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = event => {
+            const img = new Image();
+
+            img.onload = () => resolve({
+              img,
+              dataUrl: event.target.result
+            });
+
+            img.onerror = () => reject(new Error(`Could not read ${file.name}`));
+            img.src = event.target.result;
+          };
+
+          reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function pageDimensions() {
+        const sizes = {
+          a4: [210, 297],
+          a3: [297, 420],
+          letter: [215.9, 279.4],
+          legal: [215.9, 355.6]
+        };
+
+        const dimensions = [...(sizes[pageSize.value] || sizes.a4)];
+        const orientation = document.querySelector('input[name="orientation"]:checked')?.value;
+
+        if (orientation === "landscape") dimensions.reverse();
+
+        return dimensions;
+      }
+
+      function calculateBox(imageWidth, imageHeight, pageWidth, pageHeight, marginValue, mode) {
+        const availableWidth = Math.max(1, pageWidth - marginValue * 2);
+        const availableHeight = Math.max(1, pageHeight - marginValue * 2);
+        const imageRatio = imageWidth / imageHeight;
+        const pageRatio = availableWidth / availableHeight;
+
+        let width;
+        let height;
+
+        if (mode === "cover") {
+          if (imageRatio > pageRatio) {
+            height = availableHeight;
+            width = height * imageRatio;
+          } else {
+            width = availableWidth;
+            height = width / imageRatio;
+          }
+        } else {
+          if (imageRatio > pageRatio) {
+            width = availableWidth;
+            height = width / imageRatio;
+          } else {
+            height = availableHeight;
+            width = height * imageRatio;
+          }
+
+          if (mode === "original") {
+            const scale = Math.min(
+              1,
+              availableWidth / imageWidth,
+              availableHeight / imageHeight
+            );
+            width = imageWidth * scale;
+            height = imageHeight * scale;
+          }
+        }
+
+        return {
+          x: (pageWidth - width) / 2,
+          y: (pageHeight - height) / 2,
+          width,
+          height
+        };
+      }
+
+      async function prepareImage(file) {
+        const { img, dataUrl } = await readImage(file);
+
+        if (file.type === "image/png") {
+          return {
+            data: dataUrl,
+            format: "PNG",
+            width: img.naturalWidth,
+            height: img.naturalHeight,
+            img
+          };
+        }
+
+        // JPEG and WEBP are normalized to JPEG for predictable PDF output.
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Canvas is not available in this browser.");
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        return {
+          data: canvas.toDataURL("image/jpeg", Number(quality.value) / 100),
+          format: "JPEG",
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          img
+        };
+      }
+
+      function prepareCoverImage(prepared, box) {
+        const canvas = document.createElement("canvas");
+        const scale = 3.78;
+
+        canvas.width = Math.max(1, Math.round(box.width * scale));
+        canvas.height = Math.max(1, Math.round(box.height * scale));
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Canvas is not available in this browser.");
+
+        const targetRatio = box.width / box.height;
+        const sourceRatio = prepared.width / prepared.height;
+
+        let cropWidth = prepared.width;
+        let cropHeight = prepared.height;
+
+        if (sourceRatio > targetRatio) {
+          cropWidth = prepared.height * targetRatio;
+        } else {
+          cropHeight = prepared.width / targetRatio;
+        }
+
+        const sx = (prepared.width - cropWidth) / 2;
+        const sy = (prepared.height - cropHeight) / 2;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(
+          prepared.img,
+          sx, sy, cropWidth, cropHeight,
+          0, 0, canvas.width, canvas.height
+        );
+
+        return canvas.toDataURL("image/jpeg", Number(quality.value) / 100);
+      }
+
+      async function createPdf() {
+        if (!selectedFiles.length) return;
+
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Creating PDF...";
+        setStatus("Preparing PDF engine...");
+        setProgress(2);
+
+        try {
+          if (!jsPDF) await loadJsPDF();
+
+          const dimensions = pageDimensions();
+          const [pageWidth, pageHeight] = dimensions;
+          const marginValue = Number(margin.value);
+          const compressionValue = compression.value;
+          const pdf = new jsPDF({
+            orientation: pageWidth > pageHeight ? "landscape" : "portrait",
+            unit: "mm",
+            format: dimensions,
+            compress: compressionValue !== "FAST"
+          });
+
+          for (let i = 0; i < selectedFiles.length; i++) {
+            setStatus(`Processing image ${i + 1} of ${selectedFiles.length}...`);
+            setProgress(5 + ((i / selectedFiles.length) * 85));
+
+            if (i > 0) {
+              pdf.addPage(
+                dimensions,
+                pageWidth > pageHeight ? "landscape" : "portrait"
+              );
+            }
+
+            const prepared = await prepareImage(selectedFiles[i]);
+            const box = calculateBox(
+              prepared.width,
+              prepared.height,
+              pageWidth,
+              pageHeight,
+              marginValue,
+              fitMode.value
+            );
+
+            if (fitMode.value === "cover") {
+              const cropped = prepareCoverImage(prepared, box);
+              pdf.addImage(
+                cropped,
+                "JPEG",
+                box.x,
+                box.y,
+                box.width,
+                box.height,
+                undefined,
+                compressionValue
+              );
+            } else {
+              pdf.addImage(
+                prepared.data,
+                prepared.format,
+                box.x,
+                box.y,
+                box.width,
+                box.height,
+                undefined,
+                compressionValue
+              );
+            }
+          }
+
+          setStatus("Finalizing PDF...");
+          setProgress(96);
+
+          let outputName = filename.value.trim()
+            .replace(/[\\/:*?"<>|]+/g, "-")
+            .replace(/\.pdf$/i, "");
+
+          if (!outputName) outputName = "labrecord-pdf";
+
+          generatedPdfBlob = pdf.output("blob");
+          generatedPdfName = `${outputName}.pdf`;
+
+          resultDetails.textContent =
+            `${generatedPdfName} · ${formatBytes(generatedPdfBlob.size)} · ` +
+            `${selectedFiles.length} page${selectedFiles.length === 1 ? "" : "s"}.`;
+
+          resultCard.hidden = false;
+          setProgress(100);
+          setStatus("PDF created successfully. Click Download PDF to save it to your device.");
+        } catch (error) {
+          console.error("PDF generation error:", error);
+          setStatus(
+            error.message === "Unable to load PDF engine"
+              ? "PDF engine could not load. Check your internet connection and refresh the page."
+              : "Could not create the PDF. Please try another image or refresh the page.",
+            "error"
+          );
+        } finally {
+          generateBtn.disabled = selectedFiles.length === 0;
+          generateBtn.textContent = "Convert to PDF";
+
+          setTimeout(() => {
+            if (selectedFiles.length) hideProgress();
+          }, 1200);
+        }
+      }
+
+      browseBtn.addEventListener("click", event => {
+        event.stopPropagation();
+        fileInput.click();
+      });
+
+      dropZone.addEventListener("click", event => {
+        if (event.target.closest("button")) return;
+        fileInput.click();
+      });
+
+      dropZone.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          fileInput.click();
+        }
+      });
+
+      fileInput.addEventListener("change", event => {
+        addFiles(Array.from(event.target.files || []));
+        fileInput.value = "";
+      });
+
+      ["dragenter", "dragover"].forEach(type => {
+        dropZone.addEventListener(type, event => {
+          event.preventDefault();
+          dropZone.classList.add("dragover");
+        });
+      });
+
+      ["dragleave", "dragend"].forEach(type => {
+        dropZone.addEventListener(type, () => {
+          dropZone.classList.remove("dragover");
+        });
+      });
+
+      dropZone.addEventListener("drop", event => {
+        event.preventDefault();
+        dropZone.classList.remove("dragover");
+        addFiles(Array.from(event.dataTransfer.files || []));
+      });
+
+      clearBtn.addEventListener("click", () => {
+        selectedFiles = [];
+        fileInput.value = "";
+        renderFiles();
+        hideProgress();
+        status.style.display = "none";
+      });
+
+      quality.addEventListener("input", () => {
+        qualityValue.textContent = `${quality.value}%`;
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        if (!generatedPdfBlob) return;
+
+        const url = URL.createObjectURL(generatedPdfBlob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = generatedPdfName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setStatus("Download started. Check your browser's Downloads folder.");
+      });
+
+      newPdfBtn.addEventListener("click", () => {
+        generatedPdfBlob = null;
+        resultCard.hidden = true;
+        status.style.display = "none";
+        hideProgress();
+        selectedFiles = [];
+        fileInput.value = "";
+        renderFiles();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      generateBtn.addEventListener("click", createPdf);
+
+      // Start loading the PDF library in the background.
+      loadJsPDF().catch(error => {
+        console.warn("jsPDF background load failed:", error);
+        // The actual conversion will retry when the user clicks the button.
+      });
+    })();
+  </script>
+</body>
 </html>img = new Image();
 
         img.onload = () => resolve(img);
