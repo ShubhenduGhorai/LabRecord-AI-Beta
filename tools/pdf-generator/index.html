@@ -1,61 +1,228 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Image to PDF Converter | LabRecord Tools</title>
-<meta name="description" content="Free browser-based JPG, PNG and WEBP image to PDF converter. Combine images, reorder pages and download your PDF.">
-<link rel="canonical" href="https://tools.labrecord.cloud/pdf-generator">
-<link rel="icon" href="../favicon.ico">
+<title>LabRecord PDF Converter - Convert Files to PDF</title>
+<meta name="description" content="Free browser-based converter for images, Word, Excel, PowerPoint, text, CSV and HTML files to PDF. Files are processed locally in your browser.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
 <style>
-:root{--p:#2563eb;--pd:#1d4ed8;--t:#0f172a;--m:#64748b;--b:#e2e8f0;--bg:#f8fafc;--ok:#047857}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,sans-serif}button,input,select{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.wrap{width:min(1120px,calc(100% - 28px));margin:auto}
-header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--b)}nav{height:66px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}.mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff}.links{display:flex;gap:22px;color:#475569;font-size:14px;font-weight:700}
-.hero{text-align:center;padding:52px 0 30px}.tag{display:inline-block;padding:6px 11px;border-radius:99px;background:#eff6ff;color:var(--pd);font-size:12px;font-weight:800}.hero h1{font-size:clamp(34px,5vw,52px);line-height:1.05;letter-spacing:-2px;margin:15px 0 12px}.hero h1 span{color:var(--p)}.hero p{max-width:680px;margin:auto;color:var(--m)}.privacy{display:inline-block;margin-top:15px;padding:6px 11px;border:1px solid #a7f3d0;background:#ecfdf5;color:var(--ok);border-radius:99px;font-size:12px;font-weight:700}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;padding-bottom:50px}.card{background:#fff;border:1px solid var(--b);border-radius:18px;box-shadow:0 12px 35px #0f172a0d}.upload{padding:20px}.drop{min-height:285px;border:2px dashed #bfdbfe;border-radius:15px;background:#eff6ff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px}.drop.drag{border-color:var(--p);background:#e0edff}.icon{width:66px;height:66px;border-radius:19px;background:#dbeafe;color:var(--p);display:grid;place-items:center;font-size:30px;margin-bottom:15px}.drop h2{margin:0 0 5px;font-size:21px}.drop p{margin:0 0 16px;color:var(--m);font-size:13px}.primary{border:0;background:var(--p);color:#fff;border-radius:10px;padding:11px 18px;font-weight:800}.primary:hover{background:var(--pd)}#fileInput{display:none}.hint{margin-top:10px;color:#94a3b8;font-size:11px}
-.files{display:none;margin-top:20px}.fh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.fh h3{font-size:15px;margin:0}.clear{border:0;background:none;color:#dc2626;font-size:12px;font-weight:700}.list{display:grid;gap:8px}.item{display:grid;grid-template-columns:50px 1fr 32px;gap:10px;align-items:center;border:1px solid var(--b);border-radius:12px;padding:8px;cursor:grab}.thumb{width:50px;height:50px;object-fit:cover;border-radius:8px;background:#f1f5f9}.name{font-size:13px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:11px;color:var(--m)}.remove{width:32px;height:32px;border:0;border-radius:8px;background:#fef2f2;color:#dc2626;font-size:18px}
-.settings{padding:20px;position:sticky;top:86px}.settings h2{font-size:18px;margin:0 0 17px}.setting{margin-bottom:14px}.label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}select,.text{width:100%;height:42px;border:1px solid var(--b);border-radius:10px;background:#fff;padding:0 10px;color:var(--t)}.orient{display:grid;grid-template-columns:1fr 1fr;gap:7px}.orient input{display:none}.orient span{display:block;text-align:center;padding:9px;border:1px solid var(--b);border-radius:9px;font-size:12px;font-weight:700}.orient input:checked+span{color:var(--p);background:#eff6ff;border-color:#93c5fd}.range{display:flex;gap:9px;align-items:center}.range input{flex:1;accent-color:var(--p)}.range b{font-size:12px;width:36px;text-align:right}.generate{width:100%;margin-top:3px;min-height:46px;border:0;border-radius:10px;background:var(--p);color:#fff;font-weight:800}.generate:disabled{opacity:.5;cursor:not-allowed}.status{display:none;margin-top:10px;padding:10px;border-radius:10px;text-align:center;font-size:12px;font-weight:700;background:#ecfdf5;color:var(--ok)}.status.err{background:#fef2f2;color:#b91c1c}.progress{display:none;height:5px;background:#e2e8f0;border-radius:99px;margin-top:10px;overflow:hidden}.bar{height:100%;width:0;background:var(--p);transition:.2s}.result{margin-top:12px;padding:14px;border:1px solid #a7f3d0;border-radius:13px;background:#f0fdf4}.result strong{display:block;color:#065f46}.result small{display:block;color:#047857;margin-top:2px}.download,.new{width:100%;min-height:42px;margin-top:10px;border-radius:9px;font-weight:800}.download{border:0;background:#059669;color:#fff}.new{border:1px solid #a7f3d0;background:#fff;color:#047857}
-.info{padding-bottom:60px}.info .card{padding:26px}.info h2{margin:0 0 8px;font-size:24px}.info h3{margin:22px 0 7px;font-size:17px}.info p,.info li{color:#475569;font-size:14px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.feature{padding:13px;border:1px solid var(--b);border-radius:12px;background:#f8fafc}.feature b{display:block;font-size:13px}.feature span{font-size:11px;color:var(--m)}footer{background:#0f172a;color:#cbd5e1;padding:28px 0}.foot{display:flex;justify-content:space-between;gap:20px}.foot p,.foot a{font-size:12px}.footlinks{display:flex;gap:18px}
-@media(max-width:820px){.grid{grid-template-columns:1fr}.settings{position:static}.links{display:none}}@media(max-width:560px){.wrap{width:calc(100% - 20px)}.hero{padding-top:38px}.upload,.settings,.info .card{padding:16px}.features{grid-template-columns:1fr}.foot{flex-direction:column;text-align:center}.footlinks{justify-content:center}}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f5f7fb;color:#172033}
+.container{max-width:1100px;margin:auto;padding:28px 18px 60px}
+header{text-align:center;margin-bottom:24px}h1{margin:0 0 8px;font-size:34px}header p{margin:0;color:#64748b}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:18px;padding:20px;box-shadow:0 8px 30px rgba(15,23,42,.05);margin-bottom:18px}
+.drop{border:2px dashed #94a3b8;border-radius:16px;padding:38px 18px;text-align:center;background:#f8fafc;cursor:pointer;transition:.2s}
+.drop.drag{border-color:#2563eb;background:#eff6ff}.drop strong{display:block;font-size:19px;margin-bottom:6px}.drop span{color:#64748b;font-size:14px}
+input[type=file]{display:none}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;font-size:14px}
+.primary{background:#2563eb;color:#fff}.primary:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#e2e8f0;color:#172033}.danger{background:#fee2e2;color:#b91c1c}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+label{font-size:13px;font-weight:700;color:#475569}select,input[type=text],input[type=number]{width:100%;margin-top:6px;padding:10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff}
+.file-list{margin-top:15px;display:grid;gap:8px}.file-row{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid #e2e8f0;border-radius:10px}.file-row .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{font-size:11px;background:#e0e7ff;padding:4px 7px;border-radius:99px;color:#3730a3}.remove{padding:6px 9px}
+.progress{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:14px}.bar{height:100%;width:0;background:#2563eb;transition:.2s}
+.status{font-size:14px;color:#475569;margin-top:9px;min-height:20px}
+.notice{font-size:13px;line-height:1.6;color:#64748b;background:#f8fafc;border-radius:10px;padding:12px}
+.preview-host{position:fixed;left:-100000px;top:0;width:794px;background:#fff}
+.page{background:#fff;color:#111;padding:42px;min-height:1123px;font-family:Arial,sans-serif;overflow:hidden}
+.page img{max-width:100%}.page table{border-collapse:collapse;width:100%;font-size:11px}.page th,.page td{border:1px solid #cbd5e1;padding:5px;text-align:left;vertical-align:top}.page h1,.page h2,.page h3{margin-top:0}.plain{white-space:pre-wrap;word-break:break-word;font:14px/1.55 Arial,sans-serif}
+.slide{min-height:560px;padding:55px;background:#fff;display:flex;flex-direction:column;justify-content:center}.slide h2{font-size:32px}.slide p{font-size:20px;line-height:1.5}
+@media(max-width:650px){h1{font-size:27px}.container{padding:18px 12px}.card{padding:14px}}
 </style>
 </head>
 <body>
-<header><div class="wrap"><nav><a class="brand" href="https://tools.labrecord.cloud/"><span class="mark">▣</span><span>LabRecord Tools</span></a><div class="links"><a href="https://tools.labrecord.cloud/">All Tools</a><a href="https://www.labrecord.cloud/">LabRecord</a></div></nav></div></header>
-<main>
-<section class="hero"><div class="wrap"><span class="tag">⚡ Free browser-based tool</span><h1>Image to <span>PDF Converter</span></h1><p>Convert JPG, PNG and WEBP images into a PDF. Combine images, reorder pages and customize your document.</p><span class="privacy">🔒 Images stay in your browser</span></div></section>
-<section class="wrap grid">
-<div class="card upload"><div class="drop" id="drop" tabindex="0"><div class="icon">↑</div><h2>Drop your images here</h2><p>JPG, JPEG, PNG or WEBP · Multiple files supported</p><button class="primary" id="browse" type="button">Choose Images</button><input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple><div class="hint">Files are processed locally</div></div><div class="files" id="filesBox"><div class="fh"><h3>Selected images (<span id="count">0</span>)</h3><button class="clear" id="clear" type="button">Clear all</button></div><div class="list" id="list"></div></div></div>
-<aside class="card settings"><h2>PDF Settings</h2>
-<div class="setting"><label class="label" for="size">Page size</label><select id="size"><option value="a4">A4</option><option value="a3">A3</option><option value="letter">Letter</option><option value="legal">Legal</option></select></div>
-<div class="setting"><span class="label">Orientation</span><div class="orient"><label><input name="orientation" value="portrait" type="radio" checked><span>Portrait</span></label><label><input name="orientation" value="landscape" type="radio"><span>Landscape</span></label></div></div>
-<div class="setting"><label class="label" for="margin">Margin</label><select id="margin"><option value="0">No margin</option><option value="5" selected>5 mm</option><option value="10">10 mm</option><option value="15">15 mm</option></select></div>
-<div class="setting"><label class="label" for="fit">Image fitting</label><select id="fit"><option value="contain">Fit inside page</option><option value="cover">Fill page</option><option value="original">Original ratio</option></select></div>
-<div class="setting"><label class="label" for="quality">Image quality</label><div class="range"><input id="quality" type="range" min="50" max="100" value="92"><b id="qv">92%</b></div></div>
-<div class="setting"><label class="label" for="compression">PDF compression</label><select id="compression"><option value="FAST">Fast</option><option value="MEDIUM" selected>Balanced</option><option value="SLOW">Maximum quality</option></select></div>
-<div class="setting"><label class="label" for="filename">PDF filename</label><input class="text" id="filename" value="labrecord-pdf" maxlength="80"></div>
-<button class="generate" id="generate" type="button" disabled>Convert to PDF</button><div class="progress" id="progress"><div class="bar" id="bar"></div></div><div class="status" id="status" aria-live="polite"></div>
-<div class="result" id="result" hidden><strong>✓ PDF ready</strong><small id="details"></small><button class="download" id="download" type="button">Download PDF</button><button class="new" id="new" type="button">Create another PDF</button></div>
-</aside></section>
-<section class="wrap info"><div class="card"><h2>Free Image to PDF Converter</h2><p>Combine JPG, PNG and WEBP images into a PDF directly in your browser. No account or file upload is required.</p><div class="features"><div class="feature"><b>Multiple images</b><span>Combine and reorder pages.</span></div><div class="feature"><b>Custom pages</b><span>Choose size, orientation and margins.</span></div><div class="feature"><b>Private</b><span>Processing happens in your browser.</span></div></div><h3>How to convert images to PDF</h3><ul><li>Select or drag your images.</li><li>Arrange them in the required order.</li><li>Choose your PDF settings.</li><li>Click Convert to PDF.</li><li>Click Download PDF when ready.</li></ul></div></section>
-</main>
-<footer><div class="wrap foot"><p>© 2026 LabRecord. Free online tools.</p><div class="footlinks"><a href="https://www.labrecord.cloud/privacy-policy">Privacy</a><a href="https://www.labrecord.cloud/terms">Terms</a><a href="https://www.labrecord.cloud/disclaimer">Disclaimer</a></div></div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<div class="container">
+<header>
+<h1>PDF Converter</h1>
+<p>Convert images, Word, Excel, PowerPoint, text, CSV and HTML files to PDF.</p>
+</header>
+
+<div class="card">
+<div class="drop" id="drop">
+<strong>Drop files here</strong>
+<span>or click to choose files</span>
+<input id="files" type="file" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.txt,.md,.csv,.html,.htm,.docx,.xlsx,.xls,.pptx">
+</div>
+<div class="file-list" id="fileList"></div>
+<div class="toolbar">
+<button class="secondary" id="clearBtn">Clear all</button>
+</div>
+</div>
+
+<div class="card">
+<div class="grid">
+<label>Paper size
+<select id="size"><option>A4</option><option>A3</option><option>Letter</option><option>Legal</option></select></label>
+<label>Orientation
+<select id="orientation"><option value="portrait">Portrait</option><option value="landscape">Landscape</option></select></label>
+<label>Margin (mm)
+<input id="margin" type="number" min="0" max="30" value="10"></label>
+<label>Image quality
+<select id="quality"><option value="0.92">High</option><option value="0.82" selected>Balanced</option><option value="0.65">Smaller PDF</option></select></label>
+<label>Filename
+<input id="filename" type="text" value="labrecord-converted"></label>
+</div>
+<div class="toolbar">
+<button class="primary" id="convertBtn" disabled>Convert to PDF</button>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="status" id="status"></div>
+</div>
+
+<div class="card">
+<div class="notice">
+<strong>Supported:</strong> JPG, JPEG, PNG, WEBP, GIF, BMP, TXT, MD, CSV, HTML, DOCX, XLSX/XLS and PPTX.
+<br><strong>Privacy:</strong> conversion is performed in your browser; files are not intentionally uploaded to a server.
+<br><strong>Important:</strong> DOCX/XLSX/PPTX conversion is designed for practical document conversion. Very complex Office layouts, animations, embedded objects and some fonts may not reproduce exactly.
+</div>
+</div>
+</div>
+
+<div class="preview-host" id="previewHost"></div>
+
 <script>
-(()=>{"use strict";
-const $=id=>document.getElementById(id),fileInput=$("fileInput"),browse=$("browse"),drop=$("drop"),filesBox=$("filesBox"),list=$("list"),count=$("count"),clear=$("clear"),generate=$("generate"),status=$("status"),progress=$("progress"),bar=$("bar"),result=$("result"),details=$("details"),download=$("download"),newBtn=$("new"),quality=$("quality"),qv=$("qv");
-let files=[],dragIndex=null,pdfBlob=null,pdfName="labrecord-pdf.pdf";
-function msg(s,err=false){status.textContent=s;status.className="status"+(err?" err":"");status.style.display="block"}
-function bytes(n){if(!n)return"0 B";let u=["B","KB","MB","GB"],i=Math.min(Math.floor(Math.log(n)/Math.log(1024)),3);return`${(n/1024**i).toFixed(i?1:0)} ${u[i]}`}
-function render(){list.innerHTML="";count.textContent=files.length;filesBox.style.display=files.length?"block":"none";generate.disabled=!files.length;files.forEach((f,i)=>{let x=document.createElement("div");x.className="item";x.draggable=true;let im=document.createElement("img");im.className="thumb";im.alt="";let r=new FileReader;r.onload=e=>im.src=e.target.result;r.readAsDataURL(f);let info=document.createElement("div");info.innerHTML=`<div class="name"></div><div class="meta">${bytes(f.size)} · ${f.type.split("/")[1].toUpperCase()} · Page ${i+1}</div>`;info.firstChild.textContent=f.name;let rm=document.createElement("button");rm.className="remove";rm.type="button";rm.textContent="×";rm.onclick=()=>{files.splice(i,1);result.hidden=true;render()};x.append(im,info,rm);x.ondragstart=()=>dragIndex=i;x.ondragover=e=>e.preventDefault();x.ondrop=e=>{e.preventDefault();if(dragIndex===null||dragIndex===i)return;let m=files.splice(dragIndex,1)[0];files.splice(i,0,m);dragIndex=null;render()};list.append(x)})}
-function add(fs){files.push(...fs.filter(f=>["image/jpeg","image/png","image/webp"].includes(f.type)));result.hidden=true;render()}
-browse.onclick=e=>{e.stopPropagation();fileInput.click()};drop.onclick=e=>{if(!e.target.closest("button"))fileInput.click()};drop.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fileInput.click()}};fileInput.onchange=e=>{add([...e.target.files]);fileInput.value=""};["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("drag")}));["dragleave","dragend"].forEach(t=>drop.addEventListener(t,()=>drop.classList.remove("drag")));drop.ondrop=e=>{e.preventDefault();drop.classList.remove("drag");add([...e.dataTransfer.files])};clear.onclick=()=>{files=[];result.hidden=true;status.style.display="none";render()};quality.oninput=()=>qv.textContent=quality.value+"%";
-function read(f){return new Promise((res,rej)=>{let r=new FileReader;r.onload=e=>{let im=new Image;im.onload=()=>res(im);im.onerror=rej;im.src=e.target.result};r.onerror=rej;r.readAsDataURL(f)})}
-function dims(){let s=$("size").value,d=s==="a3"?[297,420]:s==="letter"?[215.9,279.4]:s==="legal"?[215.9,355.6]:[210,297];if(document.querySelector('input[name="orientation"]:checked').value==="landscape")d.reverse();return d}
-async function prepare(f){let im=await read(f),c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;let ctx=c.getContext("2d");if(f.type==="image/png")return{data:im.src,format:"PNG",w:im.naturalWidth,h:im.naturalHeight,im};ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(im,0,0);return{data:c.toDataURL("image/jpeg",+quality.value/100),format:"JPEG",w:im.naturalWidth,h:im.naturalHeight,im}}
-function box(w,h,pw,ph,m,mode){let aw=pw-2*m,ah=ph-2*m,r=w/h,pr=aw/ah,W,H;if(mode==="cover"){if(r>pr){H=ah;W=H*r}else{W=aw;H=W/r}}else{if(r>pr){W=aw;H=W/r}else{H=ah;W=H*r}if(mode==="original"){let s=Math.min(1,aw/w,ah/h);W=w*s;H=h*s}}return{x:(pw-W)/2,y:(ph-H)/2,w:W,h:H}}
-generate.onclick=async()=>{if(!files.length)return;if(!window.jspdf?.jsPDF){msg("PDF engine could not load. Refresh the page and try again.",true);return}generate.disabled=true;generate.textContent="Creating PDF...";progress.style.display="block";try{let d=dims(),pdf=new jspdf.jsPDF({orientation:d[0]>d[1]?"landscape":"portrait",unit:"mm",format:d,compress:$("compression").value!=="FAST"}),m=+$("margin").value;for(let i=0;i<files.length;i++){msg(`Processing image ${i+1} of ${files.length}...`);bar.style.width=(5+i/files.length*90)+"%";if(i)pdf.addPage(d,d[0]>d[1]?"landscape":"portrait");let a=await prepare(files[i]),b=box(a.w,a.h,d[0],d[1],m,$("fit").value);if($("fit").value==="cover"){let c=document.createElement("canvas"),tr=b.w/b.h,sr=a.w/a.h,cw=a.w,ch=a.h;if(sr>tr)cw=a.h*tr;else ch=a.w/tr;let sx=(a.w-cw)/2,sy=(a.h-ch)/2;c.width=Math.max(1,Math.round(b.w*3.78));c.height=Math.max(1,Math.round(b.h*3.78));let x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(a.im,sx,sy,cw,ch,0,0,c.width,c.height);pdf.addImage(c.toDataURL("image/jpeg",+quality.value/100),"JPEG",b.x,b.y,b.w,b.h,undefined,$("compression").value)}else pdf.addImage(a.data,a.format,b.x,b.y,b.w,b.h,undefined,$("compression").value)}let n=$("filename").value.trim().replace(/[\\/:*?"<>|]+/g,"-").replace(/\.pdf$/i,"")||"labrecord-pdf";pdfName=n+".pdf";pdfBlob=pdf.output("blob");details.textContent=`${pdfName} · ${bytes(pdfBlob.size)} · ${files.length} page${files.length===1?"":"s"}`;result.hidden=false;bar.style.width="100%";msg("PDF created successfully. Click Download PDF to save it.");}catch(e){console.error(e);msg("Could not create the PDF. Please try another image or refresh the page.",true)}finally{generate.disabled=!files.length;generate.textContent="Convert to PDF";setTimeout(()=>progress.style.display="none",900)}};
-download.onclick=()=>{if(!pdfBlob)return;let u=URL.createObjectURL(pdfBlob),a=document.createElement("a");a.href=u;a.download=pdfName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);msg("Download started. Check your browser's Downloads folder.")};
-newBtn.onclick=()=>{pdfBlob=null;result.hidden=true;files=[];fileInput.value="";status.style.display="none";render();scrollTo({top:0,behavior:"smooth"})};
+(() => {
+const {jsPDF} = window.jspdf || {};
+const input=document.getElementById('files'), drop=document.getElementById('drop');
+const list=document.getElementById('fileList'), convertBtn=document.getElementById('convertBtn');
+const clearBtn=document.getElementById('clearBtn'), status=document.getElementById('status');
+const bar=document.getElementById('bar'), host=document.getElementById('previewHost');
+let files=[];
+
+const ext = name => (name.split('.').pop()||'').toLowerCase();
+const supported = ['jpg','jpeg','png','webp','gif','bmp','txt','md','csv','html','htm','docx','xlsx','xls','pptx'];
+
+function renderList(){
+  list.innerHTML='';
+  files.forEach((f,i)=>{
+    const row=document.createElement('div'); row.className='file-row';
+    row.innerHTML=`<span class="badge">${ext(f.name).toUpperCase()}</span><span class="name">${escapeHtml(f.name)}</span><span style="color:#64748b;font-size:12px">${formatBytes(f.size)}</span><button class="danger remove">Remove</button>`;
+    row.querySelector('.remove').onclick=()=>{files.splice(i,1);renderList()};
+    list.appendChild(row);
+  });
+  convertBtn.disabled=!files.length;
+}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function formatBytes(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(1)+' MB'}
+function addFiles(arr){
+  for(const f of arr){if(supported.includes(ext(f.name)) && !files.some(x=>x.name===f.name&&x.size===f.size)) files.push(f)}
+  renderList();
+}
+input.onchange=e=>addFiles([...e.target.files]); drop.onclick=()=>input.click();
+['dragenter','dragover'].forEach(x=>drop.addEventListener(x,e=>{e.preventDefault();drop.classList.add('drag')}));
+['dragleave','drop'].forEach(x=>drop.addEventListener(x,e=>{e.preventDefault();drop.classList.remove('drag')}));
+drop.addEventListener('drop',e=>addFiles([...e.dataTransfer.files]));
+clearBtn.onclick=()=>{files=[];renderList();status.textContent='';bar.style.width='0%'};
+
+function pageDims(size,orient){
+  const m={A4:[210,297],A3:[297,420],Letter:[215.9,279.4],Legal:[215.9,355.6]}[size];
+  return orient==='landscape'?[m[1],m[0]]:m;
+}
+function setStatus(s,p){status.textContent=s;if(p!=null)bar.style.width=p+'%'}
+
+async function imageToDataURL(file,quality){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file), img=new Image();
+    img.onload=()=>{const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext('2d').drawImage(img,0,0);URL.revokeObjectURL(url);resolve(c.toDataURL('image/jpeg',quality))};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Could not read image'))}; img.src=url;
+  });
+}
+async function addImagePage(doc,file,opts){
+  const [pw,ph]=pageDims(opts.size,opts.orientation), margin=opts.margin;
+  const data=await imageToDataURL(file,opts.quality);
+  const img=new Image(); img.src=data; await img.decode();
+  const aw=pw-2*margin, ah=ph-2*margin, scale=Math.min(aw/img.naturalWidth,ah/img.naturalHeight);
+  const w=img.naturalWidth*scale,h=img.naturalHeight*scale;
+  doc.addImage(data,'JPEG',margin+(aw-w)/2,margin+(ah-h)/2,w,h,undefined,'FAST');
+}
+async function textPages(doc,text,opts){
+  const [pw,ph]=pageDims(opts.size,opts.orientation), margin=opts.margin;
+  const div=document.createElement('div'); div.className='page plain'; div.style.width=(pw-2*margin)+'mm'; div.textContent=text;
+  host.innerHTML='';host.appendChild(div);
+  const canvas=await html2canvas(div,{scale:1.5,backgroundColor:'#fff',useCORS:true});
+  const img=canvas.toDataURL('image/jpeg',opts.quality);
+  const usableW=pw-2*margin, usableH=ph-2*margin;
+  const pxPerMm=canvas.width/usableW, pagePx=Math.floor(usableH*pxPerMm);
+  for(let y=0;y<canvas.height;y+=pagePx){
+    if(y>0)doc.addPage();
+    const slice=document.createElement('canvas');slice.width=canvas.width;slice.height=Math.min(pagePx,canvas.height-y);
+    slice.getContext('2d').drawImage(canvas,0,y,canvas.width,slice.height,0,0,canvas.width,slice.height);
+    doc.addImage(slice.toDataURL('image/jpeg',opts.quality),'JPEG',margin,margin,usableW,slice.height/pxPerMm,undefined,'FAST');
+  }
+  host.innerHTML='';
+}
+async function htmlToPages(doc,html,opts){
+  const [pw,ph]=pageDims(opts.size,opts.orientation), margin=opts.margin;
+  const div=document.createElement('div'); div.className='page'; div.style.width=(pw-2*margin)+'mm'; div.innerHTML=html;
+  host.innerHTML='';host.appendChild(div);
+  const canvas=await html2canvas(div,{scale:1.5,backgroundColor:'#fff',useCORS:true,allowTaint:false});
+  const usableW=pw-2*margin, usableH=ph-2*margin, pxPerMm=canvas.width/usableW, pagePx=Math.floor(usableH*pxPerMm);
+  for(let y=0;y<canvas.height;y+=pagePx){
+    if(y>0)doc.addPage();
+    const slice=document.createElement('canvas');slice.width=canvas.width;slice.height=Math.min(pagePx,canvas.height-y);
+    slice.getContext('2d').drawImage(canvas,0,y,canvas.width,slice.height,0,0,canvas.width,slice.height);
+    doc.addImage(slice.toDataURL('image/jpeg',opts.quality),'JPEG',margin,margin,usableW,slice.height/pxPerMm,undefined,'FAST');
+  }
+  host.innerHTML='';
+}
+async function docxHtml(file){
+  const r=await mammoth.convertToHtml({arrayBuffer:await file.arrayBuffer()});
+  return r.value || '<p>No readable document content.</p>';
+}
+async function xlsxHtml(file){
+  const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+  return wb.SheetNames.map(n=>`<h2>${escapeHtml(n)}</h2>${XLSX.utils.sheet_to_html(wb.Sheets[n],{editable:false})}`).join('<hr>');
+}
+async function pptxHtml(file){
+  const zip=await JSZip.loadAsync(await file.arrayBuffer());
+  const names=Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/i.test(n))
+    .sort((a,b)=>parseInt(a.match(/slide(\d+)/i)[1])-parseInt(b.match(/slide(\d+)/i)[1]));
+  if(!names.length)return '<p>No readable slides found.</p>';
+  let out='';
+  for(let i=0;i<names.length;i++){
+    const xml=await zip.file(names[i]).async('text');
+    const doc=new DOMParser().parseFromString(xml,'application/xml');
+    const texts=[...doc.getElementsByTagName('*')].filter(x=>x.localName==='t').map(x=>x.textContent).filter(Boolean);
+    out+=`<section class="slide"><div style="color:#64748b;font-size:13px">Slide ${i+1}</div>${texts.length?'<h2>'+escapeHtml(texts[0])+'</h2><p>'+texts.slice(1).map(escapeHtml).join('<br>')+'</p>':'<p>No extractable text on this slide.</p>'}</section>`;
+  }
+  return out;
+}
+async function convertOne(doc,file,opts){
+  const e=ext(file.name);
+  if(['jpg','jpeg','png','webp','gif','bmp'].includes(e)) return addImagePage(doc,file,opts);
+  if(['txt','md','csv'].includes(e)) return textPages(doc,await file.text(),opts);
+  if(['html','htm'].includes(e)) return htmlToPages(doc,await file.text(),opts);
+  if(e==='docx') return htmlToPages(doc,await docxHtml(file),opts);
+  if(e==='xlsx'||e==='xls') return htmlToPages(doc,await xlsxHtml(file),opts);
+  if(e==='pptx') return htmlToPages(doc,await pptxHtml(file),opts);
+  throw new Error('Unsupported file: '+file.name);
+}
+convertBtn.onclick=async()=>{
+  if(!files.length)return;
+  if(!window.jspdf||!window.html2canvas){setStatus('PDF engine could not load. Check your internet connection and refresh.',0);return}
+  const opts={size:document.getElementById('size').value,orientation:document.getElementById('orientation').value,margin:Number(document.getElementById('margin').value)||0,quality:Number(document.getElementById('quality').value)};
+  const name=(document.getElementById('filename').value||'labrecord-converted').replace(/[\\/:*?"<>|]+/g,'-').trim()||'labrecord-converted';
+  try{
+    setStatus('Preparing PDF...',0);
+    const [pw,ph]=pageDims(opts.size,opts.orientation);
+    const doc=new jsPDF({orientation:opts.orientation,unit:'mm',format:[pw,ph],compress:true});
+    let first=true;
+    for(let i=0;i<files.length;i++){
+      setStatus(`Converting ${files[i].name} (${i+1}/${files.length})...`,Math.round(i/files.length*90));
+      if(!first)doc.addPage(); first=false;
+      await convertOne(doc,files[i],opts);
+    }
+    setStatus('Creating download...',96);
+    doc.save(name.endsWith('.pdf')?name:name+'.pdf');
+    setStatus(`Done. ${files.length} file${files.length>1?'s':''} converted successfully.`,100);
+  }catch(err){
+    console.error(err); setStatus('Conversion failed: '+(err.message||'Unknown error'),0);
+  }finally{host.innerHTML=''}
+};
 })();
 </script>
 </body>
