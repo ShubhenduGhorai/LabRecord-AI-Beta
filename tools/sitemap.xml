@@ -53,4 +53,8 @@
     <loc>https://tools.labrecord.cloud/word-counter</loc>
   </url>
 
+  <url>
+    <loc>https://tools.labrecord.cloud/pdf-generator</loc>
+  </url>
+
 </urlset>
